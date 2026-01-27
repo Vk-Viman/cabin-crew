@@ -1,0 +1,248 @@
+@{
+    ViewData["Title"] = "Update Pilot Details";
+}
+
+<div class="tracker-container">
+    <div class="search-card">
+        <form id="detailsSearchForm" class="search-form">
+            <div class="form-row-inline">
+                <div class="form-field">
+                    <label for="flightNo">Flight No</label>
+                    <input type="text" id="flightNo" name="flightNo" placeholder="ul" />
+                </div>
+                
+                <div class="form-field">
+                    <label for="flightDate">Flight Date (Local)</label>
+                    <div class="date-input-wrapper">
+                        <input type="text" id="flightDate" name="flightDate" placeholder="dd/mm/yy" />
+                        <span class="calendar-icon">&#128197;</span>
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="boardPoint">Board Point</label>
+                    <input type="text" id="boardPoint" name="boardPoint" placeholder="cmb" />
+                </div>
+                
+                <button type="submit" class="btn-search-inline">
+                    <span class="search-icon">&#128269;</span> Search
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="results-card">
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="5" width="60" height="70" rx="4" fill="#e2e8f0" stroke="#cbd5e0" stroke-width="2"/>
+                    <circle cx="40" cy="45" r="15" fill="white" stroke="#cbd5e0" stroke-width="2"/>
+                    <circle cx="40" cy="45" r="8" fill="#cbd5e0"/>
+                    <line x1="50" y1="55" x2="60" y2="65" stroke="#cbd5e0" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h3 class="empty-title">Ready to Search</h3>
+            <p class="empty-text">Use the filters above to search for Pilot Details by Flight.<br>Enter flight details to get started.</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('detailsSearchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Details search submitted');
+        });
+
+        document.getElementById('flightDate').addEventListener('focus', function() {
+            this.type = 'date';
+        });
+
+        document.getElementById('flightDate').addEventListener('blur', function() {
+            if (!this.value) {
+                this.type = 'text';
+            }
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .tracker-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .search-form {
+            width: 100%;
+        }
+
+        .form-row-inline {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .form-field {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .form-field label {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: #2d3748;
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+
+        .form-field input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            background-color: #f7f8fa;
+            color: #2d3748;
+        }
+
+        .form-field input:focus {
+            outline: none;
+            background-color: #eef0f3;
+        }
+
+        .form-field input::placeholder {
+            color: #a0aec0;
+        }
+
+        .date-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .date-input-wrapper input {
+            width: 100%;
+            padding-right: 2.5rem;
+        }
+
+        .calendar-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 1.25rem;
+        }
+
+        .btn-search-inline {
+            padding: 0.75rem 2rem;
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .btn-search-inline:hover {
+            background-color: #1e40af;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-search-inline:active {
+            transform: translateY(0);
+        }
+
+        .search-icon {
+            font-size: 1rem;
+        }
+
+        .results-card {
+            background: white;
+            border-radius: 16px;
+            padding: 4rem 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            min-height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            max-width: 520px;
+        }
+
+        .empty-icon {
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-text {
+            font-size: 0.9375rem;
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        @@media (max-width: 1200px) {
+            .form-row-inline {
+                flex-wrap: wrap;
+            }
+
+            .form-field {
+                flex: 1 1 45%;
+            }
+
+            .btn-search-inline {
+                flex: 1 1 100%;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .form-row-inline {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .form-field {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .form-field label {
+                font-size: 0.875rem;
+            }
+
+            .search-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+}

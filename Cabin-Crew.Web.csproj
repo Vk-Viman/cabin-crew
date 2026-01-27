@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Cabin_Crew</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cabin-Crew.Application\Cabin-Crew.Application.csproj" />
+    <ProjectReference Include="..\Cabin-Crew.Infastructure\Cabin-Crew.Infastructure.csproj" />
+  </ItemGroup>
+
+</Project>

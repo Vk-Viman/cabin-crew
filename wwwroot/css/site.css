@@ -1,0 +1,158 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+  padding: 0;
+}
+
+.welcome-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.welcome-card h2 {
+  font-weight: 600;
+  color: white;
+}
+
+.welcome-card .text-muted {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.stat-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.stat-card h2 {
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.stat-card h6 {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+}
+
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+.card-header {
+  padding: 1rem 1.25rem;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.card-header h5 {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.list-group-item {
+  border-left: none;
+  border-right: none;
+  padding: 1rem 1.25rem;
+}
+
+.list-group-item:first-child {
+  border-top: none;
+}
+
+.list-group-item h6 {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.badge {
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+}
+
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-info,
+.btn-outline-secondary {
+  font-weight: 500;
+  border-width: 2px;
+  padding: 0.5rem 1rem;
+}
+
+.calendar-icon {
+  min-width: 50px;
+}
+
+.calendar-icon .badge {
+  display: block;
+  font-size: 1.1rem;
+  padding: 0.5rem;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 0;
+}
+
+.calendar-icon small {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.card-footer {
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 12px 12px !important;
+}
+
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .stat-card h2 {
+    font-size: 1.5rem;
+  }
+  
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .stat-icon i {
+    font-size: 1.5rem !important;
+  }
+}
