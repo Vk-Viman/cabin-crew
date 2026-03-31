@@ -19,6 +19,37 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-color: #dddddd !important;
+}
+
+.main-content {
+  background-color: #dddddd !important;
+}
+
+/* Force Dashboard Grid Layout */
+.dashboard-wrapper, .db-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5rem !important;
+  background-color: transparent !important;
+}
+
+.stats-row, .db-stats {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1.5rem !important;
+}
+
+.charts-row, .db-charts {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1.5rem !important;
+}
+
+.bottom-section, .db-bottom {
+  display: grid !important;
+  grid-template-columns: 1.6fr 1fr !important;
+  gap: 1.5rem !important;
 }
 
 /* Dashboard Styles */
@@ -40,13 +71,14 @@ body {
   color: rgba(255, 255, 255, 0.9) !important;
 }
 
-.stat-card {
+.stat-card, .db-card, .db-stat {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: white !important;
 }
 
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+.stat-card:hover, .db-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
 }
 
 .stat-card h2 {
@@ -71,11 +103,13 @@ body {
 
 .card {
   border-radius: 12px;
+  background: white !important;
 }
 
 .card-header {
   padding: 1rem 1.25rem;
   border-radius: 12px 12px 0 0 !important;
+  background: white !important;
 }
 
 .card-header h5 {
@@ -87,6 +121,7 @@ body {
   border-left: none;
   border-right: none;
   padding: 1rem 1.25rem;
+  background: white !important;
 }
 
 .list-group-item:first-child {
@@ -135,6 +170,7 @@ body {
 .card-footer {
   padding: 0.75rem 1.25rem;
   border-radius: 0 0 12px 12px !important;
+  background: white !important;
 }
 
 .shadow-sm {
@@ -142,6 +178,18 @@ body {
 }
 
 /* Responsive adjustments */
+@media (max-width: 1200px) {
+  .stats-row, .db-stats {
+    grid-template-columns: 1fr !important;
+  }
+  .charts-row, .db-charts {
+    grid-template-columns: 1fr !important;
+  }
+  .bottom-section, .db-bottom {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 @media (max-width: 767.98px) {
   .stat-card h2 {
     font-size: 1.5rem;

@@ -1,0 +1,773 @@
+@{
+    ViewData["Title"] = "Access Control";
+}
+
+<div class="access-control-container">
+    <div class="access-surface">
+        <div class="access-layout">
+            <div class="access-row top-row">
+                <div class="search-card">
+                    <h2>Search Ground Staff</h2>
+                    <div class="field-label">Staff ID or Name</div>
+
+                    <div class="search-box">
+                        <input type="text" id="staffSearch" placeholder="Enter Staff ID or Name..."
+                               class="search-input" />
+                        <button class="search-btn" aria-label="Search">
+                            <img class="search-btn-icon"
+                                 src="http://localhost:3845/assets/8d5576640b13d512765bbe4597d5b9542d886612.svg" alt=""
+                                 aria-hidden="true" />
+                        </button>
+                    </div>
+
+                    <div id="staffResults" class="staff-results">
+                        <button type="button" class="staff-result-item" data-staff-id="GS-001"
+                                data-staff-name="Alice Johnson" data-staff-dept="Cabin Crew">
+                            <span class="result-primary">GS-001</span>
+                            <span class="result-secondary">Alice Johnson • Cabin Crew</span>
+                        </button>
+                        <button type="button" class="staff-result-item" data-staff-id="GS-002"
+                                data-staff-name="Bob Smith" data-staff-dept="Cabin Crew">
+                            <span class="result-primary">GS-002</span>
+                            <span class="result-secondary">Bob Smith • Cabin Crew</span>
+                        </button>
+                    </div>
+
+                    <div id="staffResult" class="staff-result-card">
+                        <div class="staff-avatar-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="staff-details">
+                            <p><span class="detail-label">Staff ID:</span> <span id="displayStaffId">GS-001</span></p>
+                            <p><span class="detail-label">Name:</span> <span id="displayStaffName">Alice Johnson</span>
+                            </p>
+                            <p><span class="detail-label">Department:</span> <span id="displayDept">Cabin Crew</span>
+                            </p>
+                            <p class="config-hint">Configure module access permissions below</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="permissions-card">
+                    <h2>Module Permissions</h2>
+
+                    <div class="permission-list">
+                        <div class="permission-row">
+                            <div class="permission-text">
+                                <h4>Incident Reports</h4>
+                                <p>View incident reports for assigned flights</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="incidentToggle" checked />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="permission-row">
+                            <div class="permission-text">
+                                <h4>Voyage Reports</h4>
+                                <p>View voyage reports for assigned flights</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="voyageToggle" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="save-row">
+                        <button class="save-btn">Save Configuration</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="access-row table-row">
+                <div class="access-table-card">
+                    <h3>Current Access Configuration</h3>
+                    <div class="table-container">
+                        <table class="access-table">
+                            <thead>
+                                <tr>
+                                    <th>Staff ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Incident Reports</th>
+                                    <th>Voyage Reports</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-staff-id="GS-001">
+                                    <td>GS-001</td>
+                                    <td>Alice Johnson</td>
+                                    <td>Cabin Crew</td>
+                                    <td><span class="badge badge-enabled" data-permission="incident">ENABLED</span></td>
+                                    <td><span class="badge badge-enabled" data-permission="voyage">ENABLED</span></td>
+                                </tr>
+                                <tr data-staff-id="GS-002">
+                                    <td>GS-002</td>
+                                    <td>Bob Smith</td>
+                                    <td>Cabin Crew</td>
+                                    <td><span class="badge badge-disabled" data-permission="incident">DISABLED</span>
+                                    </td>
+                                    <td><span class="badge badge-enabled" data-permission="voyage">ENABLED</span></td>
+                                </tr>
+                                <tr data-staff-id="GS-003">
+                                    <td>GS-003</td>
+                                    <td>Carol White</td>
+                                    <td>Ground Operations</td>
+                                    <td><span class="badge badge-enabled" data-permission="incident">ENABLED</span></td>
+                                    <td><span class="badge badge-disabled" data-permission="voyage">DISABLED</span></td>
+                                </tr>
+                                <tr data-staff-id="GS-004">
+                                    <td>GS-004</td>
+                                    <td>David Brown</td>
+                                    <td>Cabin Crew</td>
+                                    <td><span class="badge badge-enabled" data-permission="incident">ENABLED</span></td>
+                                    <td><span class="badge badge-enabled" data-permission="voyage">ENABLED</span></td>
+                                </tr>
+                                <tr data-staff-id="GS-005">
+                                    <td>GS-005</td>
+                                    <td>Emma Wilson</td>
+                                    <td>Ground Operations</td>
+                                    <td><span class="badge badge-enabled" data-permission="incident">ENABLED</span></td>
+                                    <td><span class="badge badge-enabled" data-permission="voyage">ENABLED</span></td>
+                                </tr>
+                                <tr data-staff-id="GS-006">
+                                    <td>GS-006</td>
+                                    <td>Frank Miller</td>
+                                    <td>Cabin Crew</td>
+                                    <td><span class="badge badge-enabled" data-permission="incident">ENABLED</span></td>
+                                    <td><span class="badge badge-enabled" data-permission="voyage">ENABLED</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="access-row notes-row">
+                <div class="notes-card">
+                    <div class="notes-icon">i</div>
+                    <h4>Access Control Notes:</h4>
+                    <div class="notes-grid">
+                        <div class="notes-row-item">
+                            <span class="notes-dot"></span>
+                            <span>Ground staff can only view data for flights assigned to them</span>
+                        </div>
+                        <div class="notes-row-item">
+                            <span class="notes-dot"></span>
+                            <span>Ground staff cannot edit or modify any reports</span>
+                        </div>
+                        <div class="notes-row-item">
+                            <span class="notes-dot"></span>
+                            <span>Crew admins have full access to all modules and data</span>
+                        </div>
+                        <div class="notes-row-item">
+                            <span class="notes-dot"></span>
+                            <span>Changes to permissions take effect immediately</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const searchBtn = document.querySelector('.search-btn');
+        const searchInput = document.getElementById('staffSearch');
+        const staffResult = document.getElementById('staffResult');
+        const staffResults = document.getElementById('staffResults');
+        const resultItems = document.querySelectorAll('.staff-result-item');
+        const incidentToggle = document.getElementById('incidentToggle');
+        const voyageToggle = document.getElementById('voyageToggle');
+        const staffIdDisplay = document.getElementById('displayStaffId');
+
+        const showResults = function () {
+            if (searchInput.value.trim()) {
+                staffResults.style.display = 'flex';
+            } else {
+                staffResults.style.display = 'none';
+            }
+        };
+
+        searchBtn.addEventListener('click', showResults);
+
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                showResults();
+            }
+        });
+
+        searchInput.addEventListener('input', function () {
+            if (!this.value.trim()) {
+                staffResults.style.display = 'none';
+                staffResult.style.display = 'none';
+            }
+        });
+
+        const getRowForStaff = function (staffId) {
+            if (!staffId) {
+                return null;
+            }
+            return document.querySelector(`.access-table tbody tr[data-staff-id="${staffId}"]`);
+        };
+
+        const updateBadge = function (badge, isEnabled) {
+            if (!badge) {
+                return;
+            }
+            badge.textContent = isEnabled ? 'ENABLED' : 'DISABLED';
+            badge.classList.toggle('badge-enabled', isEnabled);
+            badge.classList.toggle('badge-disabled', !isEnabled);
+        };
+
+        const syncTogglesFromRow = function (row) {
+            if (!row) {
+                return;
+            }
+            const incidentBadge = row.querySelector('[data-permission="incident"]');
+            const voyageBadge = row.querySelector('[data-permission="voyage"]');
+            incidentToggle.checked = incidentBadge?.classList.contains('badge-enabled');
+            voyageToggle.checked = voyageBadge?.classList.contains('badge-enabled');
+        };
+
+        const syncRowFromToggles = function () {
+            const row = getRowForStaff(staffIdDisplay.textContent.trim());
+            if (!row) {
+                return;
+            }
+            updateBadge(row.querySelector('[data-permission="incident"]'), incidentToggle.checked);
+            updateBadge(row.querySelector('[data-permission="voyage"]'), voyageToggle.checked);
+        };
+
+        resultItems.forEach(function (item) {
+            item.addEventListener('click', function () {
+                staffIdDisplay.textContent = this.dataset.staffId;
+                document.getElementById('displayStaffName').textContent = this.dataset.staffName;
+                document.getElementById('displayDept').textContent = this.dataset.staffDept;
+                staffResults.style.display = 'none';
+                staffResult.style.display = 'flex';
+                syncTogglesFromRow(getRowForStaff(this.dataset.staffId));
+            });
+        });
+
+        incidentToggle.addEventListener('change', syncRowFromToggles);
+        voyageToggle.addEventListener('change', syncRowFromToggles);
+
+        document.querySelector('.save-btn').addEventListener('click', function () {
+            alert('Configuration saved successfully!');
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .access-control-container {
+            background: #dddddd;
+            min-height: calc(100vh - 120px);
+            padding: 24px 32px 32px;
+            font-family: Arial, sans-serif;
+        }
+
+        .access-surface {
+            max-width: 1575px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 32px 24px;
+            min-height: 1065px;
+        }
+
+        .access-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .access-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 42px;
+        }
+
+        .table-row,
+        .notes-row {
+            grid-template-columns: 1fr;
+        }
+
+        /* Cards */
+        .search-card,
+        .access-table-card,
+        .permissions-card,
+        .notes-card {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.10), 0 4px 6px rgba(0, 0, 0, 0.10);
+        }
+
+        .search-card,
+        .permissions-card {
+            height: 341px;
+        }
+
+        .search-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .permissions-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .permission-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            flex: 1;
+        }
+
+
+
+        .search-card h2,
+        .permissions-card h2 {
+            font-size: 20px;
+            font-weight: 400;
+            color: #1a1a1a;
+            margin: 0 0 16px 0;
+        }
+
+        .field-label {
+            font-size: 16px;
+            color: #1a1a1a;
+            margin: 0 0 8px 0;
+            line-height: 14px;
+        }
+
+        /* Search Box */
+        .search-box {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 18px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            max-width: 520px;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0 12px;
+            border: 1px solid rgba(0, 0, 0, 0);
+            border-radius: 8px;
+            font-size: 16px;
+            background: #f3f3f5;
+            height: 56px;
+            color: #717182;
+        }
+
+        .search-input::placeholder {
+            color: #717182;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #0f1e7d;
+            background: #ffffff;
+        }
+
+        .search-btn {
+            padding: 0;
+            background: #0f1e7d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 36px;
+            width: 112px;
+        }
+
+        .search-btn:hover {
+            background: #17245f;
+        }
+
+        .search-btn-icon {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        /* Staff Result Card */
+        .staff-result-card {
+            display: none;
+            gap: 12px;
+            padding: 16.8px;
+            background: #dfedff;
+            border: 1px solid #bedbff;
+            border-radius: 10px;
+            align-items: flex-start;
+        }
+
+        .staff-results {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .staff-result-item {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .staff-result-item:hover {
+            border-color: #0f1e7d;
+        }
+
+        .result-primary {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .result-secondary {
+            font-size: 13px;
+            color: #6a7282;
+        }
+
+        .staff-avatar-icon {
+            width: 40px;
+            height: 40px;
+            background: #bedbff;
+            color: #0f1e7d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .staff-details {
+            flex: 1;
+        }
+
+        .staff-details p {
+            margin: 0 0 0.25rem 0;
+            font-size: 16px;
+            color: #1a1a1a;
+        }
+
+        .detail-label {
+            font-weight: 700;
+        }
+
+        .config-hint {
+            margin-top: 0.5rem;
+            color: #4a5565;
+            font-size: 16px;
+        }
+
+        /* Access Table */
+        .access-table-card h3 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #1a1a1a;
+            margin: 0 0 16px 0;
+        }
+
+        .access-table-card {
+            height: 450px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border: none;
+            border-radius: 14px;
+        }
+
+        .access-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .access-table thead {
+            background: #ffffff;
+        }
+
+        .access-table th {
+            padding: 9.8px 16px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+            border-bottom: 0.8px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .access-table th:nth-child(4),
+        .access-table th:nth-child(5),
+        .access-table td:nth-child(4),
+        .access-table td:nth-child(5) {
+            text-align: center;
+        }
+
+        .access-table td {
+            padding: 11.39px 16px;
+            font-size: 16px;
+            color: #1a1a1a;
+            border-bottom: 0.8px solid rgba(0, 0, 0, 0.1);
+            line-height: 24px;
+        }
+
+        .access-table tbody tr:hover {
+            background: #ffffff;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 92px;
+            height: 26px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-enabled {
+            background: #eff6ff;
+            color: #1447e6;
+            border: 0.8px solid #bedbff;
+        }
+
+        .badge-disabled {
+            background: rgba(153, 161, 175, 0.2);
+            color: #535964;
+            border: 0.8px solid #99a1af;
+        }
+
+        /* Permission Rows */
+        .permission-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            margin-bottom: 24px;
+            border: none;
+        }
+
+        .permission-row:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .permission-text h4 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #1a1a1a;
+            margin: 0 0 6px 0;
+            line-height: 14px;
+        }
+
+        .permission-text p {
+            font-size: 16px;
+            color: #6a7282;
+            margin: 0;
+            line-height: 20px;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 32px;
+            height: 18.4px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #99a1af;
+            transition: 0.3s;
+            border-radius: 999px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 1.2px;
+            bottom: 1.2px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 999px;
+        }
+
+        input:checked+.slider {
+            background-color: #0f1e7d;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(13.6px);
+        }
+
+        /* Save Button */
+        .save-row {
+            border-top: 0.8px solid rgba(0, 0, 0, 0.1);
+            padding-top: 16.8px;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 0;
+            background: #0f1e7d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            height: 36px;
+        }
+
+        .save-btn:hover {
+            background: #17245f;
+        }
+
+        /* Notes Card */
+        .notes-card {
+            background: #ffefae;
+            border: 0.8px solid #fee685;
+            position: relative;
+            padding: 24.8px;
+            height: 134px;
+        }
+
+        .notes-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffd27c;
+            color: #1a1a1a;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 0;
+            position: absolute;
+            left: 24.8px;
+            top: 24.8px;
+        }
+
+        .notes-card h4 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 12px 32px;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 48px;
+            row-gap: 4px;
+            padding-left: 32px;
+        }
+
+        .notes-row-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            color: #1a1a1a;
+            line-height: 20px;
+        }
+
+        .notes-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: #1a1a1a;
+            flex-shrink: 0;
+        }
+
+        @@media (max-width: 1200px) {
+            .access-row {
+                grid-template-columns: 1fr;
+            }
+
+            .search-card,
+            .permissions-card,
+            .access-table-card,
+            .notes-card {
+                height: auto;
+            }
+
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 1400px) {
+            .access-row {
+                gap: 24px;
+            }
+        }
+
+        @@media (max-width: 992px) {
+            .access-control-container {
+                padding: 16px;
+            }
+
+            .access-surface {
+                padding: 24px 16px 16px 16px;
+            }
+        }
+
+        @@media (max-width: 768px) {
+
+            .access-table th,
+            .access-table td {
+                font-size: 14px;
+            }
+
+            .notes-card h4 {
+                font-size: 18px;
+            }
+        }
+    </style>
+}

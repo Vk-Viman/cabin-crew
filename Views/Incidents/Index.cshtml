@@ -1,4 +1,248 @@
 ﻿@{
     ViewData["Title"] = "Incident Reports";
 }
-<h1>hi</h1>
+
+<div class="tracker-container">
+    <div class="search-card">
+        <form id="incidentSearchForm" class="search-form">
+            <div class="form-row-inline">
+                <div class="form-field">
+                    <label for="flightNo">Flight No</label>
+                    <input type="text" id="flightNo" name="flightNo" placeholder="ul" />
+                </div>
+                
+                <div class="form-field">
+                    <label for="flightDate">Flight Date (Local)</label>
+                    <div class="date-input-wrapper">
+                        <input type="date" id="flightDate" name="flightDate" />
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <label for="boardPoint">Board Point</label>
+                    <input type="text" id="boardPoint" name="boardPoint" placeholder="cmb" />
+                </div>
+                
+                <button type="submit" class="btn-search-inline">
+                    <img class="search-icon"
+                         src="http://localhost:3845/assets/8d5576640b13d512765bbe4597d5b9542d886612.svg" alt=""
+                         aria-hidden="true" />
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="results-card">
+        <div class="empty-state">
+            <div class="empty-icon">
+                <img src="http://localhost:3845/assets/891a4a9cb6d25fc1b60faf0f44955f6eb74c2677.svg" alt=""
+                     aria-hidden="true" />
+            </div>
+            <h3 class="empty-title">Ready to Search</h3>
+            <p class="empty-text">Use the filters above to search for incident reports by flight.<br>Enter flight
+                details to get started.</p>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            document.getElementById('incidentSearchForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                console.log('Incident search submitted');
+            });
+
+        </script>
+    }
+
+    @section Styles {
+        <style>
+            .tracker-container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0;
+            }
+
+            .search-card {
+                background: white;
+                border-radius: 16px;
+                min-height: 128px;
+                padding: 16px 33px;
+                margin-bottom: 2rem;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .search-form {
+                width: 100%;
+                max-width: 1320px;
+            }
+
+            .form-row-inline {
+                display: flex;
+                align-items: center;
+                gap: 30px;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .form-field {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .form-field label {
+                font-size: 16px;
+                font-weight: 400;
+                color: #1a1a1a;
+                white-space: nowrap;
+                line-height: 14px;
+            }
+
+            .form-field input {
+                flex: 1 1 auto;
+                width: 100%;
+                height: 56px;
+                padding: 0 12px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                background: #f3f3f5;
+                color: #717182;
+                box-sizing: border-box;
+            }
+
+            .form-field input:focus {
+                outline: none;
+                background: #eceef2;
+            }
+
+            .form-field input::placeholder {
+                color: #717182;
+            }
+
+            .date-input-wrapper {
+                position: relative;
+                flex: 1;
+            }
+
+            .date-input-wrapper input {
+                width: 100%;
+            }
+
+            .btn-search-inline {
+                width: 112px;
+                height: 36px;
+                border: 0;
+                border-radius: 8px;
+                background: #0f1e7d;
+                color: #ffffff;
+                font-size: 16px;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                white-space: nowrap;
+            }
+
+            .btn-search-inline:hover {
+                background: #0f1e7d;
+            }
+
+            .btn-search-inline:active {
+                background: #0f1e7d;
+            }
+
+            .search-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+                object-fit: contain;
+            }
+
+            .results-card {
+                background: white;
+                border-radius: 16px;
+                padding: 4rem 2rem;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+                min-height: 450px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .empty-state {
+                text-align: center;
+                max-width: 520px;
+            }
+
+            .empty-icon {
+                margin-bottom: 1.5rem;
+                opacity: 1;
+            }
+
+            .empty-icon img {
+                width: 80px;
+                height: 80px;
+                object-fit: contain;
+                display: block;
+                margin: 0 auto;
+            }
+
+            .empty-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #2d3748;
+                margin-bottom: 0.75rem;
+            }
+
+            .empty-text {
+                font-size: 0.9375rem;
+                color: #718096;
+                line-height: 1.6;
+            }
+
+            @@media (max-width: 1200px) {
+                .form-row-inline {
+                    flex-wrap: wrap;
+                }
+
+                .form-field {
+                    flex: 1 1 45%;
+                }
+
+                .btn-search-inline {
+                    flex: 1 1 100%;
+                }
+            }
+
+            @@media (max-width: 768px) {
+                .form-row-inline {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+
+                .form-field {
+                    width: 100%;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.5rem;
+                }
+
+                .form-field label {
+                    font-size: 0.875rem;
+                }
+
+                .search-card {
+                    padding: 1.5rem;
+                }
+            }
+        </style>
+    }

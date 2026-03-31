@@ -1,0 +1,1232 @@
+@{
+    ViewData["Title"] = "Manuel Voyage Report";
+    var showDemo = string.Equals(Context.Request.Query["showDemo"], "1", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(Context.Request.Query["showDemo"], "true", StringComparison.OrdinalIgnoreCase);
+
+    var seededCrewRows = new[]
+    {
+        new { StaffNo = "CCM-123", Category = "Pur", Citizenship = "LK", Sex = "Female", Birthday = "2001-10-12", Passive = "No", Position = "L1" },
+        new { StaffNo = "CCM-789", Category = "CS", Citizenship = "LK", Sex = "Male", Birthday = "2002-06-04", Passive = "Yes", Position = "L4" },
+        new { StaffNo = "CCM-234", Category = "FA", Citizenship = "LK", Sex = "Female", Birthday = "2004-01-13", Passive = "Yes", Position = "R5" }
+    };
+
+    var seededIncidentRows = new[]
+    {
+        new { Type = "Medical Emergency", Seat = "12 A", Name = "Johnson", Ticket = "12 A" },
+        new { Type = "Equipment Malfunction", Seat = "25 B", Name = "May", Ticket = "25 B" }
+    };
+}
+
+<div class="mv-page">
+    <section class="mv-card mv-main-card">
+        <header class="mv-card-header">
+            <div class="mv-header-left">
+                <span class="mv-header-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 3.5h7l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20V5A1.5 1.5 0 0 1 7.5 3.5Z" stroke="currentColor" stroke-width="1.6" />
+                        <path d="M14 3.5V8h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M9 11h6M9 14h6M9 17h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <h2>Manual Voyage Entry</h2>
+            </div>
+        </header>
+
+        <div class="mv-card-body">
+            <form id="voyageInfoForm" class="mv-form-grid" onsubmit="return false;">
+                <div class="mv-field"><label>Flight No *</label><input name="FlightNo" type="text" placeholder="e.g., UL101" /></div>
+                <div class="mv-field"><label>Flight Date *</label><input class="mv-date" name="FlightDate" type="text" placeholder="dd/mm/yy" /></div>
+                <div class="mv-field"><label>Board Point *</label><select name="BoardPoint"><option value="">Select</option><option>CMB</option><option>DXB</option><option>LHR</option></select></div>
+                <div class="mv-field"><label>Air Craft Reg *</label><input name="AircraftReg" type="text" placeholder="Aircraft Registration" /></div>
+                <div class="mv-field"><label>Aircraft Type *</label><input name="AircraftType" type="text" placeholder="Aircraft Type" /></div>
+
+                <div class="mv-field"><label>Sector *</label><input name="Sector" type="text" placeholder="Sector" /></div>
+                <div class="mv-field"><label>PIC</label><input name="PIC" type="text" placeholder="PIC" /></div>
+                <div class="mv-field"><label>STD</label><input name="STD" type="text" placeholder="STD" /></div>
+                <div class="mv-field"><label>ATD</label><input name="ATD" type="text" placeholder="ATD" /></div>
+                <div class="mv-field"><label>ATA</label><input name="ATA" type="text" placeholder="ATA" /></div>
+
+                <div class="mv-field"><label>CATEROM</label><input name="CATEROM" type="text" placeholder="CATEROM" /></div>
+                <div class="mv-field"><label>CCMREADY</label><input name="CCMREADY" type="text" placeholder="CCMREADY" /></div>
+                <div class="mv-field"><label>BOARDCOM</label><input name="BOARDCOM" type="text" placeholder="BOARDCOM" /></div>
+                <div class="mv-field"><label>LPAXBOARD</label><input name="LPAXBOARD" type="text" placeholder="LPAXBOARD" /></div>
+                <div class="mv-field"><label>BC</label><input name="BC" type="text" placeholder="Business Class" /></div>
+
+                <div class="mv-field"><label>EY</label><input name="EY" type="text" placeholder="Economy" /></div>
+                <div class="mv-field"><label>AIRCRAFT DEVICE TYPE</label><input name="AIRCRAFT_DEVICE_TYPE" type="text" placeholder="Aircraft Device Type" /></div>
+                <div class="mv-field"><label>TOT</label><input name="TOT" type="text" placeholder="Total" /></div>
+                <div class="mv-field"><label>INF</label><input name="INF" type="text" placeholder="Infants" /></div>
+                <div class="mv-field"><label>BOOKED</label><input name="BOOKED" type="text" placeholder="Booked" /></div>
+
+                <div class="mv-field"><label>REQWVOLUME</label><input name="REQWVOLUME" type="text" placeholder="Required Water Volume" /></div>
+                <div class="mv-field"><label>REQWLEVEL</label><input name="REQWLEVEL" type="text" placeholder="Required Water Level" /></div>
+                <div class="mv-field"><label>RECWVOLUME</label><input name="RECWVOLUME" type="text" placeholder="Recorded Water Volume" /></div>
+                <div class="mv-field"><label>RECWLEVEL</label><input name="RECWLEVEL" type="text" placeholder="Recorded Water Level" /></div>
+                <div class="mv-field"><label>WATER REMAIN ON ARRIVAL</label><input name="WATER_REMAIN_ON_ARRIVAL" type="text" placeholder="Water Remaining On Arrival" /></div>
+
+                <div class="mv-field"><label>PICL</label><input name="PICL" type="text" placeholder="PICL" /></div>
+                <div class="mv-field"><label>XFD</label><input name="XFD" type="text" placeholder="XFD" /></div>
+                <div class="mv-field mv-span-3"><label>GENCOMM</label><input name="GENCOMM" type="text" placeholder="GENCOMM" /></div>
+            </form>
+        </div>
+
+        <section class="mv-sub-card">
+            <header class="mv-sub-header">
+                <div class="mv-header-left">
+                    <span class="mv-header-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 20v-1.1a3.9 3.9 0 0 0-3.9-3.9H8.9A3.9 3.9 0 0 0 5 18.9V20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                            <circle cx="10.5" cy="8" r="3.3" stroke="currentColor" stroke-width="1.7" />
+                            <path d="M18 8v5M15.5 10.5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                        </svg>
+                    </span>
+                    <h3>Crew Information - Add</h3>
+                </div>
+                <button id="crewAddBtn" type="button" class="mv-btn mv-btn-add">
+                    <span class="mv-btn-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </span>
+                    <span>Add</span>
+                </button>
+            </header>
+
+            <div class="mv-sub-body mv-crew-add-grid">
+                <div class="mv-field mv-search"><label>Staff No *</label><input id="crewStaffNo" list="mockStaffList" type="text" placeholder="Search by staff number or name..." /></div>
+                <div class="mv-field"><label>First Name</label><input id="crewFirstName" type="text" placeholder="Auto-filled" /></div>
+                <div class="mv-field"><label>Last Name</label><input id="crewLastName" type="text" placeholder="Auto-filled" /></div>
+                <div class="mv-field"><label>Citizenship</label><input id="crewCitizenship" type="text" placeholder="e.g., LK" /></div>
+
+                <div class="mv-field"><label>Sex</label><select id="crewSex"><option value="">Select</option><option>Female</option><option>Male</option></select></div>
+                <div class="mv-field"><label>Birthdate</label><input id="crewBirthdate" class="mv-date" type="text" placeholder="dd/mm/yy" /></div>
+                <div class="mv-field"><label>Crew Category *</label><select id="crewCategory"><option value="">Select category</option><option>Pur</option><option>CS</option><option>FA</option></select></div>
+                <div class="mv-field"><label>Crew Position *</label><select id="crewPosition"><option value="">Select position</option><option>L1</option><option>L2</option><option>L4</option><option>R5</option></select></div>
+                <div class="mv-field"><label>Is Passive</label><select id="crewPassive"><option>No</option><option>Yes</option></select></div>
+            </div>
+
+            <section id="crewViewSection" class="mv-table-card d-none">
+                <header class="mv-sub-header mv-sub-header-light">
+                    <div class="mv-header-left">
+                        <span class="mv-header-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 20v-1.1a3.9 3.9 0 0 0-3.9-3.9H8.9A3.9 3.9 0 0 0 5 18.9V20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                                <circle cx="10.5" cy="8" r="3.3" stroke="currentColor" stroke-width="1.7" />
+                                <path d="M18.5 7.5h-4M18.5 12.5h-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <h3>Crew Information - View</h3>
+                    </div>
+                    <button id="crewRemoveLastBtn" type="button" class="mv-btn mv-btn-remove">
+                        <span class="mv-btn-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 7h8m-7 0 1 12h4l1-12M9.5 7l.6-1.3A1.2 1.2 0 0 1 11.2 5h1.6a1.2 1.2 0 0 1 1.1.7L14.5 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span>Remove Last Crew</span>
+                    </button>
+                </header>
+
+                <div class="mv-table-toolbar">
+                    <div class="mv-toolbar-left">
+                        <span>Show</span>
+                        <select id="crewEntriesSelect"><option>10</option><option>25</option><option>50</option></select>
+                        <span>entries</span>
+                        <span id="crewRecordBadge" class="mv-badge">0 records</span>
+                    </div>
+                    <div class="mv-toolbar-search">
+                        <span class="mv-search-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8" />
+                                <path d="M20 20l-3.4-3.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <input id="crewSearchInput" type="text" placeholder="Search crew..." />
+                    </div>
+                </div>
+
+                <div class="mv-table-wrap">
+                    <table class="mv-table">
+                        <thead>
+                            <tr>
+                                <th class="mv-sort" data-table="crew" data-key="StaffNo">Staff No</th>
+                                <th class="mv-sort" data-table="crew" data-key="Category">Crew Category</th>
+                                <th class="mv-sort" data-table="crew" data-key="Citizenship">Citizenship</th>
+                                <th class="mv-sort" data-table="crew" data-key="Sex">Sex</th>
+                                <th class="mv-sort" data-table="crew" data-key="Birthday">Birthday</th>
+                                <th class="mv-sort" data-table="crew" data-key="Passive">Is Passive</th>
+                                <th class="mv-sort" data-table="crew" data-key="Position">Crew Position</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crewTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="mv-pagination">
+                    <span id="crewPagingInfo">Showing 0 to 0 of 0 entries</span>
+                    <div class="mv-pager-btns">
+                        <button id="crewPrevBtn" type="button">Previous</button>
+                        <button id="crewPageBtn" type="button" class="active">1</button>
+                        <button id="crewNextBtn" type="button">Next</button>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section class="mv-sub-card mv-inc-card">
+            <header class="mv-sub-header">
+                <div class="mv-header-left">
+                    <span class="mv-header-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4.2 3.8 18.5c-.5.9.1 2 1.2 2h14c1 0 1.7-1.1 1.2-2L12 4.2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+                            <path d="M12 9v5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+                            <circle cx="12" cy="17" r="1" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <h3>Incidents Related To Above Voyage Reports</h3>
+                </div>
+                <button id="incidentAddBtn" type="button" class="mv-btn mv-btn-add">
+                    <span class="mv-btn-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </span>
+                    <span>Add</span>
+                </button>
+            </header>
+
+            <div class="mv-sub-body mv-inc-add-grid">
+                <div class="mv-field mv-search"><label>Reported Person (Staff ID)</label><input id="incidentStaffId" list="mockStaffList" type="text" placeholder="Search staff..." /></div>
+                <div class="mv-field"><label>Incident Type *</label><select id="incidentType"><option value="">Select type</option><option>Medical Emergency</option><option>Equipment Malfunction</option><option>Security Issue</option></select></div>
+                <div class="mv-field"><label>PAX Seat *</label><input id="incidentPaxSeat" type="text" placeholder="e.g., 12A" /></div>
+                <div class="mv-field"><label>PNR Ticket</label><input id="incidentPnrTicket" type="text" placeholder="PNR number" /></div>
+                <div class="mv-field"><label>PAX Name</label><input id="incidentPaxName" type="text" placeholder="Passenger name" /></div>
+                <div class="mv-field"><label>Upload Image</label><input id="incidentImageInput" type="file" accept="image/*" /></div>
+                <div class="mv-field mv-span-2"><label>Details</label><textarea id="incidentDetails" rows="3" placeholder="Enter incident details..."></textarea></div>
+            </div>
+
+            <section id="incidentViewSection" class="mv-table-card d-none">
+                <header class="mv-sub-header mv-sub-header-light">
+                    <div class="mv-header-left">
+                        <span class="mv-header-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 4.2 3.8 18.5c-.5.9.1 2 1.2 2h14c1 0 1.7-1.1 1.2-2L12 4.2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+                                <path d="M12 9v5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+                                <circle cx="12" cy="17" r="1" fill="currentColor" />
+                            </svg>
+                        </span>
+                        <h3>Incidents Reported So Far For Above Voyage Report</h3>
+                    </div>
+                    <button id="incidentRemoveLastBtn" type="button" class="mv-btn mv-btn-remove">
+                        <span class="mv-btn-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 7h8m-7 0 1 12h4l1-12M9.5 7l.6-1.3A1.2 1.2 0 0 1 11.2 5h1.6a1.2 1.2 0 0 1 1.1.7L14.5 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span>Remove Last Incident</span>
+                    </button>
+                </header>
+
+                <div class="mv-table-toolbar">
+                    <div class="mv-toolbar-left">
+                        <span>Show</span>
+                        <select id="incidentEntriesSelect"><option>10</option><option>25</option><option>50</option></select>
+                        <span>entries</span>
+                        <span id="incidentRecordBadge" class="mv-badge">0 records</span>
+                    </div>
+                    <div class="mv-toolbar-search">
+                        <span class="mv-search-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8" />
+                                <path d="M20 20l-3.4-3.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <input id="incidentSearchInput" type="text" placeholder="Search incidents..." />
+                    </div>
+                </div>
+
+                <div class="mv-table-wrap">
+                    <table class="mv-table mv-inc-table">
+                        <thead>
+                            <tr>
+                                <th class="mv-sort" data-table="incident" data-key="Type">Incident Type</th>
+                                <th class="mv-sort" data-table="incident" data-key="Seat">PAX Seat</th>
+                                <th class="mv-sort" data-table="incident" data-key="Name">PAX Name</th>
+                                <th class="mv-sort" data-table="incident" data-key="Ticket">PNR Ticket</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incidentTableBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="mv-pagination">
+                    <span id="incidentPagingInfo">Showing 0 to 0 of 0 entries</span>
+                    <div class="mv-pager-btns">
+                        <button id="incidentPrevBtn" type="button">Previous</button>
+                        <button id="incidentPageBtn" type="button" class="active">1</button>
+                        <button id="incidentNextBtn" type="button">Next</button>
+                    </div>
+                </div>
+            </section>
+
+            <div class="mv-bottom-actions">
+                <button id="resetVoyageBtn" type="button" class="mv-btn mv-btn-reset">
+                    <span class="mv-btn-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 12a8 8 0 1 1-2.3-5.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                            <path d="M20 5v4h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    <span>Reset Voyage Report</span>
+                </button>
+                <button id="submitVoyageBtn" type="button" class="mv-btn mv-btn-submit">
+                    <span class="mv-btn-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 3 10 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                            <path d="m21 3-7 18-4-7-7-4 18-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    <span>Submit</span>
+                </button>
+            </div>
+        </section>
+
+        <datalist id="mockStaffList"></datalist>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const staffDirectory = [
+                { staffNo: "CCM-123", firstName: "Asha", lastName: "Perera", citizenship: "LK", sex: "Female", birthdate: "2001-10-12" },
+                { staffNo: "CCM-789", firstName: "Nimal", lastName: "Silva", citizenship: "LK", sex: "Male", birthdate: "2002-06-04" },
+                { staffNo: "CCM-234", firstName: "Ravi", lastName: "Fernando", citizenship: "LK", sex: "Female", birthdate: "2004-01-13" }
+            ];
+            const mockStaffList = document.getElementById("mockStaffList");
+
+            const initialCrewData = @Html.Raw(showDemo ? System.Text.Json.JsonSerializer.Serialize(seededCrewRows) : "[]");
+            const initialIncidentData = @Html.Raw(showDemo ? System.Text.Json.JsonSerializer.Serialize(seededIncidentRows) : "[]");
+
+            let crewData = [...initialCrewData];
+            let incidentData = [...initialIncidentData];
+
+            let crewSort = { key: "", dir: "asc" };
+            let incidentSort = { key: "", dir: "asc" };
+            let crewPage = 1;
+            let incidentPage = 1;
+
+            const crewStaffNo = document.getElementById("crewStaffNo");
+            const crewFirstName = document.getElementById("crewFirstName");
+            const crewLastName = document.getElementById("crewLastName");
+            const crewCitizenship = document.getElementById("crewCitizenship");
+            const crewSex = document.getElementById("crewSex");
+            const crewBirthdate = document.getElementById("crewBirthdate");
+            const crewCategory = document.getElementById("crewCategory");
+            const crewPosition = document.getElementById("crewPosition");
+            const crewPassive = document.getElementById("crewPassive");
+
+            const crewAddBtn = document.getElementById("crewAddBtn");
+            const crewRemoveLastBtn = document.getElementById("crewRemoveLastBtn");
+            const crewViewSection = document.getElementById("crewViewSection");
+            const crewTableBody = document.getElementById("crewTableBody");
+            const crewSearchInput = document.getElementById("crewSearchInput");
+            const crewEntriesSelect = document.getElementById("crewEntriesSelect");
+            const crewRecordBadge = document.getElementById("crewRecordBadge");
+            const crewPagingInfo = document.getElementById("crewPagingInfo");
+            const crewPrevBtn = document.getElementById("crewPrevBtn");
+            const crewPageBtn = document.getElementById("crewPageBtn");
+            const crewNextBtn = document.getElementById("crewNextBtn");
+
+            const incidentStaffId = document.getElementById("incidentStaffId");
+            const incidentType = document.getElementById("incidentType");
+            const incidentPaxSeat = document.getElementById("incidentPaxSeat");
+            const incidentPaxName = document.getElementById("incidentPaxName");
+            const incidentPnrTicket = document.getElementById("incidentPnrTicket");
+            const incidentImageInput = document.getElementById("incidentImageInput");
+            const incidentDetails = document.getElementById("incidentDetails");
+
+            const incidentAddBtn = document.getElementById("incidentAddBtn");
+            const incidentRemoveLastBtn = document.getElementById("incidentRemoveLastBtn");
+            const incidentViewSection = document.getElementById("incidentViewSection");
+            const incidentTableBody = document.getElementById("incidentTableBody");
+            const incidentSearchInput = document.getElementById("incidentSearchInput");
+            const incidentEntriesSelect = document.getElementById("incidentEntriesSelect");
+            const incidentRecordBadge = document.getElementById("incidentRecordBadge");
+            const incidentPagingInfo = document.getElementById("incidentPagingInfo");
+            const incidentPrevBtn = document.getElementById("incidentPrevBtn");
+            const incidentPageBtn = document.getElementById("incidentPageBtn");
+            const incidentNextBtn = document.getElementById("incidentNextBtn");
+
+            const voyageInfoForm = document.getElementById("voyageInfoForm");
+            const resetVoyageBtn = document.getElementById("resetVoyageBtn");
+            const submitVoyageBtn = document.getElementById("submitVoyageBtn");
+
+            function normalizeDate(value) {
+                if (!value) return "";
+                const dt = new Date(value);
+                if (Number.isNaN(dt.getTime())) return value;
+                const y = dt.getFullYear();
+                const m = String(dt.getMonth() + 1).padStart(2, "0");
+                const d = String(dt.getDate()).padStart(2, "0");
+                return `${y}-${m}-${d}`;
+            }
+
+            function applySort(rows, sort) {
+                if (!sort.key) return rows;
+                return [...rows].sort((a, b) => {
+                    const av = String(a[sort.key] ?? "").toLowerCase();
+                    const bv = String(b[sort.key] ?? "").toLowerCase();
+                    if (av < bv) return sort.dir === "asc" ? -1 : 1;
+                    if (av > bv) return sort.dir === "asc" ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            function buildStaffOptions() {
+                if (!mockStaffList) return;
+                const options = staffDirectory
+                    .map((s) => `<option value="${s.staffNo}">${s.firstName} ${s.lastName}</option>`)
+                    .join("");
+                mockStaffList.innerHTML = options;
+            }
+
+            function findStaff(query) {
+                const q = (query || "").trim().toLowerCase();
+                if (!q) return null;
+
+                const exact = staffDirectory.find((s) =>
+                    s.staffNo.toLowerCase() === q ||
+                    `${s.firstName} ${s.lastName}`.toLowerCase() === q
+                );
+                if (exact) return exact;
+
+                return staffDirectory.find((s) =>
+                    s.staffNo.toLowerCase().includes(q) ||
+                    `${s.firstName} ${s.lastName}`.toLowerCase().includes(q)
+                ) || null;
+            }
+
+            function autofillCrewFromStaff(staff) {
+                if (!staff) return;
+                crewStaffNo.value = staff.staffNo;
+                crewFirstName.value = staff.firstName;
+                crewLastName.value = staff.lastName;
+                crewCitizenship.value = staff.citizenship;
+                crewSex.value = staff.sex;
+                crewBirthdate.value = staff.birthdate;
+            }
+
+            function renderCrewTable() {
+                const searchTerm = (crewSearchInput.value || "").trim().toLowerCase();
+                const limit = parseInt(crewEntriesSelect.value || "10", 10);
+
+                let rows = crewData.filter((r) => {
+                    if (!searchTerm) return true;
+                    return Object.values(r).some((v) => String(v).toLowerCase().includes(searchTerm));
+                });
+                rows = applySort(rows, crewSort);
+
+                const totalPages = Math.max(1, Math.ceil(rows.length / limit));
+                if (crewPage > totalPages) {
+                    crewPage = totalPages;
+                }
+                const startIndex = (crewPage - 1) * limit;
+                const visibleRows = rows.slice(startIndex, startIndex + limit);
+                crewViewSection.classList.toggle("d-none", crewData.length === 0);
+                crewRecordBadge.textContent = `${crewData.length} records`;
+                const startDisplay = rows.length ? startIndex + 1 : 0;
+                const endDisplay = startIndex + visibleRows.length;
+                crewPagingInfo.textContent = `Showing ${startDisplay} to ${endDisplay} of ${rows.length} entries`;
+                crewPageBtn.textContent = String(crewPage);
+                crewPrevBtn.disabled = crewPage <= 1;
+                crewNextBtn.disabled = crewPage >= totalPages;
+
+                crewTableBody.innerHTML = visibleRows.length
+                    ? visibleRows.map((r) => `
+                        <tr>
+                            <td>${r.StaffNo}</td>
+                            <td><span class="mv-chip">${r.Category}</span></td>
+                            <td>${r.Citizenship}</td>
+                            <td>${r.Sex}</td>
+                            <td>${r.Birthday}</td>
+                            <td><span class="mv-chip mv-chip-passive">${r.Passive}</span></td>
+                            <td>${r.Position}</td>
+                        </tr>
+                    `).join("")
+                    : `<tr><td colspan="7" class="mv-empty-row">No matching crew records</td></tr>`;
+            }
+
+            function renderIncidentTable() {
+                const searchTerm = (incidentSearchInput.value || "").trim().toLowerCase();
+                const limit = parseInt(incidentEntriesSelect.value || "10", 10);
+
+                let rows = incidentData.filter((r) => {
+                    if (!searchTerm) return true;
+                    return Object.values(r).some((v) => String(v).toLowerCase().includes(searchTerm));
+                });
+                rows = applySort(rows, incidentSort);
+
+                const totalPages = Math.max(1, Math.ceil(rows.length / limit));
+                if (incidentPage > totalPages) {
+                    incidentPage = totalPages;
+                }
+                const startIndex = (incidentPage - 1) * limit;
+                const visibleRows = rows.slice(startIndex, startIndex + limit);
+                incidentViewSection.classList.toggle("d-none", incidentData.length === 0);
+                incidentRecordBadge.textContent = `${incidentData.length} records`;
+                const startDisplay = rows.length ? startIndex + 1 : 0;
+                const endDisplay = startIndex + visibleRows.length;
+                incidentPagingInfo.textContent = `Showing ${startDisplay} to ${endDisplay} of ${rows.length} entries`;
+                incidentPageBtn.textContent = String(incidentPage);
+                incidentPrevBtn.disabled = incidentPage <= 1;
+                incidentNextBtn.disabled = incidentPage >= totalPages;
+
+                incidentTableBody.innerHTML = visibleRows.length
+                    ? visibleRows.map((r) => `
+                        <tr>
+                            <td><span class="mv-chip mv-chip-incident">${r.Type}</span></td>
+                            <td>${r.Seat}</td>
+                            <td>${r.Name}</td>
+                            <td>${r.Ticket}</td>
+                        </tr>
+                    `).join("")
+                    : `<tr><td colspan="4" class="mv-empty-row">No matching incident records</td></tr>`;
+            }
+
+            function handleCrewStaffLookup() {
+                const found = findStaff(crewStaffNo.value);
+                if (!found) return;
+                autofillCrewFromStaff(found);
+            }
+
+            crewStaffNo.addEventListener("input", handleCrewStaffLookup);
+            crewStaffNo.addEventListener("change", handleCrewStaffLookup);
+            crewStaffNo.addEventListener("blur", handleCrewStaffLookup);
+
+            function handleIncidentStaffLookup() {
+                const found = findStaff(incidentStaffId.value);
+                if (!found) return;
+                incidentStaffId.value = found.staffNo;
+                if (!incidentPaxName.value.trim()) {
+                    incidentPaxName.value = `${found.firstName} ${found.lastName}`;
+                }
+            }
+
+            incidentStaffId.addEventListener("input", handleIncidentStaffLookup);
+            incidentStaffId.addEventListener("change", handleIncidentStaffLookup);
+            incidentStaffId.addEventListener("blur", handleIncidentStaffLookup);
+
+            crewAddBtn.addEventListener("click", function () {
+                const payload = {
+                    StaffNo: crewStaffNo.value.trim(),
+                    Category: crewCategory.value.trim(),
+                    Citizenship: crewCitizenship.value.trim(),
+                    Sex: crewSex.value.trim(),
+                    Birthday: normalizeDate(crewBirthdate.value.trim()),
+                    Passive: crewPassive.value.trim() || "No",
+                    Position: crewPosition.value.trim()
+                };
+
+                if (!payload.StaffNo || !payload.Category || !payload.Position) {
+                    alert("Please fill Staff No, Crew Category, and Crew Position.");
+                    return;
+                }
+
+                crewData.push(payload);
+                crewPage = Math.max(1, Math.ceil(crewData.length / parseInt(crewEntriesSelect.value || "10", 10)));
+                renderCrewTable();
+            });
+
+            crewRemoveLastBtn.addEventListener("click", function () {
+                if (!crewData.length) return;
+                crewData.pop();
+                renderCrewTable();
+            });
+
+            incidentAddBtn.addEventListener("click", function () {
+                const payload = {
+                    Type: incidentType.value.trim(),
+                    Seat: incidentPaxSeat.value.trim(),
+                    Name: incidentPaxName.value.trim() || incidentStaffId.value.trim() || "Unknown",
+                    Ticket: incidentPnrTicket.value.trim() || "N/A",
+                    Details: incidentDetails.value.trim(),
+                    Image: incidentImageInput.files && incidentImageInput.files.length ? incidentImageInput.files[0].name : ""
+                };
+
+                if (!payload.Type || !payload.Seat) {
+                    alert("Please fill Incident Type and PAX Seat.");
+                    return;
+                }
+
+                incidentData.push(payload);
+                incidentPage = Math.max(1, Math.ceil(incidentData.length / parseInt(incidentEntriesSelect.value || "10", 10)));
+                renderIncidentTable();
+            });
+
+            incidentRemoveLastBtn.addEventListener("click", function () {
+                if (!incidentData.length) return;
+                incidentData.pop();
+                renderIncidentTable();
+            });
+
+            crewEntriesSelect.addEventListener("change", function () {
+                crewPage = 1;
+                renderCrewTable();
+            });
+            incidentEntriesSelect.addEventListener("change", function () {
+                incidentPage = 1;
+                renderIncidentTable();
+            });
+
+            crewSearchInput.addEventListener("input", function () {
+                crewPage = 1;
+                renderCrewTable();
+            });
+
+            incidentSearchInput.addEventListener("input", function () {
+                incidentPage = 1;
+                renderIncidentTable();
+            });
+
+            crewPrevBtn.addEventListener("click", function () {
+                if (crewPage <= 1) return;
+                crewPage -= 1;
+                renderCrewTable();
+            });
+
+            crewNextBtn.addEventListener("click", function () {
+                const limit = parseInt(crewEntriesSelect.value || "10", 10);
+                const searchTerm = (crewSearchInput.value || "").trim().toLowerCase();
+                const filtered = applySort(
+                    crewData.filter((r) => !searchTerm || Object.values(r).some((v) => String(v).toLowerCase().includes(searchTerm))),
+                    crewSort
+                );
+                const totalPages = Math.max(1, Math.ceil(filtered.length / limit));
+                if (crewPage >= totalPages) return;
+                crewPage += 1;
+                renderCrewTable();
+            });
+
+            incidentPrevBtn.addEventListener("click", function () {
+                if (incidentPage <= 1) return;
+                incidentPage -= 1;
+                renderIncidentTable();
+            });
+
+            incidentNextBtn.addEventListener("click", function () {
+                const limit = parseInt(incidentEntriesSelect.value || "10", 10);
+                const searchTerm = (incidentSearchInput.value || "").trim().toLowerCase();
+                const filtered = applySort(
+                    incidentData.filter((r) => !searchTerm || Object.values(r).some((v) => String(v).toLowerCase().includes(searchTerm))),
+                    incidentSort
+                );
+                const totalPages = Math.max(1, Math.ceil(filtered.length / limit));
+                if (incidentPage >= totalPages) return;
+                incidentPage += 1;
+                renderIncidentTable();
+            });
+
+            document.querySelectorAll(".mv-sort").forEach(function (th) {
+                th.addEventListener("click", function () {
+                    const table = th.dataset.table;
+                    const key = th.dataset.key;
+                    const sortRef = table === "crew" ? crewSort : incidentSort;
+
+                    if (sortRef.key === key) {
+                        sortRef.dir = sortRef.dir === "asc" ? "desc" : "asc";
+                    } else {
+                        sortRef.key = key;
+                        sortRef.dir = "asc";
+                    }
+
+                    if (table === "crew") {
+                        renderCrewTable();
+                    } else {
+                        renderIncidentTable();
+                    }
+                });
+            });
+
+            resetVoyageBtn.addEventListener("click", function () {
+                voyageInfoForm.reset();
+                crewFirstName.value = "";
+                crewLastName.value = "";
+                crewCitizenship.value = "";
+                crewSex.value = "";
+                crewBirthdate.value = "";
+                incidentType.value = "";
+                incidentPaxSeat.value = "";
+                incidentPaxName.value = "";
+                incidentPnrTicket.value = "";
+                incidentStaffId.value = "";
+                incidentDetails.value = "";
+                if (incidentImageInput) {
+                    incidentImageInput.value = "";
+                }
+            });
+
+            submitVoyageBtn.addEventListener("click", function () {
+                const voyageData = Object.fromEntries(new FormData(voyageInfoForm).entries());
+                const payload = {
+                    voyage: voyageData,
+                    crew: crewData,
+                    incidents: incidentData
+                };
+                console.log("Manual Voyage Submit Payload", payload);
+                alert(`Voyage report prepared with ${crewData.length} crew and ${incidentData.length} incidents.`);
+            });
+
+            document.querySelectorAll(".mv-date").forEach(function (el) {
+                el.addEventListener("focus", function () { el.type = "date"; });
+                el.addEventListener("blur", function () { if (!el.value) { el.type = "text"; } });
+            });
+
+            buildStaffOptions();
+            renderCrewTable();
+            renderIncidentTable();
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .mv-page {
+            --mv-bg: #dddddd;
+            --mv-card: #ffffff;
+            --mv-ink: #1a1a1a;
+            --mv-header: #272727;
+            --mv-input: #f3f3f5;
+            --mv-input-text: #717182;
+            --mv-input-label: #364153;
+            --mv-table-head: rgba(131, 157, 187, 0.7);
+            --mv-border: rgba(0, 0, 0, 0.1);
+            --mv-add: #1c9b00;
+            --mv-add-hover: #178000;
+            --mv-remove: #dc001c;
+            --mv-remove-hover: #bd0018;
+            --mv-reset: #e4a127;
+            --mv-reset-hover: #c98d21;
+            --mv-submit: #0f1e7d;
+            --mv-submit-hover: #0c1865;
+        }
+
+        .mv-page {
+            padding: 0;
+            background: var(--mv-bg);
+            min-height: calc(100vh - 92px);
+            font-family: Arial, sans-serif;
+        }
+
+        .mv-card {
+            background: var(--mv-card);
+            border-radius: 14px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .mv-main-card {
+            margin: 0;
+        }
+
+        .mv-card-header,
+        .mv-sub-header {
+            background: var(--mv-header);
+            color: #ffffff;
+            min-height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+        }
+
+        .mv-sub-header-light {
+            background: #272727;
+        }
+
+        .mv-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mv-header-icon {
+            width: 25px;
+            height: 25px;
+            flex: 0 0 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .mv-header-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .mv-card-header h2,
+        .mv-sub-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 400;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .mv-card-body,
+        .mv-sub-body {
+            padding: 24px;
+        }
+
+        .mv-form-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 30px 65px;
+        }
+
+        .mv-crew-add-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 30px 65px;
+            align-items: end;
+        }
+
+        .mv-inc-add-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 30px 65px;
+            align-items: end;
+        }
+
+        .mv-span-2 {
+            grid-column: span 2;
+        }
+
+        .mv-span-3 {
+            grid-column: span 3;
+        }
+
+        .mv-field {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .mv-field label {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--mv-input-label);
+            line-height: 16px;
+        }
+
+        .mv-field input,
+        .mv-field select,
+        .mv-field textarea {
+            height: 36px;
+            width: 100%;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: var(--mv-input);
+            color: var(--mv-input-text);
+            font-size: 14px;
+            padding: 8px 12px;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .mv-field textarea {
+            height: 64px;
+            resize: none;
+        }
+
+        .mv-field input[type="file"] {
+            padding: 6px 10px;
+        }
+
+        .mv-field input:focus,
+        .mv-field select:focus,
+        .mv-field textarea:focus {
+            border-color: #0f1e7d;
+        }
+
+        .mv-sub-card {
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            margin-top: 12px;
+            padding-bottom: 24px;
+        }
+
+        .mv-table-card {
+            margin-top: 28px;
+            border: 1px solid var(--mv-border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--mv-card);
+        }
+
+        .mv-table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 16px;
+        }
+
+        .mv-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--mv-ink);
+        }
+
+        .mv-toolbar-left select {
+            width: 64px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid #d0d5dd;
+            padding: 0 10px;
+            background: #ffffff;
+            font-size: 12px;
+        }
+
+        .mv-badge {
+            margin-left: 10px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            color: #364153;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .mv-toolbar-search input {
+            width: 250px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid #d0d5dd;
+            padding: 6px 10px 6px 32px;
+            font-size: 12px;
+            color: #6b7280;
+            background: #ffffff;
+        }
+
+        .mv-toolbar-search {
+            position: relative;
+        }
+
+        .mv-search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            color: #9ca3af;
+            pointer-events: none;
+            display: inline-flex;
+        }
+
+        .mv-search-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .mv-table-wrap {
+            overflow-x: auto;
+            border-top: 1px solid var(--mv-border);
+            border-bottom: 1px solid var(--mv-border);
+        }
+
+        .mv-table {
+            width: 100%;
+            min-width: 1200px;
+            border-collapse: collapse;
+        }
+
+        .mv-inc-table {
+            min-width: 900px;
+        }
+
+        .mv-table thead {
+            background: var(--mv-table-head);
+        }
+
+        .mv-table th,
+        .mv-table td {
+            text-align: left;
+            padding: 0 12px;
+            height: 44px;
+            border-top: 1px solid var(--mv-border);
+            color: var(--mv-ink);
+            font-size: 12px;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .mv-table td {
+            height: 46px;
+        }
+
+        .mv-table th {
+            border-top: 0;
+            font-weight: 700;
+            cursor: pointer;
+            user-select: none;
+            letter-spacing: 0.1px;
+        }
+
+        .mv-table th.mv-sort::after {
+            content: "\2195";
+            margin-left: 8px;
+            color: #6a7890;
+            font-size: 10px;
+        }
+
+        .mv-table tbody tr:nth-child(even) {
+            background: rgba(21, 93, 252, 0.1);
+        }
+
+        .mv-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            height: 18px;
+            border-radius: 999px;
+            padding: 0 8px;
+            background: #ffffff;
+            border: 1px solid #d1d5dc;
+            color: #1a1a1a;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .mv-chip-passive {
+            min-width: 52px;
+        }
+
+        .mv-chip-incident {
+            min-width: 0;
+            justify-content: center;
+        }
+
+        .mv-empty-row {
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .mv-pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            color: #4b5563;
+            font-size: 12px;
+            background: #ffffff;
+        }
+
+        .mv-pager-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .mv-pager-btns button {
+            height: 28px;
+            min-width: 28px;
+            padding: 0 10px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            color: #1f2937;
+            font-size: 12px;
+        }
+
+        .mv-pager-btns button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .mv-pager-btns .active {
+            background: #0f1e7d;
+            border-color: #0f1e7d;
+            color: #ffffff;
+        }
+
+        .mv-bottom-actions {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding: 20px 0 0;
+        }
+
+        .mv-btn {
+            height: 36px;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 0 16px;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            gap: 6px;
+        }
+
+        .mv-btn-icon {
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            flex: 0 0 14px;
+        }
+
+        .mv-btn-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .mv-btn-add {
+            width: 112px;
+            background: var(--mv-add);
+            color: #ffffff;
+            border-color: transparent;
+            border-radius: 10px;
+        }
+
+        .mv-btn-add:hover,
+        .mv-btn-add:focus {
+            background: var(--mv-add-hover);
+            color: #ffffff;
+        }
+
+        .mv-btn-remove {
+            background: var(--mv-remove);
+            color: #ffffff;
+            min-width: 170px;
+            border-color: transparent;
+            border-radius: 8px;
+        }
+
+        .mv-btn-remove:hover,
+        .mv-btn-remove:focus {
+            background: var(--mv-remove-hover);
+            color: #ffffff;
+        }
+
+        .mv-btn-reset {
+            width: 188px;
+            background: var(--mv-reset);
+            color: #ffffff;
+            border-color: transparent;
+            border-radius: 10px;
+        }
+
+        .mv-btn-reset:hover,
+        .mv-btn-reset:focus {
+            background: var(--mv-reset-hover);
+            color: #ffffff;
+        }
+
+        .mv-btn-submit {
+            width: 188px;
+            background: var(--mv-submit);
+            color: #ffffff;
+            border-color: transparent;
+            border-radius: 10px;
+        }
+
+        .mv-btn-submit:hover,
+        .mv-btn-submit:focus {
+            background: var(--mv-submit-hover);
+            color: #ffffff;
+        }
+
+        @@media (max-width: 1700px) {
+            .mv-form-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .mv-span-3 {
+                grid-column: span 2;
+            }
+
+            .mv-crew-add-grid,
+            .mv-inc-add-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @@media (max-width: 1200px) {
+            .mv-form-grid,
+            .mv-crew-add-grid,
+            .mv-inc-add-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .mv-span-2,
+            .mv-span-3 {
+                grid-column: span 2;
+            }
+
+            .mv-toolbar-search input {
+                width: 280px;
+            }
+
+            .mv-bottom-actions {
+                gap: 20px;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .mv-form-grid,
+            .mv-crew-add-grid,
+            .mv-inc-add-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mv-span-2,
+            .mv-span-3 {
+                grid-column: span 1;
+            }
+
+            .mv-card-header,
+            .mv-sub-header {
+                padding: 12px 14px;
+            }
+
+            .mv-card-body,
+            .mv-sub-body,
+            .mv-table-toolbar,
+            .mv-pagination {
+                padding: 14px;
+            }
+
+            .mv-table th,
+            .mv-table td,
+            .mv-pagination,
+            .mv-pager-btns button {
+                font-size: 14px;
+            }
+
+            .mv-toolbar-search input {
+                width: 180px;
+                height: 36px;
+            }
+
+            .mv-bottom-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <!-- Background -->
+  <rect width="200" height="50" fill="transparent"/>
+  
+  <!-- Cabin text -->
+  <text x="10" y="32" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFFFFF">
+    Cabin
+  </text>
+  
+  <!-- Ops text with highlight -->
+  <text x="80" y="32" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFA500">
+    Ops
+  </text>
+</svg>

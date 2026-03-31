@@ -2,7 +2,6 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
-/js/site.js
 // Highlight current nav link by comparing link href to window.location.pathname.
 // Works for sidebar and top nav links.
 // Loads on DOMContentLoaded.

@@ -1,0 +1,226 @@
+/* ========================================
+   Figma Design Tokens
+   Import your exported Figma styles here
+   ======================================== */
+
+:root {
+  /* === COLORS FROM FIGMA === */
+  
+  /* Primary Colors */
+  --figma-primary: #3b82f6;
+  --figma-primary-dark: #1e40af;
+  --figma-primary-light: #dbeafe;
+  
+  /* Secondary Colors */
+  --figma-secondary: #8b5cf6;
+  --figma-secondary-dark: #6d28d9;
+  
+  /* Neutral Colors */
+  --figma-gray-50: #f9fafb;
+  --figma-gray-100: #f3f4f6;
+  --figma-gray-200: #e5e7eb;
+  --figma-gray-300: #d1d5db;
+  --figma-gray-400: #9ca3af;
+  --figma-gray-500: #6b7280;
+  --figma-gray-600: #4b5563;
+  --figma-gray-700: #374151;
+  --figma-gray-800: #1f2937;
+  --figma-gray-900: #111827;
+  
+  /* Status Colors */
+  --figma-success: #10b981;
+  --figma-warning: #f59e0b;
+  --figma-error: #ef4444;
+  --figma-info: #3b82f6;
+  
+  /* === TYPOGRAPHY FROM FIGMA === */
+  
+  /* Font Families */
+  --figma-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --figma-font-heading: 'Poppins', system-ui, sans-serif;
+  --figma-font-mono: 'Fira Code', 'Courier New', monospace;
+  
+  /* Font Sizes */
+  --figma-text-xs: 0.75rem;      /* 12px */
+  --figma-text-sm: 0.875rem;     /* 14px */
+  --figma-text-base: 1rem;       /* 16px */
+  --figma-text-lg: 1.125rem;     /* 18px */
+  --figma-text-xl: 1.25rem;      /* 20px */
+  --figma-text-2xl: 1.5rem;      /* 24px */
+  --figma-text-3xl: 1.875rem;    /* 30px */
+  --figma-text-4xl: 2.25rem;     /* 36px */
+  
+  /* Font Weights */
+  --figma-font-light: 300;
+  --figma-font-normal: 400;
+  --figma-font-medium: 500;
+  --figma-font-semibold: 600;
+  --figma-font-bold: 700;
+  
+  /* Line Heights */
+  --figma-leading-tight: 1.25;
+  --figma-leading-normal: 1.5;
+  --figma-leading-relaxed: 1.75;
+  
+  /* === SPACING FROM FIGMA === */
+  
+  --figma-space-1: 0.25rem;      /* 4px */
+  --figma-space-2: 0.5rem;       /* 8px */
+  --figma-space-3: 0.75rem;      /* 12px */
+  --figma-space-4: 1rem;         /* 16px */
+  --figma-space-5: 1.25rem;      /* 20px */
+  --figma-space-6: 1.5rem;       /* 24px */
+  --figma-space-8: 2rem;         /* 32px */
+  --figma-space-10: 2.5rem;      /* 40px */
+  --figma-space-12: 3rem;        /* 48px */
+  --figma-space-16: 4rem;        /* 64px */
+  
+  /* === BORDER RADIUS FROM FIGMA === */
+  
+  --figma-radius-none: 0;
+  --figma-radius-sm: 0.25rem;    /* 4px */
+  --figma-radius-base: 0.5rem;   /* 8px */
+  --figma-radius-md: 0.75rem;    /* 12px */
+  --figma-radius-lg: 1rem;       /* 16px */
+  --figma-radius-xl: 1.5rem;     /* 24px */
+  --figma-radius-full: 9999px;   /* Fully rounded */
+  
+  /* === SHADOWS FROM FIGMA === */
+  
+  --figma-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --figma-shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --figma-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --figma-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --figma-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* === BREAKPOINTS FROM FIGMA === */
+  
+  --figma-screen-sm: 640px;
+  --figma-screen-md: 768px;
+  --figma-screen-lg: 1024px;
+  --figma-screen-xl: 1280px;
+  --figma-screen-2xl: 1536px;
+  
+  /* === TRANSITIONS FROM FIGMA === */
+  
+  --figma-transition-fast: 150ms;
+  --figma-transition-base: 250ms;
+  --figma-transition-slow: 350ms;
+  --figma-transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   Figma Component Classes
+   ======================================== */
+
+/* Typography Classes */
+.figma-heading-1 {
+  font-family: var(--figma-font-heading);
+  font-size: var(--figma-text-4xl);
+  font-weight: var(--figma-font-bold);
+  line-height: var(--figma-leading-tight);
+}
+
+.figma-heading-2 {
+  font-family: var(--figma-font-heading);
+  font-size: var(--figma-text-3xl);
+  font-weight: var(--figma-font-semibold);
+  line-height: var(--figma-leading-tight);
+}
+
+.figma-heading-3 {
+  font-family: var(--figma-font-heading);
+  font-size: var(--figma-text-2xl);
+  font-weight: var(--figma-font-semibold);
+  line-height: var(--figma-leading-normal);
+}
+
+.figma-body-large {
+  font-family: var(--figma-font-sans);
+  font-size: var(--figma-text-lg);
+  font-weight: var(--figma-font-normal);
+  line-height: var(--figma-leading-relaxed);
+}
+
+.figma-body {
+  font-family: var(--figma-font-sans);
+  font-size: var(--figma-text-base);
+  font-weight: var(--figma-font-normal);
+  line-height: var(--figma-leading-normal);
+}
+
+.figma-body-small {
+  font-family: var(--figma-font-sans);
+  font-size: var(--figma-text-sm);
+  font-weight: var(--figma-font-normal);
+  line-height: var(--figma-leading-normal);
+}
+
+/* Button Classes */
+.figma-btn {
+  font-family: var(--figma-font-sans);
+  font-size: var(--figma-text-base);
+  font-weight: var(--figma-font-medium);
+  padding: var(--figma-space-3) var(--figma-space-6);
+  border-radius: var(--figma-radius-md);
+  transition: all var(--figma-transition-base) var(--figma-transition-ease);
+  border: none;
+  cursor: pointer;
+}
+
+.figma-btn-primary {
+  background-color: var(--figma-primary);
+  color: white;
+}
+
+.figma-btn-primary:hover {
+  background-color: var(--figma-primary-dark);
+}
+
+.figma-btn-secondary {
+  background-color: var(--figma-gray-100);
+  color: var(--figma-gray-900);
+}
+
+.figma-btn-secondary:hover {
+  background-color: var(--figma-gray-200);
+}
+
+/* Card Classes */
+.figma-card {
+  background: white;
+  border-radius: var(--figma-radius-lg);
+  padding: var(--figma-space-6);
+  box-shadow: var(--figma-shadow-md);
+  transition: transform var(--figma-transition-base) var(--figma-transition-ease);
+}
+
+.figma-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--figma-shadow-lg);
+}
+
+/* ========================================
+   Usage Instructions
+   ======================================== */
+
+/**
+ * HOW TO USE:
+ * 
+ * 1. Copy exported CSS from Figma and paste values above
+ * 2. Update variable values to match your Figma design
+ * 3. Link this file in _Layout.cshtml:
+ *    <link rel="stylesheet" href="~/css/figma-tokens.css" />
+ * 
+ * 4. Use in your HTML:
+ *    <h1 class="figma-heading-1">Title</h1>
+ *    <button class="figma-btn figma-btn-primary">Click Me</button>
+ *    <div class="figma-card">Card content</div>
+ * 
+ * 5. Use CSS variables directly:
+ *    .custom-element {
+ *      color: var(--figma-primary);
+ *      padding: var(--figma-space-4);
+ *      border-radius: var(--figma-radius-md);
+ *    }
+ */

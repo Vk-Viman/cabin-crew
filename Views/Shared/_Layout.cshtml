@@ -1,16 +1,22 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Cabin_Crew</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Cabin_Crew.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/figma-tokens.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
+
 <body>
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    }
     <!-- Top bar -->
     <header class="topbar">
         <div class="topbar-left">
@@ -21,80 +27,93 @@
                 <div class="user-name">John Doe</div>
                 <div class="user-role">Crew Admin</div>
             </div>
-            <div class="avatar bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center">JD</div>
+            <div class="avatar bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center">JD
+            </div>
         </div>
     </header>
 
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-logo-container">
-            <a class="d-flex align-items-center justify-content-center text-decoration-none" asp-area="" asp-controller="Home" asp-action="Index">
-                <img src="@Url.Content("~/images/cabinops-logo.png")" alt="CabinOps" class="sidebar-logo" />
+            <a class="d-flex align-items-center justify-content-center text-decoration-none" asp-area=""
+                   asp-controller="Home" asp-action="Index">
+                <img src="@Url.Content("~/images/cabinops-logo.jpg")" alt="CabinOps" class="sidebar-logo" />
             </a>
         </div>
 
         <nav class="nav flex-column" aria-label="Main navigation">
-            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                <i class="nav-icon">🏠</i>
+            <a class="nav-link @(currentController == "Home" && currentAction == "Index" ? "active" : "")" asp-area=""
+                   asp-controller="Home" asp-action="Index">
+                <img src="~/images/icons/Icon-19.svg" class="nav-icon-svg" alt="" />
                 <span>Dashboard</span>
             </a>
 
             <div class="nav-section">
                 <div class="nav-section-title">INCIDENT MANAGEMENT</div>
-                <a class="nav-link" asp-area="" asp-controller="Incidents" asp-action="Index">
-                    <i class="nav-icon">⚠️</i>
+                <a class="nav-link @(currentController == "Incidents" && currentAction == "Index" ? "active" : "")"
+                       asp-area="" asp-controller="Incidents" asp-action="Index">
+                    <img src="~/images/icons/Icon-2.svg" class="nav-icon-svg" alt="" />
                     <span>Incident Reports</span>
                 </a>
             </div>
 
             <div class="nav-section">
                 <div class="nav-section-title">VOYAGE MANAGEMENT</div>
-                <a class="nav-link" asp-area="" asp-controller="Voyage" asp-action="Reports">
-                    <i class="nav-icon">📄</i>
+                <a class="nav-link @(currentController == "Voyage" && currentAction == "Reports" ? "active" : "")"
+                       asp-area="" asp-controller="Voyage" asp-action="Reports">
+                    <img src="~/images/icons/Icon-3.svg" class="nav-icon-svg" alt="" />
                     <span>Voyage Reports</span>
                 </a>
-                <a class="nav-link" asp-area="" asp-controller="Voyage" asp-action="Unsubmitted">
-                    <i class="nav-icon">⭕</i>
+                <a class="nav-link @(currentController == "Voyage" && currentAction == "Unsubmitted" ? "active" : "")"
+                       asp-area="" asp-controller="Voyage" asp-action="Unsubmitted">
+                    <img src="~/images/icons/X circle.svg" class="nav-icon-svg" alt="" />
                     <span>Unsubmitted Reports</span>
                 </a>
-                <a class="nav-link" asp-area="" asp-controller="Voyage" asp-action="ManualEntry">
-                    <i class="nav-icon">✏️</i>
+                <a class="nav-link @(currentController == "Voyage" && currentAction == "ManualEntry" ? "active" : "")"
+                       asp-area="" asp-controller="Voyage" asp-action="ManualEntry">
+                    <img src="~/images/icons/edit.svg" class="nav-icon-svg" alt="" />
                     <span>Manual Voyage Entry</span>
                 </a>
             </div>
 
             <div class="nav-section">
                 <div class="nav-section-title">CREW MANAGEMENT</div>
-                <a class="nav-link" asp-area="" asp-controller="Crew" asp-action="Tracker">
-                    <i class="nav-icon">📱</i>
+                <a class="nav-link @(currentController == "Crew" && currentAction == "Tracker" ? "active" : "")"
+                       asp-area="" asp-controller="Crew" asp-action="Tracker">
+                    <img src="~/images/icons/Icon-4.svg" class="nav-icon-svg" alt="" />
                     <span>CabinOps iPad Tracker</span>
                 </a>
-                <a class="nav-link" asp-area="" asp-controller="Crew" asp-action="Flight">
-                    <i class="nav-icon">👥</i>
+                <a class="nav-link @(currentController == "Crew" && currentAction == "Flight" ? "active" : "")"
+                       asp-area="" asp-controller="Crew" asp-action="Flight">
+                    <img src="~/images/icons/Icon-5.svg" class="nav-icon-svg" alt="" />
                     <span>Cabin Crew by Flight</span>
                 </a>
-                <a class="nav-link" asp-area="" asp-controller="Crew" asp-action="Recovery">
-                    <i class="nav-icon">✍️</i>
+                <a class="nav-link @(currentController == "Crew" && currentAction == "Recovery" ? "active" : "")"
+                       asp-area="" asp-controller="Crew" asp-action="Recovery">
+                    <img src="~/images/icons/Icon-15.svg" class="nav-icon-svg" alt="" />
                     <span>Signature Recovery</span>
                 </a>
-                <a class="nav-link" asp-area="" asp-controller="Crew" asp-action="Details">
-                    <i class="nav-icon">👤</i>
+                <a class="nav-link @(currentController == "Crew" && currentAction == "Details" ? "active" : "")"
+                       asp-area="" asp-controller="Crew" asp-action="Details">
+                    <img src="~/images/icons/User plus.svg" class="nav-icon-svg" alt="" />
                     <span>Update Pilot Details</span>
                 </a>
             </div>
 
             <div class="nav-section">
                 <div class="nav-section-title">REPORTS</div>
-                <a class="nav-link" asp-area="" asp-controller="Reports" asp-action="Index">
-                    <i class="nav-icon">📊</i>
+                <a class="nav-link @(currentController == "Reports" && currentAction == "Index" ? "active" : "")"
+                       asp-area="" asp-controller="Reports" asp-action="Index">
+                    <img src="~/images/icons/Icon-7.svg" class="nav-icon-svg" alt="" />
                     <span>Generate Reports</span>
                 </a>
             </div>
 
             <div class="nav-section">
                 <div class="nav-section-title">CONFIGURATION</div>
-                <a class="nav-link" asp-area="" asp-controller="Config" asp-action="Control">
-                    <i class="nav-icon">🔒</i>
+                <a class="nav-link @(currentController == "Config" && currentAction == "Control" ? "active" : "")"
+                       asp-area="" asp-controller="Config" asp-action="Control">
+                    <img src="~/images/icons/Icon-1.svg" class="nav-icon-svg" alt="" />
                     <span>Access Control</span>
                 </a>
             </div>
@@ -108,12 +127,6 @@
                 @RenderBody()
             </main>
         </div>
-
-        <footer class="border-top footer text-muted">
-            <div class="container">
-                &copy; 2026 - Cabin_Crew
-            </div>
-        </footer>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -121,4 +134,5 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

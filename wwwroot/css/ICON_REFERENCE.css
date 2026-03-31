@@ -1,0 +1,268 @@
+/* ==========================================================================
+   CabinOps Dashboard - Complete Icon Reference
+   ========================================================================== */
+
+/**
+ * All icons copied from: 
+ * C:\Users\Viman Kavinda\Desktop\Airline\VS(2022)\Cabin-Crew\LOGO\
+ * 
+ * To: 
+ * wwwroot/images/icons/
+ */
+
+/* ==========================================================================
+   SIDEBAR NAVIGATION ICONS
+   ========================================================================== */
+
+/* Dashboard Section */
+.nav-link[href*="Home/Index"] {
+  /* Icon: Icon.svg - Home/Dashboard icon */
+}
+
+/* Incident Management Section */
+.nav-link[href*="Incidents/Index"] {
+  /* Icon: Icon-2.svg - Warning/Alert icon */
+}
+
+/* Voyage Management Section */
+.nav-link[href*="Voyage/Reports"] {
+  /* Icon: Icon-3.svg - Document/Report icon */
+}
+
+.nav-link[href*="Voyage/Unsubmitted"] {
+  /* Icon: Icon-17.svg - Exclamation/Warning icon */
+}
+
+.nav-link[href*="Voyage/ManualEntry"] {
+  /* Icon: edit.svg - Edit/Pencil icon */
+}
+
+/* Crew Management Section */
+.nav-link[href*="Crew/Tracker"] {
+  /* Icon: Icon-4.svg - Tablet/Device icon */
+}
+
+.nav-link[href*="Crew/Flight"] {
+  /* Icon: Icon-5.svg - People/Users icon */
+}
+
+.nav-link[href*="Crew/Recovery"] {
+  /* Icon: Icon-6.svg - Signature/Document icon */
+}
+
+.nav-link[href*="Crew/Details"] {
+  /* Icon: Icon-7.svg - User/Profile icon */
+}
+
+/* Reports Section */
+.nav-link[href*="Reports/Index"] {
+  /* Icon: Icon-8.svg - Chart/Analytics icon */
+}
+
+/* Configuration Section */
+.nav-link[href*="Config/Control"] {
+  /* Icon: Icon-9.svg - Lock/Security icon */
+}
+
+/* ==========================================================================
+   DASHBOARD STATISTICS ICONS
+   ========================================================================== */
+
+/* Voyage Reports Card - Blue Theme */
+.db-stat-card:nth-child(1) .db-stat-icon {
+  /* Icon: Icon-3.svg (Document icon) */
+  /* Background: #dbeafe (light blue) */
+  /* Icon Color: Blue via CSS filter */
+}
+
+/* Incidents Card - Red Theme */
+.db-stat-card:nth-child(2) .db-stat-icon {
+  /* Icon: Icon-2.svg (Warning icon) */
+  /* Background: #fee2e2 (light red) */
+  /* Icon Color: Red via CSS filter */
+}
+
+/* Unsubmitted Reports Card - Orange Theme */
+.db-stat-card:nth-child(3) .db-stat-icon {
+  /* Icon: Icon-17.svg (Exclamation icon) */
+  /* Background: #fed7aa (light orange) */
+  /* Icon Color: Orange via CSS filter */
+}
+
+/* ==========================================================================
+   DASHBOARD FLIGHTS ICONS
+   ========================================================================== */
+
+.db-flight-ico {
+  /* Icon: Icon-15.svg - Airplane icon */
+  /* Background: #dbeafe (light blue) */
+  /* Size: 24x24px */
+}
+
+/* ==========================================================================
+   QUICK ACTIONS ICONS
+   ========================================================================== */
+
+/* New Voyage Entry - Primary Button */
+.db-action.primary {
+  /* Icon: edit.svg */
+  /* Color: White (inverted) */
+}
+
+/* Generate Report - Secondary Button */
+.db-action:nth-child(2) {
+  /* Icon: Icon-8.svg */
+  /* Color: Default (no filter) */
+}
+
+/* Print Upload - Secondary Button */
+.db-action:nth-child(3) {
+  /* Icon: Icon-4.svg */
+  /* Color: Default (no filter) */
+}
+
+/* ==========================================================================
+   ICON SIZING GUIDE
+   ========================================================================== */
+
+:root {
+  --icon-sidebar: 18px;        /* Sidebar navigation icons */
+  --icon-stat: 28px;           /* Dashboard statistic cards */
+  --icon-flight: 24px;         /* Flight entry icons */
+  --icon-action: 18px;         /* Quick action button icons */
+  --icon-logo: 32px;           /* Sidebar logo max height */
+}
+
+/* ==========================================================================
+   COLOR FILTER REFERENCE
+   ========================================================================== */
+
+/* Light Gray (Sidebar default) */
+/* filter: brightness(0) saturate(100%) invert(87%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(92%); */
+
+/* White (Sidebar hover/active) */
+/* filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%); */
+
+/* Blue (Primary color #3b82f6) */
+/* filter: brightness(0) saturate(100%) invert(32%) sepia(96%) saturate(1831%) hue-rotate(203deg) brightness(101%) contrast(97%); */
+
+/* Red (Danger color #ef4444) */
+/* filter: brightness(0) saturate(100%) invert(28%) sepia(82%) saturate(2876%) hue-rotate(346deg) brightness(95%) contrast(98%); */
+
+/* Orange (Warning color #f59e0b) */
+/* filter: brightness(0) saturate(100%) invert(64%) sepia(98%) saturate(1773%) hue-rotate(359deg) brightness(101%) contrast(101%); */
+
+/* ==========================================================================
+   AVAILABLE BUT UNUSED ICONS
+   ========================================================================== */
+
+/**
+ * The following icons are available in wwwroot/images/icons/ 
+ * but not currently used in the application:
+ * 
+ * Icon-1.svg       - Available for future use
+ * Icon-10.svg      - Available for future use
+ * Icon-11.svg      - Available for future use
+ * Icon-12.svg      - Available for future use
+ * Icon-13.svg      - Available for future use
+ * Icon-14.svg      - Available for future use
+ * Icon-16.svg      - Available for future use
+ * Icon-18.svg      - Available for future use
+ * Icon-19.svg      - Available for future use
+ * Icon-20.svg      - Available for future use
+ * Group.svg        - Gradient background element
+ * Group-1.svg      - Graphic element
+ * Group-2.svg      - Graphic element
+ * Group-3.svg      - Graphic element
+ * Group-4.svg      - Graphic element
+ * Group-5.svg      - Graphic element
+ * User plus.svg    - Add user icon
+ * Vector.svg       - Vector graphic
+ * Vector-1.svg     - Vector graphic
+ * Vector-2.svg     - Vector graphic
+ * X circle.svg     - Close/Cancel icon
+ */
+
+/* ==========================================================================
+   USAGE EXAMPLES
+   ========================================================================== */
+
+/* Example 1: Sidebar Navigation Icon */
+/*
+<a class="nav-link" asp-controller="Home" asp-action="Index">
+    <img src="~/images/icons/Icon.svg" class="nav-icon-svg" alt="" />
+    <span>Dashboard</span>
+</a>
+*/
+
+/* Example 2: Dashboard Stat Icon with Color */
+/*
+<div class="db-stat-icon blue">
+    <img src="~/images/icons/Icon-3.svg" alt="Voyage Reports" 
+         style="width:28px;height:28px;filter:brightness(0) invert(32%) sepia(96%) saturate(1831%);" />
+</div>
+*/
+
+/* Example 3: Button Icon */
+/*
+<a href="/Reports/Index" class="db-action">
+    <img src="~/images/icons/Icon-8.svg" alt="" style="width:18px;height:18px;" />
+    <span>Generate Report</span>
+</a>
+*/
+
+/* ==========================================================================
+   RESPONSIVE ICON BEHAVIOR
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Icons remain same size on mobile for clarity */
+  /* Sidebar may collapse to icon-only view */
+  
+  .nav-icon-svg {
+    /* Keep 18x18px even on mobile */
+  }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY
+   ========================================================================== */
+
+/**
+ * All icon <img> tags should have:
+ * - alt="" for decorative icons (adjacent text provides context)
+ * - alt="Description" for standalone icons
+ * 
+ * Example:
+ * <img src="~/images/icons/Icon.svg" class="nav-icon-svg" alt="" />
+ * (The <span>Dashboard</span> provides the text alternative)
+ */
+
+/* ==========================================================================
+   PERFORMANCE
+   ========================================================================== */
+
+/**
+ * SVG icons are:
+ * - Small file size (< 2KB each)
+ * - Cached by browser
+ * - No external requests (self-hosted)
+ * - Scalable without quality loss
+ * - Fast rendering
+ */
+
+/* ==========================================================================
+   BROWSER COMPATIBILITY
+   ========================================================================== */
+
+/**
+ * CSS Filters supported in:
+ * - Chrome 18+
+ * - Firefox 35+
+ * - Safari 9.1+
+ * - Edge 12+
+ * 
+ * SVG support:
+ * - All modern browsers
+ * - IE 9+ (limited)
+ */

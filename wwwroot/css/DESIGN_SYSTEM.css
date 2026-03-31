@@ -1,0 +1,267 @@
+/* ========================================
+   CabinOps Dashboard - Component Overview
+   ======================================== */
+
+/**
+ * LAYOUT STRUCTURE
+ * ===============
+ * 
+ * +------------------+----------------------------------+
+ * |                  |         TOP BAR (60px)           |
+ * |   SIDEBAR        |  Dashboard    |    User Profile  |
+ * |   (214px)        +----------------------------------+
+ * |                  |                                  |
+ * |  - Logo          |                                  |
+ * |  - Dashboard     |         MAIN CONTENT             |
+ * |  - Incident Mgmt |                                  |
+ * |  - Voyage Mgmt   |        (Scrollable)              |
+ * |  - Crew Mgmt     |                                  |
+ * |  - Reports       |                                  |
+ * |  - Config        |                                  |
+ * |                  |                                  |
+ * +------------------+----------------------------------+
+ */
+
+/* ========================================
+   DASHBOARD SECTIONS
+   ======================================== */
+
+/**
+ * 1. WELCOME BANNER
+ *    - Blue gradient background
+ *    - User greeting
+ *    - Current date (large format)
+ *    - Full width
+ */
+
+/**
+ * 2. STATISTICS CARDS (3 columns)
+ *    
+ *    +------------------+  +------------------+  +------------------+
+ *    | ?? Voyage       |  | ??  Incidents   |  | ? Unsubmitted  |
+ *    | Reports         |  |                  |  | Reports          |
+ *    | 6               |  | 10               |  | 2                |
+ *    | +17% yesterday  |  | +3 last 24h      |  | Action required  |
+ *    +------------------+  +------------------+  +------------------+
+ */
+
+/**
+ * 3. CHARTS SECTION (2 columns)
+ *    
+ *    +-------------------------+  +-------------------------+
+ *    | Incidents by Category   |  | Activity Trends         |
+ *    | [Bar Chart]             |  | [Line Chart]            |
+ *    | - Safety                |  | - Incidents (red line)  |
+ *    | - Service               |  | - Reports (blue line)   |
+ *    | - Medical               |  | - Weekly data           |
+ *    | - Security              |  |                         |
+ *    +-------------------------+  +-------------------------+
+ */
+
+/**
+ * 4. BOTTOM SECTION (2 columns: 1.6fr + 1fr)
+ *    
+ *    +--------------------------------+  +------------------+
+ *    | UPCOMING FLIGHTS               |  | RECENT INCIDENTS |
+ *    | - UL 101: CMB ? JFK [ON TIME]  |  | • UL 101: Safety |
+ *    | - UL 225: CMB ? SIN [DELAYED]  |  | • UL 225: Service|
+ *    | - UL 304: CMB ? DXB [ON TIME]  |  | • UL 304: Medical|
+ *    | - UL 807: CMB ? DEL [ON TIME]  |  |                  |
+ *    +--------------------------------+  | QUICK ACTIONS    |
+ *                                        | [New Voyage]     |
+ *                                        | [Generate Report]|
+ *                                        | [Print Upload]   |
+ *                                        +------------------+
+ */
+
+/* ========================================
+   COLOR PALETTE
+   ======================================== */
+
+:root {
+  /* Primary Colors */
+  --primary-blue: #3b82f6;
+  --primary-dark: #1e40af;
+  --primary-navy: #1e3a8a;
+  
+  /* Accent Colors */
+  --accent-orange: #e8a641;
+  --accent-yellow: #fbbf24;
+  
+  /* Status Colors */
+  --success: #10b981;
+  --success-bg: #d1fae5;
+  --danger: #ef4444;
+  --danger-bg: #fee2e2;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --info-bg: #dbeafe;
+  
+  /* Neutral Colors */
+  --bg-light: #e5e7eb;
+  --bg-card: #ffffff;
+  --sidebar-dark: #2e2e2e;
+  --topbar-dark: #3a3a3a;
+  --text-dark: #111827;
+  --text-muted: #6b7280;
+  --border: #e2e8f0;
+}
+
+/* ========================================
+   COMPONENT CLASSES
+   ======================================== */
+
+/**
+ * CARDS
+ * .db-welcome        - Welcome banner with gradient
+ * .db-stat-card      - Statistic card with icon
+ * .db-chart-card     - Chart container card
+ * .db-flights        - Upcoming flights card
+ * .db-incidents      - Recent incidents card
+ * .db-actions        - Quick actions panel
+ */
+
+/**
+ * ICONS & BADGES
+ * .db-stat-icon      - Circular icon container
+ * .db-badge          - Small label badge (LAST 6 DAYS, etc.)
+ * .db-status         - Status badge (ON TIME, DELAYED)
+ * .db-inc-dot        - Colored incident indicator dot
+ */
+
+/**
+ * TYPOGRAPHY
+ * .db-stat-num       - Large number display (2.5rem)
+ * .db-stat-label     - Uppercase small label (0.7rem)
+ * .db-stat-change    - Percentage change indicator
+ * .db-flight-num     - Flight number (bold)
+ * .db-flight-route   - Flight route (muted)
+ */
+
+/**
+ * LAYOUT UTILITIES
+ * .db-stats          - 3-column grid for statistics
+ * .db-charts         - 2-column grid for charts
+ * .db-bottom         - 2-column grid (1.6fr + 1fr)
+ * .db-side           - Vertical flex container
+ */
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS
+   ======================================== */
+
+/**
+ * Desktop (default)  - Full 3-column layout
+ * Tablet (<1024px)   - Single column stacking
+ * Mobile (<768px)    - Sidebar becomes top menu
+ */
+
+/* ========================================
+   NAVIGATION STRUCTURE
+   ======================================== */
+
+/**
+ * MAIN SECTIONS:
+ * 
+ * 1. Dashboard (/)
+ *    - Home/Index
+ * 
+ * 2. Incident Management
+ *    - Incidents/Index (Incident Reports)
+ * 
+ * 3. Voyage Management
+ *    - Voyage/Reports
+ *    - Voyage/Unsubmitted
+ *    - Voyage/ManualEntry
+ * 
+ * 4. Crew Management
+ *    - Crew/Tracker (CabinOps iPad Tracker)
+ *    - Crew/Flight (Cabin Crew by Flight)
+ *    - Crew/Recovery (Signature Recovery)
+ *    - Crew/Details (Update Pilot Details)
+ * 
+ * 5. Reports
+ *    - Reports/Index (Generate Reports)
+ * 
+ * 6. Configuration
+ *    - Config/Control (Access Control)
+ */
+
+/* ========================================
+   FILE STRUCTURE
+   ======================================== */
+
+/**
+ * Views/
+ * ??? Shared/
+ * ?   ??? _Layout.cshtml           ? Main layout with sidebar & topbar
+ * ??? Home/
+ * ?   ??? Index.cshtml              ? Dashboard page
+ * ??? Config/
+ *     ??? Control.cshtml            ? Access control page
+ * 
+ * wwwroot/
+ * ??? css/
+ * ?   ??? sidebar.css               ? Sidebar & topbar styles
+ * ?   ??? site.css                  ? Global styles & dashboard layout
+ * ??? images/
+ * ?   ??? cabinops-logo.svg         ? Application logo
+ * ??? lib/
+ *     ??? bootstrap/                ? Bootstrap 5
+ *     ??? jquery/                   ? jQuery
+ * 
+ * Controllers/
+ * ??? HomeController.cs             ? Dashboard controller
+ * ??? ConfigController.cs           ? Config controller
+ */
+
+/* ========================================
+   INTERACTIVITY
+   ======================================== */
+
+/**
+ * HOVER EFFECTS:
+ * - Cards: translateY(-2px) + shadow
+ * - Sidebar links: background change + color shift
+ * - Action buttons: translateX(2px) + shadow
+ * - Chart bars: color darken
+ * 
+ * TRANSITIONS:
+ * - All: 0.2s ease
+ * - Bars: 0.3s ease
+ * 
+ * ACTIVE STATES:
+ * - Sidebar active link: orange background (#e8a641)
+ * - Status badges: colored backgrounds with matching text
+ */
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+/**
+ * - Semantic HTML structure
+ * - ARIA labels on navigation
+ * - Keyboard navigation support
+ * - High contrast text (WCAG AA compliant)
+ * - Focus indicators on interactive elements
+ */
+
+/* ========================================
+   BROWSER COMPATIBILITY
+   ======================================== */
+
+/**
+ * Supported Browsers:
+ * - Chrome 90+
+ * - Firefox 88+
+ * - Safari 14+
+ * - Edge 90+
+ * 
+ * Features Used:
+ * - CSS Grid
+ * - Flexbox
+ * - CSS Custom Properties (--variables)
+ * - CSS Transforms
+ * - SVG graphics
+ */

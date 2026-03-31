@@ -2,247 +2,1209 @@
     ViewData["Title"] = "Cabin Crew by Flight";
 }
 
-<div class="tracker-container">
-    <div class="search-card">
-        <form id="flightSearchForm" class="search-form">
-            <div class="form-row-inline">
-                <div class="form-field">
-                    <label for="flightNo">Flight No</label>
-                    <input type="text" id="flightNo" name="flightNo" placeholder="ul" />
+<div class="cbf-page">
+    <section id="cbfFilterSection" class="cbf-card cbf-search-card">
+        <div class="cbf-search-row">
+            <div class="cbf-search-group cbf-search-group-flight">
+                <label for="cbfFilterFlightNo">Flight No</label>
+                <input id="cbfFilterFlightNo" type="text" placeholder="ul" />
+            </div>
+            <div class="cbf-search-group cbf-search-group-date">
+                <label for="cbfFilterDate">Flight Date (Local)</label>
+                <div class="cbf-date-wrap">
+                    <input id="cbfFilterDate" type="date" />
                 </div>
-                
-                <div class="form-field">
-                    <label for="flightDate">Flight Date (Local)</label>
-                    <div class="date-input-wrapper">
-                        <input type="text" id="flightDate" name="flightDate" placeholder="dd/mm/yy" />
-                        <span class="calendar-icon">&#128197;</span>
+            </div>
+            <div class="cbf-search-group cbf-search-group-board">
+                <label for="cbfFilterBoardPoint">Board Point</label>
+                <input id="cbfFilterBoardPoint" type="text" placeholder="cmb" />
+            </div>
+            <button id="cbfFilterSearchBtn" type="button" class="cbf-search-btn">
+                <img class="cbf-search-icon" src="http://localhost:3845/assets/8d5576640b13d512765bbe4597d5b9542d886612.svg" alt="" aria-hidden="true" />
+                <span>Search</span>
+            </button>
+        </div>
+    </section>
+
+    <section id="cbfEmptyState" class="cbf-card cbf-empty-card">
+        <div class="cbf-empty-icon">
+            <img src="http://localhost:3845/assets/891a4a9cb6d25fc1b60faf0f44955f6eb74c2677.svg" alt="" aria-hidden="true" />
+        </div>
+        <h3>Ready to Search</h3>
+        <p>Use the filters above to search for cabin crew assignments<br />by flight. Enter flight details to get
+            started.</p>
+        </section>
+
+        <section id="cbfSummarySection" class="cbf-card cbf-table-card d-none">
+            <div class="cbf-toolbar">
+                <div class="cbf-toolbar-left">
+                    <span>Show</span>
+                    <select id="cbfSummaryEntries">
+                        <option>10</option>
+                        <option>25</option>
+                        <option>50</option>
+                    </select>
+                    <span>entries</span>
+                    <span id="cbfSummaryBadge" class="cbf-badge">0 records</span>
+                </div>
+                <div class="cbf-toolbar-search">
+                    <input id="cbfSummarySearch" type="text" placeholder="Search by flight number..." />
+                </div>
+            </div>
+
+            <div class="cbf-table-wrap">
+                <table class="cbf-table">
+                    <thead>
+                        <tr>
+                            <th class="cbf-sort" data-table="summary" data-key="FlightNo">Flight No</th>
+                            <th class="cbf-sort" data-table="summary" data-key="BoardPoint">Board Point</th>
+                            <th class="cbf-sort" data-table="summary" data-key="OffPoint">Off Point</th>
+                            <th class="cbf-sort" data-table="summary" data-key="CrewCount">Crew Count</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cbfSummaryBody"></tbody>
+                </table>
+            </div>
+
+            <div class="cbf-pagination">
+                <span id="cbfSummaryInfo">Showing 0 to 0 of 0 entries</span>
+                <div class="cbf-pager">
+                    <button id="cbfSummaryPrev" type="button">Previous</button>
+                    <button id="cbfSummaryPage" type="button" class="active">1</button>
+                    <button id="cbfSummaryNext" type="button">Next</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="cbfDetailSection" class="d-none">
+            <button id="cbfBackBtn" type="button" class="cbf-back-link">Back to Cabin Crew</button>
+
+            <section class="cbf-banner">
+                <div class="cbf-banner-left">
+                    <div class="cbf-banner-icon">&#9992;</div>
+                    <div id="cbfBannerFlight" class="cbf-banner-main">Flight UL504</div>
+                    <div id="cbfBannerRoute" class="cbf-banner-main">CMB &rarr; KUL</div>
+                    <div id="cbfBannerDate" class="cbf-banner-main">20 / 11 / 2025</div>
+                </div>
+                <div class="cbf-banner-right">
+                    <div class="cbf-banner-chip"><span>Cabin Crew</span><strong id="cbfBannerCrewCount">0</strong></div>
+                    <div class="cbf-banner-chip"><span>SNY Crew</span><strong id="cbfBannerSnyCount">0</strong></div>
+                </div>
+            </section>
+
+            <section class="cbf-card cbf-detail-card">
+                <header class="cbf-detail-header">
+                    <img src="http://localhost:3845/assets/253273c5f2398ddeff1de3be576bb887fa28265b.svg" alt="" />
+                    <h3 id="cbfCrewTitle">Cabin Crew Members (0 members)</h3>
+                </header>
+
+                <div class="cbf-toolbar">
+                    <div class="cbf-toolbar-left">
+                        <span>Show</span>
+                        <select id="cbfCrewEntries">
+                            <option>10</option>
+                            <option>25</option>
+                            <option>50</option>
+                        </select>
+                        <span>entries</span>
+                        <span id="cbfCrewBadge" class="cbf-badge">0 records</span>
+                    </div>
+                    <div class="cbf-toolbar-search">
+                        <input id="cbfCrewSearch" type="text" placeholder="Search crew members..." />
                     </div>
                 </div>
-                
-                <div class="form-field">
-                    <label for="boardPoint">Board Point</label>
-                    <input type="text" id="boardPoint" name="boardPoint" placeholder="cmb" />
+
+                <div class="cbf-table-wrap">
+                    <table class="cbf-table cbf-table-wide">
+                        <thead>
+                            <tr>
+                                <th class="cbf-sort" data-table="crew" data-key="CAT">CAT</th>
+                                <th class="cbf-sort" data-table="crew" data-key="EMPNo">EMP No</th>
+                                <th class="cbf-sort" data-table="crew" data-key="Name">Name</th>
+                                <th class="cbf-sort" data-table="crew" data-key="PromotionDate">Date of Promotion</th>
+                                <th class="cbf-sort" data-table="crew" data-key="Gender">Gender</th>
+                                <th class="cbf-sort" data-table="crew" data-key="Nationality">Nationality</th>
+                                <th class="cbf-sort" data-table="crew" data-key="Onboard">Onboard</th>
+                                <th class="cbf-sort" data-table="crew" data-key="Position">Position</th>
+                                <th class="cbf-sort" data-table="crew" data-key="SafetySign">Safety Sign</th>
+                                <th class="cbf-sort" data-table="crew" data-key="Sign">Sign</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cbfCrewBody"></tbody>
+                    </table>
                 </div>
-                
-                <button type="submit" class="btn-search-inline">
-                    <span class="search-icon">&#128269;</span> Search
-                </button>
-            </div>
-        </form>
+
+                <div class="cbf-pagination">
+                    <span id="cbfCrewInfo">Showing 0 to 0 of 0 entries</span>
+                    <div class="cbf-pager">
+                        <button id="cbfCrewPrev" type="button">Previous</button>
+                        <button id="cbfCrewPage" type="button" class="active">1</button>
+                        <button id="cbfCrewNext" type="button">Next</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cbf-card cbf-detail-card">
+                <header class="cbf-detail-header">
+                    <img src="http://localhost:3845/assets/253273c5f2398ddeff1de3be576bb887fa28265b.svg" alt="" />
+                    <h3 id="cbfSnyTitle">SNY Crew (0 members)</h3>
+                </header>
+
+                <div class="cbf-toolbar">
+                    <div class="cbf-toolbar-left">
+                        <span>Show</span>
+                        <select id="cbfSnyEntries">
+                            <option>10</option>
+                            <option>25</option>
+                            <option>50</option>
+                        </select>
+                        <span>entries</span>
+                        <span id="cbfSnyBadge" class="cbf-badge">0 records</span>
+                    </div>
+                    <div class="cbf-toolbar-search">
+                        <input id="cbfSnySearch" type="text" placeholder="Search SNY crew..." />
+                    </div>
+                </div>
+
+                <div class="cbf-table-wrap">
+                    <table class="cbf-table">
+                        <thead>
+                            <tr>
+                                <th class="cbf-sort" data-table="sny" data-key="CAT">CAT</th>
+                                <th class="cbf-sort" data-table="sny" data-key="Position">Position</th>
+                                <th class="cbf-sort" data-table="sny" data-key="Name">Name</th>
+                                <th class="cbf-sort" data-table="sny" data-key="StaffID">Staff ID</th>
+                                <th class="cbf-sort" data-table="sny" data-key="Sign">Sign</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cbfSnyBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="cbf-pagination">
+                    <span id="cbfSnyInfo">Showing 0 to 0 of 0 entries</span>
+                    <div class="cbf-pager">
+                        <button id="cbfSnyPrev" type="button">Previous</button>
+                        <button id="cbfSnyPage" type="button" class="active">1</button>
+                        <button id="cbfSnyNext" type="button">Next</button>
+                    </div>
+                </div>
+            </section>
+        </section>
     </div>
-    
-    <div class="results-card">
-        <div class="empty-state">
-            <div class="empty-icon">
-                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="5" width="60" height="70" rx="4" fill="#e2e8f0" stroke="#cbd5e0" stroke-width="2"/>
-                    <circle cx="40" cy="45" r="15" fill="white" stroke="#cbd5e0" stroke-width="2"/>
-                    <circle cx="40" cy="45" r="8" fill="#cbd5e0"/>
-                    <line x1="50" y1="55" x2="60" y2="65" stroke="#cbd5e0" stroke-width="4" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <h3 class="empty-title">Ready to Search</h3>
-            <p class="empty-text">Use the filters above to search for cabin crew assignments<br>by flight. Enter flight details to get started.</p>
-        </div>
-    </div>
-</div>
 
-@section Scripts {
-    <script>
-        document.getElementById('flightSearchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            console.log('Flight search submitted');
-        });
+    @section Scripts {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const mockFlights = [
+                    { FlightNo: "UL101", Date: "2025-11-20", BoardPoint: "CMB", OffPoint: "LHR", CrewCount: 2 },
+                    { FlightNo: "UL205", Date: "2025-11-20", BoardPoint: "CMB", OffPoint: "BKK", CrewCount: 1 },
+                    { FlightNo: "UL504", Date: "2025-11-20", BoardPoint: "CMB", OffPoint: "KUL", CrewCount: 4 }
+                ];
 
-        document.getElementById('flightDate').addEventListener('focus', function() {
-            this.type = 'date';
-        });
+                const mockCrewByFlight = {
+                    UL101: [
+                        { CAT: "PUR", EMPNo: "CCM-456", Name: "Sarah Johnson", PromotionDate: "2023-01-15", Gender: "Female", Nationality: "LK", Onboard: "Yes", Position: "L1", SafetySign: "Yes", Sign: "Yes" },
+                        { CAT: "CS", EMPNo: "CCM-789", Name: "David Lee", PromotionDate: "2024-03-20", Gender: "Male", Nationality: "LK", Onboard: "Yes", Position: "R4", SafetySign: "Yes", Sign: "Yes" }
+                    ],
+                    UL205: [
+                        { CAT: "FA", EMPNo: "CCM-852", Name: "Break Lee", PromotionDate: "2024-03-20", Gender: "Male", Nationality: "LK", Onboard: "Yes", Position: "L4", SafetySign: "Yes", Sign: "Yes" }
+                    ],
+                    UL504: [
+                        { CAT: "PUR", EMPNo: "CCM-456", Name: "Sarah Johnson", PromotionDate: "2023-01-15", Gender: "Female", Nationality: "LK", Onboard: "Yes", Position: "L1", SafetySign: "Yes", Sign: "Yes" },
+                        { CAT: "CS", EMPNo: "CCM-789", Name: "David Lee", PromotionDate: "2024-03-20", Gender: "Male", Nationality: "LK", Onboard: "Yes", Position: "R4", SafetySign: "Yes", Sign: "Yes" },
+                        { CAT: "FA", EMPNo: "CCM-852", Name: "Break Lee", PromotionDate: "2024-03-20", Gender: "Male", Nationality: "LK", Onboard: "Yes", Position: "L4", SafetySign: "Yes", Sign: "Yes" },
+                        { CAT: "FA", EMPNo: "CCM-856", Name: "Dave Lee", PromotionDate: "2024-03-20", Gender: "Male", Nationality: "LK", Onboard: "No", Position: "L3", SafetySign: "No", Sign: "No" }
+                    ]
+                };
 
-        document.getElementById('flightDate').addEventListener('blur', function() {
-            if (!this.value) {
-                this.type = 'text';
+                const mockSnyByFlight = {
+                    UL101: [{ CAT: "PUR", Position: "L1", Name: "Alice Brown", StaffID: "CCM-901", Sign: "Yes" }],
+                    UL205: [{ CAT: "CS", Position: "R4", Name: "Robert Smith", StaffID: "CCM-902", Sign: "Yes" }],
+                    UL504: [
+                        { CAT: "PUR", Position: "L1", Name: "Alice Brown", StaffID: "CCM-901", Sign: "Yes" },
+                        { CAT: "CS", Position: "R4", Name: "Robert Smith", StaffID: "CCM-902", Sign: "Yes" }
+                    ]
+                };
+
+                const state = {
+                    searched: false,
+                    selectedFlight: "",
+                    filterFlightNo: "",
+                    filterDate: "",
+                    filterBoardPoint: "",
+                    summarySearch: "",
+                    summaryEntries: 10,
+                    summaryPage: 1,
+                    summarySort: { key: "FlightNo", dir: "asc" },
+                    crewSearch: "",
+                    crewEntries: 10,
+                    crewPage: 1,
+                    crewSort: { key: "Name", dir: "asc" },
+                    snySearch: "",
+                    snyEntries: 10,
+                    snyPage: 1,
+                    snySort: { key: "Name", dir: "asc" }
+                };
+
+                const el = {
+                    filterSection: document.getElementById("cbfFilterSection"),
+                    filterFlightNo: document.getElementById("cbfFilterFlightNo"),
+                    filterDate: document.getElementById("cbfFilterDate"),
+                    filterBoardPoint: document.getElementById("cbfFilterBoardPoint"),
+                    filterSearchBtn: document.getElementById("cbfFilterSearchBtn"),
+                    emptyState: document.getElementById("cbfEmptyState"),
+                    summarySection: document.getElementById("cbfSummarySection"),
+                    summaryBody: document.getElementById("cbfSummaryBody"),
+                    summaryBadge: document.getElementById("cbfSummaryBadge"),
+                    summarySearch: document.getElementById("cbfSummarySearch"),
+                    summaryEntries: document.getElementById("cbfSummaryEntries"),
+                    summaryInfo: document.getElementById("cbfSummaryInfo"),
+                    summaryPrev: document.getElementById("cbfSummaryPrev"),
+                    summaryPage: document.getElementById("cbfSummaryPage"),
+                    summaryNext: document.getElementById("cbfSummaryNext"),
+                    detailSection: document.getElementById("cbfDetailSection"),
+                    backBtn: document.getElementById("cbfBackBtn"),
+                    bannerFlight: document.getElementById("cbfBannerFlight"),
+                    bannerRoute: document.getElementById("cbfBannerRoute"),
+                    bannerDate: document.getElementById("cbfBannerDate"),
+                    bannerCrewCount: document.getElementById("cbfBannerCrewCount"),
+                    bannerSnyCount: document.getElementById("cbfBannerSnyCount"),
+                    crewTitle: document.getElementById("cbfCrewTitle"),
+                    crewBody: document.getElementById("cbfCrewBody"),
+                    crewBadge: document.getElementById("cbfCrewBadge"),
+                    crewEntries: document.getElementById("cbfCrewEntries"),
+                    crewSearchInput: document.getElementById("cbfCrewSearch"),
+                    crewInfo: document.getElementById("cbfCrewInfo"),
+                    crewPrev: document.getElementById("cbfCrewPrev"),
+                    crewPage: document.getElementById("cbfCrewPage"),
+                    crewNext: document.getElementById("cbfCrewNext"),
+                    snyTitle: document.getElementById("cbfSnyTitle"),
+                    snyBody: document.getElementById("cbfSnyBody"),
+                    snyBadge: document.getElementById("cbfSnyBadge"),
+                    snyEntries: document.getElementById("cbfSnyEntries"),
+                    snySearchInput: document.getElementById("cbfSnySearch"),
+                    snyInfo: document.getElementById("cbfSnyInfo"),
+                    snyPrev: document.getElementById("cbfSnyPrev"),
+                    snyPage: document.getElementById("cbfSnyPage"),
+                    snyNext: document.getElementById("cbfSnyNext")
+                };
+
+                function dateLabel(value) {
+                    if (!value) return "";
+                    const parts = value.split("-");
+                    if (parts.length !== 3) return value;
+                    return `${parts[2]} / ${parts[1]} / ${parts[0]}`;
+                }
+
+                function sortRows(rows, sort) {
+                    return [...rows].sort((a, b) => {
+                        const av = String(a[sort.key] ?? "").toLowerCase();
+                        const bv = String(b[sort.key] ?? "").toLowerCase();
+                        if (av < bv) return sort.dir === "asc" ? -1 : 1;
+                        if (av > bv) return sort.dir === "asc" ? 1 : -1;
+                        return 0;
+                    });
+                }
+
+                function toggleSort(current, key) {
+                    if (current.key === key) {
+                        current.dir = current.dir === "asc" ? "desc" : "asc";
+                    } else {
+                        current.key = key;
+                        current.dir = "asc";
+                    }
+                }
+
+                function filterFlights() {
+                    let rows = [...mockFlights];
+
+                    const flightNo = state.filterFlightNo.toLowerCase();
+                    const boardPoint = state.filterBoardPoint.toLowerCase();
+                    const date = state.filterDate;
+
+                    if (flightNo) {
+                        rows = rows.filter((r) => r.FlightNo.toLowerCase().includes(flightNo));
+                    }
+
+                    if (boardPoint) {
+                        rows = rows.filter((r) => r.BoardPoint.toLowerCase().includes(boardPoint));
+                    }
+
+                    if (date) {
+                        rows = rows.filter((r) => r.Date === date);
+                    }
+
+                    const summarySearch = state.summarySearch.toLowerCase();
+                    if (summarySearch) {
+                        rows = rows.filter((r) => r.FlightNo.toLowerCase().includes(summarySearch));
+                    }
+
+                    return sortRows(rows, state.summarySort);
+                }
+
+                function normalizeDateInput(value) {
+                    const raw = (value || "").trim();
+                    if (!raw) return "";
+
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+
+                    const match = raw.match(/^(\d{2})\/(\d{2})\/(\d{2}|\d{4})$/);
+                    if (!match) return "";
+
+                    const day = match[1];
+                    const month = match[2];
+                    const yearRaw = match[3];
+                    const year = yearRaw.length === 2 ? `20${yearRaw}` : yearRaw;
+                    return `${year}-${month}-${day}`;
+                }
+
+                function renderSummary() {
+                    const rows = filterFlights();
+                    const pageSize = state.summaryEntries;
+                    const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+                    if (state.summaryPage > totalPages) state.summaryPage = totalPages;
+                    const start = (state.summaryPage - 1) * pageSize;
+                    const visible = rows.slice(start, start + pageSize);
+
+                    el.summaryBadge.textContent = `${rows.length} records`;
+                    el.summaryPage.textContent = String(state.summaryPage);
+                    el.summaryPrev.disabled = state.summaryPage <= 1;
+                    el.summaryNext.disabled = state.summaryPage >= totalPages;
+                    const from = rows.length ? start + 1 : 0;
+                    const to = start + visible.length;
+                    el.summaryInfo.textContent = `Showing ${from} to ${to} of ${rows.length} entries`;
+
+                    el.summaryBody.innerHTML = visible.length
+                        ? visible.map((r) => `
+                                <tr class="cbf-click-row" data-flight="${r.FlightNo}">
+                                    <td>${r.FlightNo}</td>
+                                    <td>${r.BoardPoint}</td>
+                                    <td>${r.OffPoint}</td>
+                                    <td>${r.CrewCount}</td>
+                                </tr>
+                            `).join("")
+                        : `<tr><td colspan="4" class="cbf-empty-row">No matching flights found</td></tr>`;
+
+                    document.querySelectorAll(".cbf-click-row").forEach((row) => {
+                        row.addEventListener("click", function () {
+                            state.selectedFlight = this.dataset.flight || "";
+                            state.crewSearch = "";
+                            state.snySearch = "";
+                            if (el.crewSearchInput) el.crewSearchInput.value = "";
+                            if (el.snySearchInput) el.snySearchInput.value = "";
+                            state.crewPage = 1;
+                            state.snyPage = 1;
+                            renderView();
+                        });
+                    });
+                }
+
+                function tableStateRows(sourceRows, searchValue, sortState) {
+                    let rows = sourceRows;
+                    const q = searchValue.toLowerCase();
+                    if (q) {
+                        rows = rows.filter((r) => Object.values(r).some((v) => String(v).toLowerCase().includes(q)));
+                    }
+                    return sortRows(rows, sortState);
+                }
+
+                function renderCrewDetails() {
+                    const rows = mockCrewByFlight[state.selectedFlight] || [];
+                    const filtered = tableStateRows(rows, state.crewSearch, state.crewSort);
+                    const pageSize = state.crewEntries;
+                    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                    if (state.crewPage > totalPages) state.crewPage = totalPages;
+                    const start = (state.crewPage - 1) * pageSize;
+                    const visible = filtered.slice(start, start + pageSize);
+
+                    el.crewTitle.textContent = `Cabin Crew Members (${rows.length} members)`;
+                    el.crewBadge.textContent = `${rows.length} records`;
+                    el.crewPage.textContent = String(state.crewPage);
+                    el.crewPrev.disabled = state.crewPage <= 1;
+                    el.crewNext.disabled = state.crewPage >= totalPages;
+                    const from = filtered.length ? start + 1 : 0;
+                    const to = start + visible.length;
+                    el.crewInfo.textContent = `Showing ${from} to ${to} of ${filtered.length} entries`;
+
+                    el.crewBody.innerHTML = visible.length
+                        ? visible.map((r) => `
+                                <tr>
+                                    <td><span class="cbf-chip">${r.CAT}</span></td>
+                                    <td>${r.EMPNo}</td>
+                                    <td>${r.Name}</td>
+                                    <td>${r.PromotionDate}</td>
+                                    <td>${r.Gender}</td>
+                                    <td>${r.Nationality}</td>
+                                    <td>${r.Onboard === "Yes" ? "<span class=\"cbf-status-yes\">&#10003;</span>" : "<span class=\"cbf-status-no\">&#9675;</span>"}</td>
+                                    <td>${r.Position}</td>
+                                    <td>${r.SafetySign === "Yes" ? "<span class=\"cbf-status-yes\">&#10003;</span>" : "<span class=\"cbf-status-no\">&#9675;</span>"}</td>
+                                    <td><span class="cbf-sign ${r.Sign === "Yes" ? "yes" : "no"}">${r.Sign}</span></td>
+                                </tr>
+                            `).join("")
+                        : `<tr><td colspan="10" class="cbf-empty-row">No matching crew members</td></tr>`;
+                }
+
+                function renderSnyDetails() {
+                    const rows = mockSnyByFlight[state.selectedFlight] || [];
+                    const filtered = tableStateRows(rows, state.snySearch, state.snySort);
+                    const pageSize = state.snyEntries;
+                    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                    if (state.snyPage > totalPages) state.snyPage = totalPages;
+                    const start = (state.snyPage - 1) * pageSize;
+                    const visible = filtered.slice(start, start + pageSize);
+
+                    el.snyTitle.textContent = `SNY Crew (${rows.length} members)`;
+                    el.snyBadge.textContent = `${rows.length} records`;
+                    el.snyPage.textContent = String(state.snyPage);
+                    el.snyPrev.disabled = state.snyPage <= 1;
+                    el.snyNext.disabled = state.snyPage >= totalPages;
+                    const from = filtered.length ? start + 1 : 0;
+                    const to = start + visible.length;
+                    el.snyInfo.textContent = `Showing ${from} to ${to} of ${filtered.length} entries`;
+
+                    el.snyBody.innerHTML = visible.length
+                        ? visible.map((r) => `
+                                <tr>
+                                    <td><span class="cbf-chip">${r.CAT}</span></td>
+                                    <td>${r.Position}</td>
+                                    <td>${r.Name}</td>
+                                    <td>${r.StaffID}</td>
+                                    <td><span class="cbf-sign yes">${r.Sign}</span></td>
+                                </tr>
+                            `).join("")
+                        : `<tr><td colspan="5" class="cbf-empty-row">No SNY crew found</td></tr>`;
+                }
+
+                function renderBanner() {
+                    const selected = mockFlights.find((f) => f.FlightNo === state.selectedFlight);
+                    if (!selected) return;
+                    const snyCount = (mockSnyByFlight[state.selectedFlight] || []).length;
+
+                    el.bannerFlight.textContent = `Flight ${selected.FlightNo}`;
+                    el.bannerRoute.innerHTML = `${selected.BoardPoint} &rarr; ${selected.OffPoint}`;
+                    el.bannerDate.textContent = dateLabel(selected.Date);
+                    el.bannerCrewCount.textContent = String(selected.CrewCount);
+                    el.bannerSnyCount.textContent = String(snyCount);
+                }
+
+                function renderView() {
+                    if (state.selectedFlight) {
+                        el.filterSection.classList.add("d-none");
+                        el.emptyState.classList.add("d-none");
+                        el.summarySection.classList.add("d-none");
+                        el.detailSection.classList.remove("d-none");
+                        renderBanner();
+                        renderCrewDetails();
+                        renderSnyDetails();
+                        return;
+                    }
+
+                    el.detailSection.classList.add("d-none");
+                    el.filterSection.classList.remove("d-none");
+                    const rows = filterFlights();
+
+                    if (!state.searched) {
+                        el.emptyState.classList.remove("d-none");
+                        el.summarySection.classList.add("d-none");
+                        el.emptyState.querySelector("h3").textContent = "Ready to Search";
+                        el.emptyState.querySelector("p").innerHTML = "Use the filters above to search for cabin crew assignments<br />by flight. Enter flight details to get started.";
+                        return;
+                    }
+
+                    if (!rows.length) {
+                        el.emptyState.classList.remove("d-none");
+                        el.summarySection.classList.add("d-none");
+                        el.emptyState.querySelector("h3").textContent = "No Results Found";
+                        el.emptyState.querySelector("p").innerHTML = "No cabin crew assignments matched your filters.<br />Try another Flight No, date, or board point.";
+                        return;
+                    }
+
+                    el.emptyState.classList.add("d-none");
+                    el.summarySection.classList.remove("d-none");
+                    renderSummary();
+                }
+
+                el.filterSearchBtn.addEventListener("click", function () {
+                    state.filterFlightNo = el.filterFlightNo.value.trim();
+                    state.filterDate = normalizeDateInput(el.filterDate.value);
+                    state.filterBoardPoint = el.filterBoardPoint.value.trim();
+                    state.summaryPage = 1;
+                    state.summarySearch = "";
+                    el.summarySearch.value = "";
+                    state.searched = true;
+                    renderView();
+                });
+
+                el.summarySearch.addEventListener("input", function () {
+                    state.summarySearch = this.value.trim();
+                    state.summaryPage = 1;
+                    renderView();
+                });
+
+                el.summaryEntries.addEventListener("change", function () {
+                    state.summaryEntries = parseInt(this.value, 10);
+                    state.summaryPage = 1;
+                    renderView();
+                });
+
+                el.summaryPrev.addEventListener("click", function () {
+                    if (state.summaryPage <= 1) return;
+                    state.summaryPage -= 1;
+                    renderSummary();
+                });
+
+                el.summaryNext.addEventListener("click", function () {
+                    const total = filterFlights().length;
+                    const pages = Math.max(1, Math.ceil(total / state.summaryEntries));
+                    if (state.summaryPage >= pages) return;
+                    state.summaryPage += 1;
+                    renderSummary();
+                });
+
+                el.crewEntries.addEventListener("change", function () {
+                    state.crewEntries = parseInt(this.value, 10);
+                    state.crewPage = 1;
+                    renderCrewDetails();
+                });
+
+                if (el.crewSearchInput) {
+                    el.crewSearchInput.addEventListener("input", function () {
+                        state.crewSearch = this.value.trim();
+                        state.crewPage = 1;
+                        renderCrewDetails();
+                    });
+                }
+
+                el.crewPrev.addEventListener("click", function () {
+                    if (state.crewPage <= 1) return;
+                    state.crewPage -= 1;
+                    renderCrewDetails();
+                });
+
+                el.crewNext.addEventListener("click", function () {
+                    const total = tableStateRows(mockCrewByFlight[state.selectedFlight] || [], state.crewSearch, state.crewSort).length;
+                    const pages = Math.max(1, Math.ceil(total / state.crewEntries));
+                    if (state.crewPage >= pages) return;
+                    state.crewPage += 1;
+                    renderCrewDetails();
+                });
+
+                el.snyEntries.addEventListener("change", function () {
+                    state.snyEntries = parseInt(this.value, 10);
+                    state.snyPage = 1;
+                    renderSnyDetails();
+                });
+
+                if (el.snySearchInput) {
+                    el.snySearchInput.addEventListener("input", function () {
+                        state.snySearch = this.value.trim();
+                        state.snyPage = 1;
+                        renderSnyDetails();
+                    });
+                }
+
+                el.snyPrev.addEventListener("click", function () {
+                    if (state.snyPage <= 1) return;
+                    state.snyPage -= 1;
+                    renderSnyDetails();
+                });
+
+                el.snyNext.addEventListener("click", function () {
+                    const total = tableStateRows(mockSnyByFlight[state.selectedFlight] || [], state.snySearch, state.snySort).length;
+                    const pages = Math.max(1, Math.ceil(total / state.snyEntries));
+                    if (state.snyPage >= pages) return;
+                    state.snyPage += 1;
+                    renderSnyDetails();
+                });
+
+                el.backBtn.addEventListener("click", function () {
+                    state.selectedFlight = "";
+                    renderView();
+                });
+
+                document.querySelectorAll(".cbf-sort").forEach((th) => {
+                    th.addEventListener("click", function () {
+                        const table = th.dataset.table;
+                        const key = th.dataset.key;
+                        if (table === "summary") {
+                            toggleSort(state.summarySort, key);
+                            state.summaryPage = 1;
+                            renderSummary();
+                        } else if (table === "crew") {
+                            toggleSort(state.crewSort, key);
+                            state.crewPage = 1;
+                            renderCrewDetails();
+                        } else {
+                            toggleSort(state.snySort, key);
+                            state.snyPage = 1;
+                            renderSnyDetails();
+                        }
+                    });
+                });
+
+                renderView();
+            });
+        </script>
+    }
+
+    @section Styles {
+        <style>
+            .cbf-page {
+                max-width: 1574px;
+                margin: 0 auto;
+                padding: 4px 0 32px;
+                font-family: Arial, sans-serif;
+                color: #1a1a1a;
             }
-        });
-    </script>
-}
 
-@section Styles {
-    <style>
-        .tracker-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0;
-        }
-
-        .search-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem 2.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-
-        .search-form {
-            width: 100%;
-        }
-
-        .form-row-inline {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .form-field {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex: 1;
-        }
-
-        .form-field label {
-            font-size: 0.9375rem;
-            font-weight: 500;
-            color: #2d3748;
-            white-space: nowrap;
-            min-width: fit-content;
-        }
-
-        .form-field input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9375rem;
-            background-color: #f7f8fa;
-            color: #2d3748;
-        }
-
-        .form-field input:focus {
-            outline: none;
-            background-color: #eef0f3;
-        }
-
-        .form-field input::placeholder {
-            color: #a0aec0;
-        }
-
-        .date-input-wrapper {
-            position: relative;
-            flex: 1;
-        }
-
-        .date-input-wrapper input {
-            width: 100%;
-            padding-right: 2.5rem;
-        }
-
-        .calendar-icon {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            font-size: 1.25rem;
-        }
-
-        .btn-search-inline {
-            padding: 0.75rem 2rem;
-            background-color: #1e3a8a;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9375rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-
-        .btn-search-inline:hover {
-            background-color: #1e40af;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
-        }
-
-        .btn-search-inline:active {
-            transform: translateY(0);
-        }
-
-        .search-icon {
-            font-size: 1rem;
-        }
-
-        .results-card {
-            background: white;
-            border-radius: 16px;
-            padding: 4rem 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-            min-height: 450px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .empty-state {
-            text-align: center;
-            max-width: 520px;
-        }
-
-        .empty-icon {
-            margin-bottom: 1.5rem;
-            opacity: 0.5;
-        }
-
-        .empty-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 0.75rem;
-        }
-
-        .empty-text {
-            font-size: 0.9375rem;
-            color: #718096;
-            line-height: 1.6;
-        }
-
-        @@media (max-width: 1200px) {
-            .form-row-inline {
-                flex-wrap: wrap;
+            .cbf-card {
+                background: #ffffff;
+                border-radius: 14px;
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
+                margin-bottom: 28px;
             }
 
-            .form-field {
-                flex: 1 1 45%;
+            .cbf-search-card {
+                min-height: 128px;
+                padding: 16px 33px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .btn-search-inline {
-                flex: 1 1 100%;
-            }
-        }
-
-        @@media (max-width: 768px) {
-            .form-row-inline {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .form-field {
+            .cbf-search-row {
+                display: flex;
+                align-items: center;
+                gap: 30px;
                 width: 100%;
+                margin: 0;
+                max-width: 1320px;
+            }
+
+            .cbf-search-group {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .cbf-search-group-flight {
+                flex: 1 1 0;
+            }
+
+            .cbf-search-group-date {
+                flex: 1 1 0;
+            }
+
+            .cbf-search-group-board {
+                flex: 1 1 0;
+            }
+
+            .cbf-search-group label {
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 14px;
+                color: #1a1a1a;
+                white-space: nowrap;
+            }
+
+            .cbf-search-group input {
+                flex: 1 1 auto;
+                width: 100%;
+                height: 56px;
+                border: none;
+                border-radius: 8px;
+                padding: 0 12px;
+                font-size: 16px;
+                color: #717182;
+                background: #f3f3f5;
+                box-sizing: border-box;
+            }
+
+            .cbf-search-group input:focus {
+                outline: none;
+                background: #eceef2;
+            }
+
+            .cbf-search-group input::placeholder {
+                color: #717182;
+            }
+
+            .cbf-date-wrap {
+                flex: 1 1 auto;
+            }
+
+            .cbf-date-wrap input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .cbf-search-btn {
+                width: 112px;
+                height: 36px;
+                border: 0;
+                border-radius: 8px;
+                background: #0f1e7d;
+                color: #ffffff;
+                font-size: 16px;
+                line-height: 20px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                cursor: pointer;
+                flex-shrink: 0;
+                align-self: center;
+            }
+
+            .cbf-search-icon {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+                object-fit: contain;
+            }
+
+            .cbf-toolbar-search {
+                display: flex;
+            }
+
+            .cbf-empty-card {
+                min-height: 604px;
+                display: flex;
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                padding: 48px;
             }
 
-            .form-field label {
-                font-size: 0.875rem;
+            .cbf-empty-icon img {
+                width: 80px;
+                height: 80px;
+                opacity: 0.65;
+                margin-bottom: 16px;
             }
 
-            .search-card {
-                padding: 1.5rem;
+            .cbf-empty-card h3 {
+                margin: 0;
+                color: #4a5565;
+                font-size: 20px;
+                font-weight: 400;
+                line-height: 28px;
             }
-        }
-    </style>
-}
+
+            .cbf-empty-card p {
+                margin-top: 16px;
+                color: #99a1af;
+                font-size: 16px;
+                line-height: 24px;
+                max-width: 431px;
+            }
+
+            .cbf-table-card,
+            .cbf-detail-card {
+                padding: 24px;
+            }
+
+            .cbf-toolbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 0.8px solid #e5e7eb;
+                padding: 0 0 20px;
+                margin-bottom: 24px;
+                gap: 20px;
+            }
+
+            .cbf-toolbar-left {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 16px;
+                color: #4a5565;
+            }
+
+            .cbf-toolbar-left select {
+                width: 80px;
+                height: 36px;
+                border: 1px solid transparent;
+                border-radius: 8px;
+                background: #f3f3f5;
+                font-size: 16px;
+                padding: 0 12px;
+            }
+
+            .cbf-badge {
+                text-transform: uppercase;
+                padding: 4.8px 12.8px;
+                border-radius: 999px;
+                background: #f9fafb;
+                border: 0.8px solid #e5e7eb;
+                color: #364153;
+                font-size: 14px;
+                font-weight: 700;
+                letter-spacing: 0.7px;
+                line-height: 20px;
+            }
+
+            .cbf-toolbar-search input {
+                width: 384px;
+                height: 44px;
+                border: 0.8px solid transparent;
+                border-radius: 8px;
+                background: #f3f3f5;
+                color: #717182;
+                font-size: 16px;
+                padding: 0 12px 0 44px;
+                outline: none;
+                background-image: url("http://localhost:3845/assets/8d5576640b13d512765bbe4597d5b9542d886612.svg");
+                background-repeat: no-repeat;
+                background-size: 20px 20px;
+                background-position: 12px center;
+            }
+
+            #cbfSummarySection .cbf-toolbar-search input {
+                width: 357px;
+            }
+
+            .cbf-toolbar-search input:focus {
+                border-color: #0f1e7d;
+            }
+
+            .cbf-table-wrap {
+                overflow-x: auto;
+            }
+
+            .cbf-table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 760px;
+                border: 0.8px solid #e5e7eb;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            }
+
+            .cbf-table-wide {
+                min-width: 1200px;
+            }
+
+            .cbf-table thead {
+                background: rgba(131, 157, 187, 0.7);
+            }
+
+            .cbf-table th,
+            .cbf-table td {
+                height: 75px;
+                padding: 0 8px;
+                font-size: 16px;
+                white-space: nowrap;
+                text-align: left;
+            }
+
+            .cbf-table th {
+                color: #364153;
+                font-weight: 700;
+                cursor: pointer;
+                user-select: none;
+                height: 64px;
+                border-bottom: 0.8px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .cbf-sort::after {
+                content: "\2195";
+                color: #6a7890;
+                margin-left: 10px;
+                font-size: 16px;
+            }
+
+            .cbf-table tbody tr:nth-child(even) {
+                background: rgba(21, 93, 252, 0.1);
+            }
+
+            .cbf-click-row {
+                cursor: pointer;
+            }
+
+            .cbf-click-row:hover {
+                background: rgba(21, 93, 252, 0.16);
+            }
+
+            .cbf-empty-row {
+                text-align: center;
+                color: #6b7280;
+                font-style: italic;
+                height: 75px;
+            }
+
+            .cbf-chip {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 57px;
+                height: 25px;
+                border-radius: 999px;
+                padding: 0 12px;
+                border: 0.8px solid #d1d5dc;
+                background: #ffffff;
+                font-size: 14px;
+                font-weight: 700;
+                letter-spacing: 0.6px;
+                text-transform: uppercase;
+            }
+
+            .cbf-status-yes {
+                color: #16a34a;
+                font-size: 20px;
+            }
+
+            .cbf-status-no {
+                color: #6b7280;
+                font-size: 20px;
+            }
+
+            .cbf-sign {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 52px;
+                height: 26px;
+                border-radius: 999px;
+                padding: 0 13px;
+                font-size: 12px;
+                font-weight: 700;
+                text-transform: uppercase;
+                border: 0.8px solid #bedbff;
+                background: #eff6ff;
+                color: #1447e6;
+                letter-spacing: 0.6px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+
+            .cbf-sign.no {
+                border-color: #99a1af;
+                background: #eff6ff;
+                color: #535964;
+            }
+
+            .cbf-pagination {
+                margin-top: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                color: #4a5565;
+                font-size: 16px;
+                min-height: 64px;
+            }
+
+            .cbf-pager {
+                display: flex;
+                gap: 8px;
+            }
+
+            .cbf-pager button {
+                height: 44px;
+                min-width: 44px;
+                border: 0.8px solid rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                background: #ffffff;
+                color: #1a1a1a;
+                font-size: 16px;
+                padding: 0 12.8px;
+                cursor: pointer;
+            }
+
+            .cbf-pager button.active {
+                background: rgba(131, 157, 187, 0.7);
+                border-color: rgba(131, 157, 187, 0.7);
+                color: #ffffff;
+            }
+
+            .cbf-pager button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .cbf-back-link {
+                display: none;
+            }
+
+            .cbf-back-link::before {
+                content: "";
+            }
+
+            .cbf-banner {
+                border-radius: 10px;
+                background: linear-gradient(95deg, #1256b5 0%, #0166bf 35%, #0a7ca5 100%);
+                color: #ffffff;
+                min-height: 88px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 28px;
+                margin-bottom: 24px;
+            }
+
+            .cbf-banner-left {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .cbf-banner-icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.2);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+            }
+
+            .cbf-banner-main {
+                font-size: 36px;
+                font-weight: 400;
+                line-height: 1;
+                white-space: nowrap;
+            }
+
+            .cbf-banner-right {
+                display: flex;
+                gap: 14px;
+            }
+
+            .cbf-banner-chip {
+                width: 98px;
+                height: 58px;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.12);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                font-size: 11px;
+            }
+
+            .cbf-banner-chip strong {
+                font-size: 24px;
+                line-height: 1;
+                margin-top: 2px;
+            }
+
+            .cbf-detail-header {
+                height: 76px;
+                background: #272727;
+                border-radius: 14px 14px 0 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 0 24px;
+                color: #ffffff;
+                margin: -24px -24px 24px;
+            }
+
+            .cbf-detail-header img {
+                width: 24px;
+                height: 24px;
+            }
+
+            .cbf-detail-header h3 {
+                margin: 0;
+                font-size: 20px;
+                font-weight: 400;
+                line-height: 28px;
+            }
+
+            .d-none {
+                display: none !important;
+            }
+
+            @@media (max-width: 1400px) {
+                .cbf-banner-main {
+                    font-size: 26px;
+                }
+            }
+
+            @@media (max-width: 1100px) {
+                .cbf-search-row {
+                    flex-wrap: wrap;
+                    gap: 14px;
+                }
+
+                .cbf-search-group,
+                .cbf-search-group-flight,
+                .cbf-search-group-date,
+                .cbf-search-group-board {
+                    flex: 1 1 45%;
+                }
+
+                .cbf-search-btn {
+                    width: 112px;
+                }
+
+                .cbf-toolbar {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .cbf-toolbar-search input {
+                    width: 100%;
+                }
+
+                #cbfSummarySection .cbf-toolbar-search input {
+                    width: 100%;
+                }
+
+                .cbf-banner {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    padding: 14px;
+                    gap: 10px;
+                }
+
+                .cbf-banner-left,
+                .cbf-banner-right {
+                    flex-wrap: wrap;
+                }
+            }
+
+            @@media (max-width: 720px) {
+                .cbf-search-row {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+
+                .cbf-search-group,
+                .cbf-search-group-flight,
+                .cbf-search-group-date,
+                .cbf-search-group-board {
+                    width: 100%;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.5rem;
+                }
+
+                .cbf-search-group input,
+                .cbf-date-wrap {
+                    width: 100%;
+                }
+
+                .cbf-search-card {
+                    padding: 16px;
+                }
+
+                .cbf-table th,
+                .cbf-table td,
+                .cbf-toolbar-left,
+                .cbf-pagination,
+                .cbf-pager button,
+                .cbf-badge,
+                .cbf-toolbar-search input {
+                    font-size: 14px;
+                }
+            }
+        </style>
+    }

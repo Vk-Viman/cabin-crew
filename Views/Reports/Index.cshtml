@@ -1,0 +1,608 @@
+@{
+    ViewData["Title"] = "Generate Reports";
+}
+
+<div class="reports-page">
+    <div class="reports-grid">
+        <section class="report-card config-card">
+            <h2 class="card-title">Report Configuration</h2>
+
+            <form class="config-form" onsubmit="return false;">
+                <div class="form-group">
+                    <label class="form-label" for="reportType">Report Type</label>
+                    <select id="reportType" class="form-control report-field">
+                        <option value="" selected disabled>Select report type</option>
+                        <option value="incident">Incident Reports</option>
+                        <option value="voyage">Voyage Reports</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="startDate">Start Date</label>
+                    <input id="startDate" class="form-control report-field" type="text" placeholder="dd/mm/yy" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="endDate">End Date</label>
+                    <input id="endDate" class="form-control report-field" type="text" placeholder="dd/mm/yy" />
+                </div>
+
+                <button type="button" id="generateBtn" class="btn generate-btn">Generate</button>
+            </form>
+        </section>
+
+        <section class="report-card preview-card">
+            <h2 class="card-title">Report Preview</h2>
+
+            <div id="emptyState" class="preview-empty">
+                <img            src="http://localhost:3845/assets/d3e8ed720a64caff25b961fd1fbead1dfd22e446.svg"                   alt="No report"
+                                class="empty-icon"        />
+                <p class="empty-title">No report generated yet</p>
+                <p class="empty-subtitle">Configure and generate a report to see the preview</p>
+            </div>
+
+            <div id="filledState" class="preview-filled d-none">
+                <div class="preview-header">
+                    <div>
+                        <h3 id="previewReportTitle" class="preview-report-title">Incident Reports</h3>
+                        <p id="previewGenerated" class="preview-generated">Generated at: 12/19/2025, 9:04:44 AM</p>
+                    </div>
+                    <p id="previewRange" class="preview-range">2025-09-24 to 2025-12-19</p>
+                </div>
+
+                <div class="stats-grid">
+                    <article class="stat-card stat-total">
+                        <p class="stat-label">Total Records</p>
+                        <p id="statTotal" class="stat-value">15</p>
+                    </article>
+                    <article class="stat-card stat-open">
+                        <p class="stat-label">Open Items</p>
+                        <p id="statOpen" class="stat-value">8</p>
+                    </article>
+                    <article class="stat-card stat-closed">
+                        <p class="stat-label">Closed Items</p>
+                        <p id="statClosed" class="stat-value">7</p>
+                    </article>
+                </div>
+
+                <h4 class="sample-title">Sample Data Preview</h4>
+
+                <div class="table-shell">
+                    <table class="table report-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Flight No</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportRows"></tbody>
+                    </table>
+                </div>
+
+                <div class="export-row">
+                    <button type="button" class="btn export-btn export-pdf">Export as PDF</button>
+                    <button type="button" class="btn export-btn export-excel">Export as Excel</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const generateBtn = document.getElementById("generateBtn");
+                const emptyState = document.getElementById("emptyState");
+                const filledState = document.getElementById("filledState");
+                const reportRows = document.getElementById("reportRows");
+                const reportType = document.getElementById("reportType");
+                const startDate = document.getElementById("startDate");
+                const endDate = document.getElementById("endDate");
+
+                const previewReportTitle = document.getElementById("previewReportTitle");
+                const previewGenerated = document.getElementById("previewGenerated");
+                const previewRange = document.getElementById("previewRange");
+                const statTotal = document.getElementById("statTotal");
+                const statOpen = document.getElementById("statOpen");
+                const statClosed = document.getElementById("statClosed");
+
+                const reportData = {
+                    incident: {
+                        title: "Incident Reports",
+                        generated: "Generated at: 12/19/2025, 9:04:44 AM",
+                        range: "2025-09-24 to 2025-12-19",
+                        total: 15,
+                        open: 8,
+                        closed: 7,
+                        rows: [
+                            { flightNo: "UL101", date: "2025-11-15", description: "Medical emergency", status: "OPEN" },
+                            { flightNo: "UL205", date: "2025-11-16", description: "Unruly passenger", status: "CLOSED" }
+                        ],
+                        remaining: 13
+                    },
+                    voyage: {
+                        title: "Voyage Reports",
+                        generated: "Generated at: 12/20/2025, 3:45:18 PM",
+                        range: "2025-10-01 to 2025-12-20",
+                        total: 12,
+                        open: 5,
+                        closed: 7,
+                        rows: [
+                            { flightNo: "UL411", date: "2025-11-20", description: "Arrival delay", status: "OPEN" },
+                            { flightNo: "UL522", date: "2025-11-22", description: "Gate reassignment", status: "CLOSED" }
+                        ],
+                        remaining: 10
+                    }
+                };
+
+                function buildRows(data) {
+                    const firstRow = data.rows[0];
+                    const secondRow = data.rows[1];
+                    const secondTint = "row-alt";
+                    return `
+                        <tr>
+                            <td>${firstRow.flightNo}</td>
+                            <td>${firstRow.date}</td>
+                            <td>${firstRow.description}</td>
+                            <td><span class="status-pill status-open">OPEN</span></td>
+                        </tr>
+                        <tr class="${secondTint}">
+                            <td>${secondRow.flightNo}</td>
+                            <td>${secondRow.date}</td>
+                            <td>${secondRow.description}</td>
+                            <td><span class="status-pill status-closed">CLOSED</span></td>
+                        </tr>
+                    `;
+                }
+
+                function renderPreview() {
+                    const selectedType = reportType.value || "incident";
+                    const selectedData = reportData[selectedType] || reportData.incident;
+
+                    previewReportTitle.textContent = selectedData.title;
+                    previewGenerated.textContent = selectedData.generated;
+                    previewRange.textContent = selectedData.range;
+                    statTotal.textContent = String(selectedData.total);
+                    statOpen.textContent = String(selectedData.open);
+                    statClosed.textContent = String(selectedData.closed);
+                    reportRows.innerHTML = buildRows(selectedData);
+                }
+
+                generateBtn.addEventListener("click", function () {
+                    if (!reportType.value) {
+                        reportType.value = "incident";
+                    }
+                    if (!startDate.value) {
+                        startDate.value = "24/09/25";
+                    }
+                    if (!endDate.value) {
+                        endDate.value = "19/12/25";
+                    }
+
+                    renderPreview();
+                    emptyState.classList.add("d-none");
+                    filledState.classList.remove("d-none");
+                });
+
+                reportType.addEventListener("change", function () {
+                    if (!filledState.classList.contains("d-none")) {
+                        renderPreview();
+                    }
+                });
+            });
+    </script>
+}
+
+@section Styles {
+    <style>
+            .reports-page {
+                font-family: Arial, sans-serif;
+                background: #dddddd;
+                min-height: calc(100vh - 92px);
+                padding: 0;
+                overflow-x: visible;
+            }
+
+            .reports-grid {
+                display: grid;
+                grid-template-columns: minmax(320px, 34%) minmax(0, 66%);
+                gap: 24px;
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                min-width: 0;
+                align-items: start;
+            }
+
+            .report-card {
+                background: #ffffff;
+                border-radius: 14px;
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
+                border: 0;
+                min-width: 0;
+            }
+
+            .config-card {
+                height: 807px;
+                padding: 24px;
+                width: 100%;
+            }
+
+            .preview-card {
+                height: 807px;
+                padding: 24px;
+                overflow: visible;
+                width: 100%;
+            }
+
+            .card-title {
+                font-size: 20px;
+                font-weight: 400;
+                color: #1a1a1a;
+                margin: 0 0 24px;
+                line-height: 1;
+            }
+
+            .config-form {
+                display: grid;
+                gap: 30px;
+                max-width: 365px;
+            }
+
+            .form-group {
+                display: grid;
+                gap: 12px;
+            }
+
+            .form-label {
+                margin: 0;
+                font-size: 16px;
+                color: #1a1a1a;
+                line-height: 1;
+            }
+
+            .report-field {
+                height: 36px;
+                border-radius: 8px;
+                border: 1px solid transparent;
+                background: #f3f3f5;
+                font-size: 16px;
+                color: #717182;
+                padding: 0 12px;
+                box-shadow: none;
+            }
+
+            .report-field:focus {
+                border-color: #0f1e7d;
+                box-shadow: none;
+            }
+
+            .generate-btn {
+                width: 112px;
+                height: 36px;
+                border: 0;
+                border-radius: 8px;
+                background: #0f1e7d;
+                color: #ffffff;
+                font-size: 14px;
+                line-height: 20px;
+                margin: 8px auto 0;
+            }
+
+            .generate-btn:hover,
+            .generate-btn:focus {
+                background: #0d196a;
+                color: #ffffff;
+            }
+
+            .preview-empty {
+                height: calc(100% - 48px);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                gap: 14px;
+            }
+
+            .empty-icon {
+                width: 116px;
+                height: 116px;
+                display: block;
+            }
+
+            .empty-title,
+            .empty-subtitle {
+                margin: 0;
+                color: #99a1af;
+                font-size: 18px;
+                line-height: 28px;
+            }
+
+            .preview-filled {
+                height: calc(100% - 48px);
+                display: block;
+            }
+
+            .preview-header {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                padding-bottom: 8px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+
+            .preview-report-title {
+                margin: 0;
+                font-size: 20px;
+                font-weight: 400;
+                color: #1a1a1a;
+                line-height: 28px;
+            }
+
+            .preview-generated {
+                margin: 0;
+                font-size: 16px;
+                color: #1a1a1a;
+                line-height: 20px;
+            }
+
+            .preview-range {
+                margin: 0;
+                font-size: 16px;
+                font-weight: 700;
+                color: #1a1a1a;
+                text-transform: uppercase;
+                letter-spacing: 0.6px;
+                line-height: 16px;
+                padding-top: 6px;
+                white-space: nowrap;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 24px;
+                margin-top: 16px;
+                margin-bottom: 18px;
+            }
+
+            .stat-card {
+                height: 100px;
+                border-radius: 10px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .reports-page .stat-total {
+                background: #daeafe !important;
+            }
+
+            .reports-page .stat-open {
+                background: #ffefd9 !important;
+            }
+
+            .reports-page .stat-closed {
+                background: #d8fce3 !important;
+            }
+
+            .stat-label {
+                margin: 0;
+                font-size: 14px;
+                color: #4a5565;
+                line-height: 20px;
+            }
+
+            .stat-value {
+                margin: 0;
+                font-size: 24px;
+                color: #1a1a1a;
+                line-height: 32px;
+            }
+
+            .sample-title {
+                margin: 0;
+                font-size: 16px;
+                font-weight: 400;
+                color: #1a1a1a;
+                line-height: 24px;
+                margin-bottom: 10px;
+            }
+
+            .table-shell {
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+                overflow: hidden;
+                min-height: 0;
+            }
+
+            .report-table {
+                width: 100%;
+                min-width: 0;
+                margin: 0;
+                table-layout: fixed;
+                border-collapse: separate;
+                border-spacing: 0;
+            }
+
+            .report-table thead {
+                background: rgba(131, 157, 187, 0.7);
+            }
+
+            .report-table th,
+            .report-table td {
+                padding: 10px 12px;
+                font-size: 14px;
+                color: #1a1a1a;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+                vertical-align: middle;
+            }
+
+            .report-table th {
+                font-weight: 700;
+                border-top: 0;
+                font-size: 16px;
+                height: 48px;
+            }
+
+            .report-table td {
+                height: 51px;
+            }
+
+            .report-table th:nth-child(1),
+            .report-table td:nth-child(1) {
+                width: 18%;
+            }
+
+            .report-table th:nth-child(2),
+            .report-table td:nth-child(2) {
+                width: 22%;
+            }
+
+            .report-table th:nth-child(3),
+            .report-table td:nth-child(3) {
+                width: 36%;
+            }
+
+            .report-table th:nth-child(4),
+            .report-table td:nth-child(4) {
+                width: 24%;
+                text-align: center;
+            }
+
+            .report-table td:nth-child(3),
+            .report-table th:nth-child(3) {
+                white-space: normal;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                word-break: break-word;
+            }
+
+            .row-alt {
+                background: rgba(21, 93, 252, 0.1);
+            }
+
+            .row-footer td {
+                font-size: 14px;
+                color: #6a7282;
+                text-align: center;
+                background: #f9fafb;
+            }
+
+            .status-pill {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 92px;
+                height: 26px;
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.6px;
+            }
+
+            .status-open {
+                color: #1447e6;
+                background: #eff6ff;
+                border: 1px solid #bedbff;
+            }
+
+            .status-closed {
+                color: #535964;
+                background: rgba(153, 161, 175, 0.2);
+                border: 1px solid #99a1af;
+            }
+
+            .export-row {
+                padding-top: 16px;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+                display: flex;
+                gap: 8px;
+                margin-top: 16px;
+            }
+
+            .export-btn {
+                height: 36px;
+                width: 154px;
+                border-radius: 8px;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                color: #ffffff;
+                font-size: 14px;
+                line-height: 20px;
+                padding: 0 12px;
+            }
+
+            .export-pdf {
+                background: #f91f1f;
+            }
+
+            .export-excel {
+                background: #28db36;
+            }
+
+            @@media (max-width: 1680px) {
+                .reports-page {
+                    padding: 0;
+                }
+
+                .reports-grid {
+                    margin: 0;
+                }
+            }
+
+            @@media (max-width: 1100px) {
+                .reports-page {
+                    overflow-x: visible;
+                }
+
+                .reports-grid {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                    width: 100%;
+                }
+
+                .config-card,
+                .preview-card {
+                    width: 100%;
+                    height: auto;
+                    min-height: 560px;
+                }
+            }
+
+            @@media (max-width: 992px) {
+                .stats-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .export-row {
+                    flex-wrap: wrap;
+                }
+
+                .table-shell {
+                    overflow-x: auto;
+                }
+
+                .report-table {
+                    min-width: 640px;
+                }
+            }
+
+            @@media (max-width: 576px) {
+                .reports-page {
+                    padding: 16px 10px 24px;
+                }
+
+                .config-card,
+                .preview-card {
+                    padding: 16px;
+                }
+            }
+    </style>
+}
