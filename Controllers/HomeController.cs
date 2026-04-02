@@ -18,6 +18,19 @@ namespace Cabin_Crew.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult GroundDashboard()
+        {
+            ViewData["Title"] = "Ground Staff Dashboard";
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

@@ -1,245 +1,3258 @@
-@{
+﻿@{
     ViewData["Title"] = "Voyage Reports";
 }
 
-<div class="tracker-container">
-    <div class="search-card">
-        <form id="voyageReportsForm" class="search-form">
-            <div class="form-row-inline">
-                <div class="form-field">
+<div class="vr-page">
+    <section id="voyageSearchCard" class="vr-card vr-search-card">
+        <form id="voyageReportsForm" class="vr-search-form">
+            <div class="vr-form-row-inline">
+                <div class="vr-form-field">
                     <label for="flightNo">Flight No</label>
                     <input type="text" id="flightNo" name="flightNo" placeholder="ul" />
                 </div>
-                
-                <div class="form-field">
+
+                <div class="vr-form-field">
                     <label for="flightDate">Flight Date (Local)</label>
-                    <div class="date-input-wrapper">
-                        <input type="date" id="flightDate" name="flightDate" />
+                    <div class="vr-date-input-wrapper">
+                        <input type="text" id="flightDate" name="flightDate" placeholder="DD/MM/YY" />
                     </div>
                 </div>
-                
-                <div class="form-field">
+
+                <div class="vr-form-field">
                     <label for="boardPoint">Board Point</label>
                     <input type="text" id="boardPoint" name="boardPoint" placeholder="cmb" />
                 </div>
-                
-                <button type="submit" class="btn-search-inline">
-                    <img class="search-icon" src="http://localhost:3845/assets/8d5576640b13d512765bbe4597d5b9542d886612.svg" alt="" aria-hidden="true" />
+
+                <button type="submit" class="vr-btn-search-inline">
+                    <img class="vr-search-icon" src="/images/icons/search-white.svg" alt="" aria-hidden="true" />
                     Search
                 </button>
             </div>
         </form>
-    </div>
-    
-    <div class="results-card">
-        <div class="empty-state">
-            <div class="empty-icon">
-                <img src="http://localhost:3845/assets/891a4a9cb6d25fc1b60faf0f44955f6eb74c2677.svg" alt="" aria-hidden="true" />
+    </section>
+
+    <section id="voyageEmptyState" class="vr-card vr-empty-card">
+        <div class="vr-empty-state">
+            <div class="vr-empty-icon">
+                <img src="/images/icons/empty-state.svg" alt="" aria-hidden="true" />
             </div>
-            <h3 class="empty-title">Ready to Search</h3>
-            <p class="empty-text">Use the filters above to search for Voyage Reports by flight.<br>Enter flight details
-                to get started.</p>
+            <h3 class="vr-empty-title">Ready to Search</h3>
+            <p class="vr-empty-text">Use the filters above to search for voyage reports by flight.<br />Enter flight details to get started.</p>
+        </div>
+    </section>
+
+    <section id="voyageSummaryState" class="vr-card vr-summary-card d-none">
+        <div class="vr-toolbar">
+            <div class="vr-toolbar-left">
+                <span>Show</span>
+                <select id="voyageEntriesSelect">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+                <span>entries</span>
+                <span id="voyageRecordBadge" class="vr-badge">0 records</span>
+            </div>
+
+            <div class="vr-toolbar-search">
+                <span class="vr-toolbar-search-icon" aria-hidden="true">
+                    <img src="/images/icons/search-white.svg" alt="" />
+                </span>
+                <input id="voyageSummarySearch" type="text" placeholder="Search voyage reports..." />
             </div>
         </div>
-    </div>
 
-    @section Scripts {
-        <script>
-            document.getElementById('voyageReportsForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-                console.log('Voyage Reports search submitted');
+        <div class="vr-table-wrap">
+            <table class="vr-table">
+                <thead>
+                    <tr>
+                        <th class="vr-sort" data-sort-key="flightDate">Flight Date</th>
+                        <th class="vr-sort" data-sort-key="flightNo">Flight No</th>
+                        <th class="vr-sort" data-sort-key="boardPoint">Board Point</th>
+                        <th class="vr-sort" data-sort-key="offPoint">Off Point</th>
+                    </tr>
+                </thead>
+                <tbody id="voyageSummaryBody"></tbody>
+            </table>
+        </div>
+
+        <div class="vr-table-footer">
+            <span id="voyagePagingInfo">Showing 0 to 0 of 0 entries</span>
+            <div class="vr-pager-btns">
+                <button id="voyagePrevBtn" type="button">Previous</button>
+                <button id="voyagePageBtn" type="button" class="active">1</button>
+                <button id="voyageNextBtn" type="button">Next</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="voyageDetailState" class="d-none">
+        <button id="voyageBackBtn" type="button" class="vr-back-btn">Back to Voyage Reports</button>
+
+        <section class="vr-banner">
+            <div class="vr-banner-left">
+                <div class="vr-banner-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 12.2l15.2-6.4c.7-.3 1.4.4 1.1 1.1l-6.4 15.2c-.3.7-1.3.6-1.5-.1l-1.6-5.2-5.2-1.6c-.7-.2-.8-1.2-.1-1.5Z" fill="currentColor" />
+                        <path d="M11 13l5-5" stroke="#fff" stroke-width="1.7" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <div>
+                    <div id="voyageBannerFlight" class="vr-banner-main">Flight UL504</div>
+                    <div class="vr-banner-meta-row">
+                        <div class="vr-banner-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M12 21s6-5.1 6-10.3A6 6 0 1 0 6 10.7C6 15.9 12 21 12 21Z" stroke="currentColor" stroke-width="1.6" />
+                                <circle cx="12" cy="10.6" r="2" fill="currentColor" />
+                            </svg>
+                            <span id="voyageBannerRoute" class="vr-banner-sub">CMB → KUL</span>
+                        </div>
+                        <div class="vr-banner-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.6" />
+                                <path d="M4 9h16" stroke="currentColor" stroke-width="1.6" />
+                                <path d="M8 3.5v3M16 3.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                            </svg>
+                            <span id="voyageBannerDate" class="vr-banner-sub">20 / 11 / 2025</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="vr-banner-right">
+                <div class="vr-banner-chip"><span>Total PAX</span><strong id="voyageBannerPax">248</strong></div>
+                <div class="vr-banner-chip"><span>Crew</span><strong id="voyageBannerCrew">4</strong></div>
+                <div class="vr-banner-chip"><span>Incidents</span><strong id="voyageBannerIncidents">0</strong></div>
+            </div>
+        </section>
+
+        <div class="vr-tab-shell">
+            <div id="voyageTabStrip" class="vr-tab-strip" role="tablist" aria-label="Voyage report sections"></div>
+            <div id="voyageDetailSections" class="vr-detail-sections"></div>
+        </div>
+    </section>
+
+    <div id="voyageGalleryModal" class="vr-gallery-modal d-none" role="dialog" aria-modal="true" aria-labelledby="voyageGalleryTitle">
+        <div class="vr-gallery-backdrop" data-gallery-close></div>
+        <div class="vr-gallery-panel">
+            <div class="vr-gallery-header">
+                <h4 id="voyageGalleryTitle">Incident Images</h4>
+                <button type="button" id="voyageGalleryCloseBtn" class="vr-gallery-close" aria-label="Close gallery">×</button>
+            </div>
+            <div id="voyageGalleryBody" class="vr-gallery-body"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function svgImage(title, subtitle, leftColor, rightColor) {
+                const svg = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+                        <defs>
+                            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+                                <stop offset="0%" stop-color="${leftColor}" />
+                                <stop offset="100%" stop-color="${rightColor}" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="1200" height="760" rx="36" fill="url(#g)" />
+                        <rect x="92" y="108" width="1016" height="544" rx="30" fill="rgba(255,255,255,0.12)" />
+                        <circle cx="228" cy="234" r="74" fill="rgba(255,255,255,0.22)" />
+                        <rect x="220" y="410" width="760" height="98" rx="24" fill="rgba(255,255,255,0.18)" />
+                        <text x="122" y="190" fill="#ffffff" font-family="Arial, sans-serif" font-size="52" font-weight="700">${title}</text>
+                        <text x="122" y="252" fill="rgba(255,255,255,0.88)" font-family="Arial, sans-serif" font-size="26">${subtitle}</text>
+                    </svg>`;
+                return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+            }
+
+            const voyageReports = [
+                {
+                    flightDate: "2025-11-20",
+                    flightNo: "UL101",
+                    boardPoint: "CMB",
+                    offPoint: "LHR",
+                    generalInformation: {
+                        std: "10:00",
+                        atd: "10:15",
+                        ata: "18:30",
+                        cateringCom: "09:45",
+                        ccmReadyForPax: "09:50",
+                        boardingCom: "09:30",
+                        lastPaxOnboard: "10:05",
+                        xfd: "245",
+                        bc: 230,
+                        ey: 15,
+                        inf: 3,
+                        total: 248
+                    },
+                    crewInformation: [
+                        { cat: "PUR", empNo: "CCM-456", name: "Sarah Johnson", promotionDate: "2023-01-15", gender: "Female", nationality: "LK", onboard: "Yes", position: "L1", safetySign: "Yes", sign: "Yes" },
+                        { cat: "CS", empNo: "CCM-789", name: "David Lee", promotionDate: "2024-03-20", gender: "Male", nationality: "LK", onboard: "Yes", position: "R4", safetySign: "Yes", sign: "Yes" },
+                        { cat: "FA", empNo: "CCM-852", name: "Break Lee", promotionDate: "2024-03-20", gender: "Male", nationality: "LK", onboard: "Yes", position: "L4", safetySign: "Yes", sign: "Yes" },
+                        { cat: "FA", empNo: "CCM-856", name: "Dave Lee", promotionDate: "2024-03-20", gender: "Male", nationality: "LK", onboard: "No", position: "L3", safetySign: "No", sign: "No" }
+                    ],
+                    regulatory: [
+                        { label: "Transit Baggage Check Carried Out", value: "Yes" },
+                        { label: "Aerosol Sprayed", value: "Yes" },
+                        { label: "General Declaration Completed", value: "Yes" },
+                        { label: "First Aid Kits Sealed", value: "Yes" },
+                        { label: "Ditching / Crash Landing", value: "Yes" },
+                        { label: "De-compression", value: "Yes" },
+                        { label: "Enter Communication", value: "Yes" },
+                        { label: "Inflight Fries", value: "Yes" },
+                        { label: "Flight Details & Regulatory docs of CCM’s Verified", value: "Yes" },
+                        { label: "Relevant station regulations and sector updates", value: "Yes" },
+                        { label: "Relevant meal services produce", value: "Yes" },
+                        { label: "Handling of special PAX including VIP/OneWorld/FLySmiles/UM/YP", value: "Yes" },
+                        { label: "Covid-19 preflight briefing conducted according to CSI-16 Rev 6", value: "Yes" },
+                        { label: "Relevant Announcements for the sector/s", value: "Pre-flight, taxi, and arrival announcements completed" }
+                    ],
+                    safetyConfirmation: [
+                        { cat: "PUR", name: "Sarah Johnson", staffId: "CCM-456", sign: "Yes" },
+                        { cat: "CS", name: "David Lee", staffId: "CCM-789", sign: "Yes" },
+                        { cat: "FA", name: "Break Lee", staffId: "CCM-852", sign: "Yes" },
+                        { cat: "FA", name: "Dave Lee", staffId: "CCM-856", sign: "No" }
+                    ],
+                    incidents: [
+                        {
+                            pnrTicket: "ABC123",
+                            mainCategory: "Safety",
+                            incidentDescription: "Passenger medical emergency",
+                            moreDetails: "Passenger experienced chest pain during flight. First aid was provided by cabin crew and the onboard doctor.",
+                            paxName: "John Smith",
+                            paxSeat: "12A",
+                            reportedBy: "CCM-456",
+                            incidentId: "INC-504-01",
+                            assignedInspectors: "ADM-001",
+                            status: "OPEN",
+                            assignedBy: "ADM-001",
+                            images: [
+                                { src: svgImage("Incident Photo 1", "Cabin scene and passenger assistance", "#1256b5", "#0a7ca5"), caption: "Passenger emergency scene" },
+                                { src: svgImage("Incident Photo 2", "Cabin documentation and reporting", "#272727", "#0f1e7d"), caption: "Cabin report documentation" },
+                                { src: svgImage("Incident Photo 3", "Follow-up evidence capture", "#016b94", "#0a7ca5"), caption: "Follow-up evidence" }
+                            ]
+                        }
+                    ],
+                    delayReport: "Delayed departure due to late baggage loading (15 minutes). Ground handling team was notified and corrective measures taken.",
+                    generalComments: "Smooth flight with excellent passenger cooperation. All safety procedures followed. In-flight service completed without issues.",
+                    snyCrew: [
+                        { cat: "PUR", pos: "L1", name: "Alice Brown", staffId: "CCM-901", sign: "Yes" },
+                        { cat: "CS", pos: "R4", name: "Robert Smith", staffId: "CCM-902", sign: "Yes" }
+                    ],
+                    passengers: [
+                        { passengerName: "John Smith", seatNumber: "12A", ticketNumber: "ABC123", pnrNumber: "PNR-1001" },
+                        { passengerName: "Maria Chen", seatNumber: "22D", ticketNumber: "ABC124", pnrNumber: "PNR-1002" }
+                    ],
+                    flySmiles: [
+                        { cabin: "EY", flySmilesNo: "FS-55421", memberName: "Arun Perera", tier: "Gold", seatNo: "18C" }
+                    ],
+                    specialNeeds: [
+                        { cabin: "EY", paxName: "Noel Brown", serviceCode: "WCHR", description: "Wheelchair assistance", seatNo: "23B" }
+                    ],
+                    neighborFreeSeat: [
+                        { cabin: "EY", paxName: "Lily Thomas", serviceCode: "NFS", checkInSeatNo: "30A", neighbourFreeSeat: "30B", details: "Seat kept open for comfort spacing." }
+                    ],
+                    water: "18 liters remaining on arrival",
+                    meals: [
+                        { mealType: "BC", measurementUnit: "Packs", bcCateredMeals: 24, bcRemainingMeals: 2, eyCateredMeals: 156, eyRemainingMeals: 10 },
+                        { mealType: "EY", measurementUnit: "Trays", bcCateredMeals: 0, bcRemainingMeals: 0, eyCateredMeals: 156, eyRemainingMeals: 10 }
+                    ]
+                },
+                {
+                    flightDate: "2025-11-20",
+                    flightNo: "UL205",
+                    boardPoint: "CMB",
+                    offPoint: "BKK",
+                    generalInformation: {
+                        std: "13:10",
+                        atd: "13:12",
+                        ata: "15:35",
+                        cateringCom: "Completed",
+                        ccmReadyForPax: "Yes",
+                        boardingCom: "Yes",
+                        lastPaxOnboard: "13:01",
+                        xfd: "Delivered",
+                        bc: 16,
+                        ey: 124,
+                        inf: 1,
+                        total: 141
+                    },
+                    crewInformation: [
+                        { cat: "PUR", empNo: "CCM-901", name: "Alice Brown", promotionDate: "2022-09-10", gender: "Female", nationality: "LK", onboard: "Yes", position: "L1", safetySign: "Yes", sign: "Yes" },
+                        { cat: "FA", empNo: "CCM-902", name: "Robert Smith", promotionDate: "2024-01-10", gender: "Male", nationality: "LK", onboard: "Yes", position: "R3", safetySign: "Yes", sign: "Yes" }
+                    ],
+                    regulatory: [
+                        { label: "Transit Baggage Check Carried Out", value: "Yes" },
+                        { label: "Aerosol Sprayed", value: "Yes" },
+                        { label: "General Declaration Completed", value: "Yes" },
+                        { label: "First Aid Kits Sealed", value: "Yes" },
+                        { label: "Relevant Announcements for the sector/s", value: "Standard safety and arrival announcements completed" }
+                    ],
+                    safetyConfirmation: [
+                        { cat: "PUR", name: "Alice Brown", staffId: "CCM-901", sign: "Yes" },
+                        { cat: "FA", name: "Robert Smith", staffId: "CCM-902", sign: "Yes" }
+                    ],
+                    incidents: [],
+                    delayReport: "No operational delay recorded.",
+                    generalComments: "Normal service flow with no irregularities.",
+                    snyCrew: [
+                        { cat: "CS", pos: "R4", name: "Kevin Fernando", staffId: "CCM-905", sign: "Yes" }
+                    ],
+                    passengers: [
+                        { passengerName: "Hannah Smith", seatNumber: "14B", ticketNumber: "XYZ555", pnrNumber: "PNR-2001" }
+                    ],
+                    flySmiles: [
+                        { cabin: "EY", flySmilesNo: "FS-77901", memberName: "Nadeesha Silva", tier: "Silver", seatNo: "15A" }
+                    ],
+                    specialNeeds: [],
+                    neighborFreeSeat: [],
+                    water: "22 liters remaining on arrival",
+                    meals: [
+                        { mealType: "EY", measurementUnit: "Trays", bcCateredMeals: 16, bcRemainingMeals: 1, eyCateredMeals: 124, eyRemainingMeals: 8 }
+                    ]
+                }
+            ];
+
+            const state = {
+                searched: false,
+                selectedId: "",
+                selectedTab: "general",
+                filterFlightNo: "",
+                filterDate: "",
+                filterBoardPoint: "",
+                summarySearch: "",
+                summaryEntries: 10,
+                summaryPage: 1,
+                sort: { key: "flightDate", dir: "desc" }
+            };
+
+            const rawRole = localStorage.getItem("cc_user_role") || "Ground User";
+            const currentRole = (rawRole === "Admin" || rawRole === "Ground User") ? rawRole : "Ground User";
+            const isGroundUser = currentRole === "Ground User";
+
+            function getAssignedFlightSet() {
+                if (!isGroundUser) return null;
+
+                try {
+                    const raw = localStorage.getItem("cc_assigned_flights") || "[]";
+                    const parsed = JSON.parse(raw);
+                    const list = Array.isArray(parsed) ? parsed : [];
+                    const normalized = list
+                        .map((flightNo) => String(flightNo || "").trim().toUpperCase())
+                        .filter(Boolean);
+                    return new Set(normalized);
+                } catch (_error) {
+                    return new Set();
+                }
+            }
+
+            const assignedFlightSet = getAssignedFlightSet();
+
+            const el = {
+                searchCard: document.getElementById("voyageSearchCard"),
+                searchForm: document.getElementById("voyageReportsForm"),
+                flightNo: document.getElementById("flightNo"),
+                flightDate: document.getElementById("flightDate"),
+                boardPoint: document.getElementById("boardPoint"),
+                emptyState: document.getElementById("voyageEmptyState"),
+                summaryState: document.getElementById("voyageSummaryState"),
+                summaryBody: document.getElementById("voyageSummaryBody"),
+                recordBadge: document.getElementById("voyageRecordBadge"),
+                summarySearch: document.getElementById("voyageSummarySearch"),
+                entriesSelect: document.getElementById("voyageEntriesSelect"),
+                pagingInfo: document.getElementById("voyagePagingInfo"),
+                prevBtn: document.getElementById("voyagePrevBtn"),
+                pageBtn: document.getElementById("voyagePageBtn"),
+                nextBtn: document.getElementById("voyageNextBtn"),
+                detailState: document.getElementById("voyageDetailState"),
+                backBtn: document.getElementById("voyageBackBtn"),
+                bannerFlight: document.getElementById("voyageBannerFlight"),
+                bannerRoute: document.getElementById("voyageBannerRoute"),
+                bannerDate: document.getElementById("voyageBannerDate"),
+                bannerPax: document.getElementById("voyageBannerPax"),
+                bannerCrew: document.getElementById("voyageBannerCrew"),
+                bannerIncidents: document.getElementById("voyageBannerIncidents"),
+                tabStrip: document.getElementById("voyageTabStrip"),
+                detailSections: document.getElementById("voyageDetailSections"),
+                galleryModal: document.getElementById("voyageGalleryModal"),
+                galleryClose: document.getElementById("voyageGalleryCloseBtn"),
+                galleryBody: document.getElementById("voyageGalleryBody"),
+                galleryTitle: document.getElementById("voyageGalleryTitle")
+            };
+
+            function setHidden(node, hidden) {
+                if (!node) return;
+                node.classList.toggle("d-none", hidden);
+            }
+
+            function setEmptyStateText(titleText, bodyHtml) {
+                if (!el.emptyState) return;
+                const title = el.emptyState.querySelector(".vr-empty-title");
+                const text = el.emptyState.querySelector(".vr-empty-text");
+                if (title) title.textContent = titleText;
+                if (text) text.innerHTML = bodyHtml;
+            }
+
+            function scopedReports() {
+                if (!isGroundUser) return [...voyageReports];
+                if (!assignedFlightSet || !assignedFlightSet.size) return [];
+                return voyageReports.filter((report) => assignedFlightSet.has(String(report.flightNo || "").toUpperCase()));
+            }
+
+            function dateLabel(value) {
+                if (!value) return "";
+                const parts = value.split("-");
+                if (parts.length !== 3) return value;
+                return `${parts[2]} / ${parts[1]} / ${parts[0]}`;
+            }
+
+            function normalizeDateInput(value) {
+                const raw = (value || "").trim();
+                if (!raw) return "";
+                if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+                const match = raw.match(/^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{2}|\d{4})$/);
+                if (!match) return "";
+                const day = String(match[1]).padStart(2, "0");
+                const month = String(match[2]).padStart(2, "0");
+                const year = match[3].length === 2 ? `20${match[3]}` : match[3];
+                return `${year}-${month}-${day}`;
+            }
+
+            function sortRows(rows, sort) {
+                return [...rows].sort((a, b) => {
+                    const av = String(a[sort.key] ?? "").toLowerCase();
+                    const bv = String(b[sort.key] ?? "").toLowerCase();
+                    if (sort.key === "flightDate") {
+                        return sort.dir === "asc"
+                            ? new Date(a.flightDate) - new Date(b.flightDate)
+                            : new Date(b.flightDate) - new Date(a.flightDate);
+                    }
+                    if (av < bv) return sort.dir === "asc" ? -1 : 1;
+                    if (av > bv) return sort.dir === "asc" ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            function toggleSort(key) {
+                if (state.sort.key === key) {
+                    state.sort.dir = state.sort.dir === "asc" ? "desc" : "asc";
+                    return;
+                }
+                state.sort.key = key;
+                state.sort.dir = "asc";
+            }
+
+            function summaryRows() {
+                let rows = scopedReports();
+                const flightNo = state.filterFlightNo.toLowerCase();
+                const boardPoint = state.filterBoardPoint.toLowerCase();
+                const date = state.filterDate;
+                const summarySearch = state.summarySearch.toLowerCase();
+
+                if (flightNo) rows = rows.filter((row) => row.flightNo.toLowerCase().includes(flightNo));
+                if (boardPoint) rows = rows.filter((row) => row.boardPoint.toLowerCase().includes(boardPoint));
+                if (date) rows = rows.filter((row) => row.flightDate === date);
+                if (summarySearch) {
+                    rows = rows.filter((row) =>
+                        [row.flightDate, row.flightNo, row.boardPoint, row.offPoint].some((value) => String(value).toLowerCase().includes(summarySearch))
+                    );
+                }
+
+                return sortRows(rows, state.sort);
+            }
+
+            function getSelectedReport() {
+                return scopedReports().find((report) => `${report.flightNo}::${report.flightDate}` === state.selectedId) || null;
+            }
+
+            function yesNoBadge(value) {
+                const text = String(value || "");
+                const lower = text.toLowerCase();
+                const klass = lower === "yes" ? "yes" : lower === "no" ? "no" : "text";
+                return `<span class="vr-pill ${klass}">${text}</span>`;
+            }
+
+            function yesNoIcon(value) {
+                const text = String(value || "").toLowerCase();
+                const yes = text === "yes";
+                const icon = yes
+                    ? `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="#16A34A" /><path d="M6 10.3l2.3 2.3L14.2 6.8" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg>`
+                    : `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="#9CA3AF" /><path d="M6.4 6.4l7.2 7.2M13.6 6.4l-7.2 7.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round" /></svg>`;
+                return `<span class="vr-yn-icon ${yes ? "yes" : "no"}">${icon}</span>`;
+            }
+
+            function catBadge(value) {
+                return `<span class="vr-cat-badge">${value}</span>`;
+            }
+
+            function signBadge(value) {
+                const text = String(value || "");
+                return `<span class="vr-sign ${text.toLowerCase() === "yes" ? "yes" : "no"}">${text}</span>`;
+            }
+
+            function safetySignPill(value) {
+                const text = String(value || "").toUpperCase();
+                const yes = text === "YES";
+                return `<span class="vr-safety-sign ${yes ? "yes" : "no"}">${text}</span>`;
+            }
+
+            function sectionHeaderIcon(type) {
+                if (type === "warning") {
+                    return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 3.8 21.1 19a1.1 1.1 0 0 1-.95 1.6H3.85A1.1 1.1 0 0 1 2.9 19L12 3.8Z" fill="currentColor" opacity="0.2"/><path d="M12 7v7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.1" fill="currentColor"/></svg>`;
+                }
+
+                if (type === "water") {
+                    return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 3.8c2.7 3 5.2 6.4 5.2 9.2a5.2 5.2 0 1 1-10.4 0c0-2.8 2.5-6.2 5.2-9.2Z" stroke="currentColor" stroke-width="1.8"/><path d="M9.2 13.6c0 1.5 1 2.7 2.8 2.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/></svg>`;
+                }
+
+                if (type === "meal") {
+                    return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="9" cy="19" r="1.6" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="19" r="1.6" stroke="currentColor" stroke-width="1.6"/><path d="M4 5h2l1.7 8.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 8H7.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+                }
+
+                return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M5.8 19c.7-3.3 3.3-5.2 6.2-5.2 2.9 0 5.5 1.9 6.2 5.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+            }
+
+            function regulatoryStatus(item) {
+                const label = String(item?.label || "").toLowerCase();
+                const value = String(item?.value || "").toLowerCase();
+                if (label.includes("meal services produce")) return "pending";
+                if (value === "yes") return "yes";
+                if (value === "no") return "no";
+                return "pending";
+            }
+
+            function regulatoryStatusIcon(status) {
+                if (status === "yes") {
+                    return `<span class="vr-reg-status yes" aria-hidden="true"><svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none"><circle cx="10" cy="10" r="8" stroke="#00A63E" stroke-width="2"/><path d="M6.4 10.2l2.1 2.2 5-5" stroke="#00A63E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
+                }
+                if (status === "no") {
+                    return `<span class="vr-reg-status no" aria-hidden="true"><svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none"><circle cx="10" cy="10" r="8" stroke="#9CA3AF" stroke-width="2"/><path d="M7 7l6 6M13 7l-6 6" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round"/></svg></span>`;
+                }
+                return `<span class="vr-reg-status pending" aria-hidden="true"><svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none"><circle cx="10" cy="10" r="8" fill="#D1D5DB" stroke="#A1A1AA" stroke-width="1.5"/></svg></span>`;
+            }
+
+            function dataTableCard(title, iconUrl, headers, rows, emptyMessage, options) {
+                const opts = options || {};
+                const count = Number(opts.count) || 0;
+                const titleSuffix = opts.titleSuffix === undefined ? "members" : String(opts.titleSuffix);
+                const cardClass = opts.cardClass || "";
+                const headerClass = opts.headerClass || "";
+                const bodyClass = opts.bodyClass || "";
+                const tableClass = opts.tableClass || "vr-crew-table";
+                const tableKey = opts.tableKey || title.toLowerCase().replace(/\s+/g, "-");
+                const defaultEntries = Number(opts.defaultEntries) || 10;
+                const iconHtml = opts.iconMarkup || `<img src="${iconUrl}" alt="" />`;
+                const body = rows.length
+                    ? rows.join("")
+                    : `<tr><td colspan="${headers.length}" class="vr-empty-row">${emptyMessage}</td></tr>`;
+                const titleText = titleSuffix ? `${title} (${count} ${titleSuffix})` : title;
+                const footer = opts.showFooter !== false
+                    ? `<div class="vr-table-footer vr-passenger-footer">
+                            <span class="vr-js-info">${opts.footerLabel || `Showing 1 to ${count} of ${count} entries`}</span>
+                            <div class="vr-pager-btns">
+                                <button type="button" class="vr-js-prev" disabled>Previous</button>
+                                <button type="button" class="active vr-js-page">1</button>
+                                <button type="button" class="vr-js-next" disabled>Next</button>
+                            </div>
+                        </div>`
+                    : "";
+
+                return `
+                    <section class="vr-section-card vr-data-card ${cardClass}" data-table-key="${tableKey}">
+                        <header class="vr-section-header vr-data-card-header ${headerClass}">
+                            <span class="vr-data-header-icon" aria-hidden="true">${iconHtml}</span>
+                            <span>${titleText}</span>
+                        </header>
+                        <div class="vr-section-body vr-data-card-body ${bodyClass}">
+                            <div class="vr-toolbar vr-inline-toolbar">
+                                <div class="vr-toolbar-left">
+                                    <span>Show</span>
+                                    <select class="vr-toolbar-select vr-js-entries" aria-label="Entries per page">
+                                        <option value="10" ${defaultEntries === 10 ? "selected" : ""}>10</option>
+                                        <option value="25" ${defaultEntries === 25 ? "selected" : ""}>25</option>
+                                        <option value="50" ${defaultEntries === 50 ? "selected" : ""}>50</option>
+                                    </select>
+                                    <span>entries</span>
+                                    <span class="vr-badge">${count} records</span>
+                                </div>
+                                <div class="vr-toolbar-search">
+                                    <span class="vr-toolbar-search-icon" aria-hidden="true">
+                                        <img src="/images/icons/search-white.svg" alt="" />
+                                    </span>
+                                    <input class="vr-js-search" type="text" placeholder="${opts.searchPlaceholder || "Search..."}" />
+                                </div>
+                            </div>
+                            <div class="vr-table-wrap">
+                                <table class="vr-table vr-detail-table ${tableClass}">
+                                    <thead>
+                                        <tr>${headers.map((header) => `<th>${header}</th>`).join("")}</tr>
+                                    </thead>
+                                    <tbody class="vr-js-tbody" data-colspan="${headers.length}" data-empty-message="${emptyMessage}">${body}</tbody>
+                                </table>
+                            </div>
+                            ${footer}
+                        </div>
+                    </section>`;
+            }
+
+            function sectionCard(title, body, className, attributes) {
+                const extraAttrs = attributes ? ` ${attributes}` : "";
+                return `<section class="vr-section-card ${className || ""}"${extraAttrs}><header class="vr-section-header">${title}</header><div class="vr-section-body">${body}</div></section>`;
+            }
+
+            function emptyIncidentCard() {
+                return `
+                    <section class="vr-section-card vr-incident-empty-card">
+                        <header class="vr-section-header vr-incident-empty-header">
+                            <span class="vr-incident-header-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 3.8 21.1 19a1.1 1.1 0 0 1-.95 1.6H3.85A1.1 1.1 0 0 1 2.9 19L12 3.8Z" fill="currentColor" opacity="0.18" />
+                                    <path d="M12 7v7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                                    <circle cx="12" cy="17.2" r="1.1" fill="currentColor" />
+                                </svg>
+                            </span>
+                            <span>No Incidents Reported</span>
+                        </header>
+                        <div class="vr-section-body">
+                            <div class="vr-incident-empty-panel">
+                                <div class="vr-incident-empty-mark">✓</div>
+                                <div class="vr-incident-empty-title">Flight Completed Successfully</div>
+                                <div class="vr-incident-empty-text">No incidents reported during this voyage</div>
+                            </div>
+                        </div>
+                    </section>`;
+            }
+
+            function incidentCard(report) {
+                const incidentRows = report.incidents.map((incident, index) => `
+                    <tr>
+                        <td>${incident.pnrTicket}</td>
+                        <td><span class="vr-cat-badge vr-incident-cat">${incident.mainCategory}</span></td>
+                        <td>${incident.incidentDescription}</td>
+                        <td class="vr-incident-details">${incident.moreDetails}</td>
+                        <td>${incident.paxName}</td>
+                        <td>${incident.paxSeat}</td>
+                        <td>${incident.reportedBy}</td>
+                        <td>${incident.incidentId}</td>
+                        <td>${incident.assignedInspectors}</td>
+                        <td><span class="vr-status ${incident.status.toLowerCase()}">${incident.status}</span></td>
+                        <td>${incident.assignedBy}</td>
+                        <td><button type="button" class="vr-gallery-btn vr-incident-gallery-btn" data-incident-index="${index}">View Images (${incident.images.length})</button></td>
+                    </tr>
+                `);
+
+                return `
+                    <section class="vr-section-card vr-incident-card" data-table-key="incidents">
+                        <header class="vr-section-header vr-incident-header">
+                            <span class="vr-incident-header-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 3.8 21.1 19a1.1 1.1 0 0 1-.95 1.6H3.85A1.1 1.1 0 0 1 2.9 19L12 3.8Z" fill="currentColor" opacity="0.18" />
+                                    <path d="M12 7v7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                                    <circle cx="12" cy="17.2" r="1.1" fill="currentColor" />
+                                </svg>
+                            </span>
+                            <span>Incidents</span>
+                        </header>
+                        <div class="vr-section-body vr-incident-wrap">
+                            <div class="vr-incident-toolbar">
+                                <div class="vr-safety-toolbar-left vr-incident-toolbar-left">
+                                    <span>Show</span>
+                                    <select class="vr-toolbar-select vr-js-entries" aria-label="Entries per page">
+                                        <option value="10" selected>10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                    </select>
+                                    <span>entries</span>
+                                    <span class="vr-badge">${report.incidents.length} records</span>
+                                </div>
+                                <div class="vr-incident-toolbar-search">
+                                    <span class="vr-toolbar-search-icon" aria-hidden="true">
+                                        <img src="/images/icons/search-muted.svg" alt="" />
+                                    </span>
+                                    <input class="vr-js-search" type="text" placeholder="Search incidents..." />
+                                </div>
+                            </div>
+                            <div class="vr-table-wrap">
+                                <table class="vr-table vr-detail-table vr-incident-table">
+                                    <thead>
+                                        <tr>
+                                            <th>PNR Ticket</th>
+                                            <th>Main Category</th>
+                                            <th>Incident Description</th>
+                                            <th>More Details</th>
+                                            <th>PAX Name</th>
+                                            <th>PAX Seat</th>
+                                            <th>Reported by</th>
+                                            <th>Incident ID</th>
+                                            <th>Assigned Inspector/s</th>
+                                            <th>Status</th>
+                                            <th>Assigned By</th>
+                                            <th>Image</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="vr-js-tbody" data-colspan="12" data-empty-message="No incidents recorded for this voyage.">${incidentRows.length ? incidentRows.join("") : `<tr><td colspan="12" class="vr-empty-row">No incidents recorded for this voyage.</td></tr>`}</tbody>
+                                </table>
+                            </div>
+                            <div class="vr-incident-footer">
+                                <span class="vr-js-info">Showing 1 to ${report.incidents.length} of ${report.incidents.length} entries</span>
+                                <div class="vr-incident-pager">
+                                    <button type="button" class="vr-js-prev" disabled>Previous</button>
+                                    <button type="button" class="active vr-js-page">1</button>
+                                    <button type="button" class="vr-js-next" disabled>Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>`;
+            }
+
+            function renderTabStrip(report) {
+                if (!el.tabStrip || !report) return;
+
+                const tabs = [
+                    { key: "general", label: "General" },
+                    { key: "crew", label: "Crew Info" },
+                    { key: "regulatory", label: "Regulatory" },
+                    { key: "safety", label: "Safety" },
+                    { key: "incidents", label: "Incidents" },
+                    { key: "passengers", label: "Passengers" },
+                    { key: "services", label: "Services" }
+                ];
+
+                el.tabStrip.innerHTML = tabs.map((tab) => `
+                    <button type="button" class="vr-tab-btn ${state.selectedTab === tab.key ? "active" : ""}" data-tab-key="${tab.key}" aria-pressed="${state.selectedTab === tab.key ? "true" : "false"}">${tab.label}</button>
+                `).join("");
+
+                el.tabStrip.querySelectorAll(".vr-tab-btn").forEach((button) => {
+                    button.addEventListener("click", function () {
+                        state.selectedTab = this.getAttribute("data-tab-key") || "general";
+                        renderDetail();
+                    });
+                });
+            }
+
+            function kvGrid(items) {
+                return `<div class="vr-kv-grid">${items.map((item) => `
+                    <div class="vr-kv-item">
+                        <span>${item.label}</span>
+                        <strong>${item.value}</strong>
+                    </div>
+                `).join("")}</div>`;
+            }
+
+            function simpleTable(headers, rows, emptyMessage, colspan) {
+                const body = rows.length
+                    ? rows.join("")
+                    : `<tr><td colspan="${colspan}" class="vr-empty-row">${emptyMessage}</td></tr>`;
+                return `<div class="vr-table-wrap"><table class="vr-table vr-detail-table"><thead><tr>${headers.map((header) => `<th>${header}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table></div>`;
+            }
+
+            function wireDetailTableInteractions(report) {
+                if (!el.detailSections) return;
+
+                el.detailSections.querySelectorAll("[data-table-key]").forEach((card) => {
+                    const tableKey = card.getAttribute("data-table-key") || "";
+                    const tbody = card.querySelector(".vr-js-tbody");
+                    if (!tbody) return;
+
+                    const searchInput = card.querySelector(".vr-js-search");
+                    const entriesSelect = card.querySelector(".vr-js-entries");
+                    const badge = card.querySelector(".vr-badge");
+                    const info = card.querySelector(".vr-js-info");
+                    const prevBtn = card.querySelector(".vr-js-prev");
+                    const pageBtn = card.querySelector(".vr-js-page");
+                    const nextBtn = card.querySelector(".vr-js-next");
+                    const colspan = parseInt(tbody.getAttribute("data-colspan") || "1", 10);
+                    const emptyMessage = tbody.getAttribute("data-empty-message") || "No records found.";
+
+                    const sourceRows = Array.from(tbody.querySelectorAll("tr"))
+                        .filter((row) => !row.querySelector(".vr-empty-row"))
+                        .map((row) => ({
+                            html: row.outerHTML,
+                            text: (row.textContent || "").toLowerCase()
+                        }));
+
+                    let page = 1;
+                    let pageSize = parseInt(entriesSelect ? entriesSelect.value : "10", 10);
+                    let search = "";
+
+                    function renderTableState() {
+                        const query = search.trim().toLowerCase();
+                        const filtered = query
+                            ? sourceRows.filter((row) => row.text.includes(query))
+                            : sourceRows;
+
+                        const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                        if (page > totalPages) page = totalPages;
+                        const start = (page - 1) * pageSize;
+                        const visible = filtered.slice(start, start + pageSize);
+
+                        tbody.innerHTML = visible.length
+                            ? visible.map((row) => row.html).join("")
+                            : `<tr><td colspan="${colspan}" class="vr-empty-row">${emptyMessage}</td></tr>`;
+
+                        if (badge) {
+                            badge.textContent = `${filtered.length} records`;
+                        }
+
+                        if (info) {
+                            const from = filtered.length ? start + 1 : 0;
+                            const to = start + visible.length;
+                            info.textContent = `Showing ${from} to ${to} of ${filtered.length} entries`;
+                        }
+
+                        if (pageBtn) pageBtn.textContent = String(page);
+                        if (prevBtn) prevBtn.disabled = page <= 1;
+                        if (nextBtn) nextBtn.disabled = page >= totalPages;
+
+                        if (tableKey === "incidents") {
+                            tbody.querySelectorAll(".vr-incident-gallery-btn").forEach((button) => {
+                                button.addEventListener("click", function () {
+                                    const index = parseInt(this.getAttribute("data-incident-index") || "0", 10);
+                                    openGallery(report.incidents[index]);
+                                });
+                            });
+                        }
+                    }
+
+                    if (searchInput) {
+                        searchInput.addEventListener("input", function () {
+                            search = this.value;
+                            page = 1;
+                            renderTableState();
+                        });
+                    }
+
+                    if (entriesSelect) {
+                        entriesSelect.addEventListener("change", function () {
+                            pageSize = parseInt(this.value, 10);
+                            page = 1;
+                            renderTableState();
+                        });
+                    }
+
+                    if (prevBtn) {
+                        prevBtn.addEventListener("click", function () {
+                            if (page <= 1) return;
+                            page -= 1;
+                            renderTableState();
+                        });
+                    }
+
+                    if (nextBtn) {
+                        nextBtn.addEventListener("click", function () {
+                            const query = search.trim().toLowerCase();
+                            const filtered = query
+                                ? sourceRows.filter((row) => row.text.includes(query))
+                                : sourceRows;
+                            const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                            if (page >= totalPages) return;
+                            page += 1;
+                            renderTableState();
+                        });
+                    }
+
+                    renderTableState();
+                });
+            }
+
+            function renderDetailSections(report) {
+                if (!el.detailSections || !report) return;
+
+                const generalInfo = sectionCard(
+                    "General Information",
+                    kvGrid([
+                        { label: "Scheduled Time of Departure", value: report.generalInformation.std },
+                        { label: "Actual Time of Departure", value: report.generalInformation.atd },
+                        { label: "Actual Time of Arrival", value: report.generalInformation.ata },
+                        { label: "Catering Com", value: report.generalInformation.cateringCom },
+                        { label: "CCM Ready for PAX", value: report.generalInformation.ccmReadyForPax },
+                        { label: "Boarding Com", value: report.generalInformation.boardingCom },
+                        { label: "Last Pax Onboard", value: report.generalInformation.lastPaxOnboard },
+                        { label: "XFD", value: report.generalInformation.xfd },
+                        { label: "Business Class", value: report.generalInformation.bc },
+                        { label: "Economy Class", value: report.generalInformation.ey },
+                        { label: "Infants", value: report.generalInformation.inf },
+                        { label: "Total", value: report.generalInformation.total }
+                    ])
+                );
+
+                const crewRows = report.crewInformation.map((crew) => `
+                    <tr>
+                        <td>${catBadge(crew.cat)}</td>
+                        <td>${crew.empNo}</td>
+                        <td>${crew.name}</td>
+                        <td>${crew.promotionDate}</td>
+                        <td>${crew.gender}</td>
+                        <td>${crew.nationality}</td>
+                        <td>${yesNoIcon(crew.onboard)}</td>
+                        <td>${crew.position}</td>
+                        <td>${yesNoIcon(crew.safetySign)}</td>
+                        <td>${signBadge(crew.sign)}</td>
+                    </tr>
+                `);
+                const crewInfo = dataTableCard(
+                    "Crew Information",
+                    "/images/icons/section-header.svg",
+                    ["CAT", "EMP No", "Name", "Date of Promotion", "Gender", "Nationality", "Onboard", "Position", "Safety Sign", "Sign"],
+                    crewRows,
+                    "No crew information recorded.",
+                    { count: report.crewInformation.length, searchPlaceholder: "Search crew...", tableKey: "crew" }
+                );
+
+                const regulatoryCards = report.regulatory.map((item) => {
+                    const status = regulatoryStatus(item);
+                    return `
+                        <div class="vr-reg-item ${status}">
+                            <span class="vr-reg-label">${item.label}</span>
+                            ${regulatoryStatusIcon(status)}
+                        </div>`;
+                });
+
+                const regulatoryPrimary = regulatoryCards.slice(0, 4).join("");
+                const regulatoryBriefing = regulatoryCards.slice(4).join("");
+                const regulatory = sectionCard(
+                    `<span class="vr-reg-header-title"><span class="vr-reg-header-icon">✓</span>Regulatory Compliance</span>`,
+                    report.regulatory.length
+                        ? `<div class="vr-regulatory-wrap">
+                            <div class="vr-reg-grid">${regulatoryPrimary}</div>
+                            <div class="vr-reg-divider"></div>
+                            <div class="vr-reg-subtitle"><span class="vr-reg-subtitle-mark"></span>Mandatory Topics Discussed at SEP Briefing</div>
+                            <div class="vr-reg-grid">${regulatoryBriefing}</div>
+                        </div>`
+                        : `<div class="vr-empty-row">No regulatory records available.</div>`,
+                    "vr-regulatory-card"
+                );
+
+                const safetyRows = report.safetyConfirmation.map((item) => `
+                    <tr>
+                        <td>${catBadge(item.cat)}</td>
+                        <td>${item.name}</td>
+                        <td>${item.staffId}</td>
+                        <td>${safetySignPill(item.sign)}</td>
+                    </tr>
+                `);
+                const safety = sectionCard(
+                    `<span class="vr-reg-header-title"><span class="vr-reg-header-icon">✓</span>Confirmation of Safety (${report.safetyConfirmation.length} confirmations)</span>`,
+                    `<div class="vr-safety-wrap">
+                        <div class="vr-safety-toolbar">
+                            <div class="vr-safety-toolbar-left">
+                                <span>Show</span>
+                                <select class="vr-toolbar-select vr-js-entries" aria-label="Entries per page">
+                                    <option value="10" selected>10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                </select>
+                                <span>entries</span>
+                                <span class="vr-badge">${report.safetyConfirmation.length} records</span>
+                            </div>
+                            <div class="vr-safety-toolbar-search">
+                                <span class="vr-toolbar-search-icon" aria-hidden="true">
+                                    <img src="/images/icons/search-muted.svg" alt="" />
+                                </span>
+                                <input class="vr-js-search" type="text" placeholder="Search safety confirmations..." />
+                            </div>
+                        </div>
+                        <div class="vr-table-wrap">
+                            <table class="vr-table vr-detail-table vr-safety-table">
+                                <thead>
+                                    <tr>
+                                        <th>CAT</th>
+                                        <th>Name</th>
+                                        <th>Staff ID</th>
+                                        <th>Sign</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="vr-js-tbody" data-colspan="4" data-empty-message="No safety confirmation records available.">${safetyRows.length ? safetyRows.join("") : `<tr><td colspan="4" class="vr-empty-row">No safety confirmation records available.</td></tr>`}</tbody>
+                            </table>
+                        </div>
+                        <div class="vr-safety-footer">
+                            <span class="vr-js-info">Showing 1 to ${report.safetyConfirmation.length} of ${report.safetyConfirmation.length} entries</span>
+                            <div class="vr-safety-pager">
+                                <button type="button" class="vr-js-prev" disabled>Previous</button>
+                                <button type="button" class="active vr-js-page">1</button>
+                                <button type="button" class="vr-js-next" disabled>Next</button>
+                            </div>
+                        </div>
+                        </div>`,
+                    "vr-safety-card",
+                    "data-table-key=\"safety\""
+                );
+
+                const delayReport = sectionCard("Delay Comments", `<div class="vr-alert-box">${report.delayReport}</div>`);
+                const generalComments = sectionCard("General Comments", `<div class="vr-info-box">${report.generalComments}</div>`);
+
+                const snyRows = report.snyCrew.map((item) => `
+                    <tr>
+                        <td>${catBadge(item.cat)}</td>
+                        <td>${item.pos}</td>
+                        <td>${item.name}</td>
+                        <td>${item.staffId}</td>
+                        <td>${signBadge(item.sign)}</td>
+                    </tr>
+                `);
+                const snyCrew = dataTableCard(
+                    "SNY Crew",
+                    "/images/icons/section-header.svg",
+                    ["CAT", "POS", "Name", "StaffID", "Sign"],
+                    snyRows,
+                    "No SNY crew recorded.",
+                    { count: report.snyCrew.length, searchPlaceholder: "Search SNY crew...", tableKey: "sny" }
+                );
+
+                const passengerRows = report.passengers.map((item) => `
+                    <tr>
+                        <td>${item.passengerName}</td>
+                        <td>${item.seatNumber}</td>
+                        <td>${item.ticketNumber}</td>
+                        <td>${item.pnrNumber}</td>
+                    </tr>
+                `);
+                const passengers = dataTableCard(
+                    "Passengers",
+                    "/images/icons/section-header.svg",
+                    ["Passenger Name", "Seat Number", "Ticket Number", "PNR Number"],
+                    passengerRows,
+                    "No passenger records available.",
+                    {
+                        count: report.passengers.length,
+                        titleSuffix: "",
+                        iconMarkup: sectionHeaderIcon("person"),
+                        searchPlaceholder: "Search passengers...",
+                        showFooter: true,
+                        footerLabel: `Showing 1 to ${report.passengers.length} of ${report.passengers.length} entries`,
+                        cardClass: "vr-passenger-card",
+                        headerClass: "vr-passenger-header",
+                        bodyClass: "vr-passenger-body",
+                        tableClass: "vr-passenger-table",
+                        tableKey: "passengers"
+                    }
+                );
+
+                const flySmilesRows = report.flySmiles.map((item) => `
+                    <tr>
+                        <td>${catBadge(item.cabin)}</td>
+                        <td>${item.flySmilesNo}</td>
+                        <td>${item.memberName}</td>
+                        <td>${item.tier}</td>
+                        <td>${item.seatNo}</td>
+                    </tr>
+                `);
+                const flySmiles = dataTableCard(
+                    "FlySmiles PAX",
+                    "/images/icons/section-header.svg",
+                    ["Cabin", "FlySmiles No", "Member Name", "Tier", "Seat No"],
+                    flySmilesRows,
+                    "No FlySmiles passengers recorded.",
+                    {
+                        count: report.flySmiles.length,
+                        titleSuffix: "",
+                        iconMarkup: sectionHeaderIcon("person"),
+                        searchPlaceholder: "Search FlySmiles members...",
+                        showFooter: true,
+                        footerLabel: `Showing 1 to ${report.flySmiles.length} of ${report.flySmiles.length} entries`,
+                        cardClass: "vr-passenger-card",
+                        headerClass: "vr-passenger-header",
+                        bodyClass: "vr-passenger-body",
+                        tableClass: "vr-flysmiles-table",
+                        tableKey: "flysmiles"
+                    }
+                );
+
+                const specialNeedsRows = report.specialNeeds.map((item) => `
+                    <tr>
+                        <td>${catBadge(item.cabin)}</td>
+                        <td>${item.paxName}</td>
+                        <td>${item.serviceCode}</td>
+                        <td>${item.description}</td>
+                        <td>${item.seatNo}</td>
+                    </tr>
+                `);
+                const specialNeeds = dataTableCard(
+                    "Special Needs PAX",
+                    "/images/icons/section-header.svg",
+                    ["Cabin", "PAX Name", "Service Code", "Description", "Seat No"],
+                    specialNeedsRows,
+                    "No special needs passengers recorded.",
+                    {
+                        count: report.specialNeeds.length,
+                        titleSuffix: "",
+                        iconMarkup: sectionHeaderIcon("warning"),
+                        searchPlaceholder: "Search special needs passengers...",
+                        showFooter: true,
+                        footerLabel: `Showing 1 to ${report.specialNeeds.length} of ${report.specialNeeds.length} entries`,
+                        cardClass: "vr-passenger-card",
+                        headerClass: "vr-passenger-header",
+                        bodyClass: "vr-passenger-body",
+                        tableClass: "vr-special-needs-table",
+                        tableKey: "special-needs"
+                    }
+                );
+
+                const neighborRows = report.neighborFreeSeat.map((item) => `
+                    <tr>
+                        <td>${catBadge(item.cabin)}</td>
+                        <td>${item.paxName}</td>
+                        <td>${item.serviceCode}</td>
+                        <td>${item.checkInSeatNo}</td>
+                        <td>${item.neighbourFreeSeat}</td>
+                        <td>${item.details}</td>
+                    </tr>
+                `);
+                const neighborFreeSeat = dataTableCard(
+                    "Neighbor Free Seat",
+                    "/images/icons/section-header.svg",
+                    ["Cabin", "PAX Name", "Service Code", "Check-In SeatNo", "Neighbour Free Seat", "Details"],
+                    neighborRows,
+                    "No neighbour free seat records available.",
+                    {
+                        count: report.neighborFreeSeat.length,
+                        titleSuffix: "",
+                        iconMarkup: sectionHeaderIcon("person"),
+                        searchPlaceholder: "Search neighbor free seats...",
+                        showFooter: true,
+                        footerLabel: `Showing 1 to ${report.neighborFreeSeat.length} of ${report.neighborFreeSeat.length} entries`,
+                        cardClass: "vr-passenger-card",
+                        headerClass: "vr-passenger-header",
+                        bodyClass: "vr-passenger-body",
+                        tableClass: "vr-neighbor-seat-table",
+                        tableKey: "neighbor-free-seat"
+                    }
+                );
+
+                const water = sectionCard("Water", kvGrid([{ label: "Water Remaining On Arrival", value: report.water }]));
+
+                const mealsRows = report.meals.map((item) => `
+                    <tr>
+                        <td>${item.mealType}</td>
+                        <td>${item.measurementUnit}</td>
+                        <td>${item.bcCateredMeals}</td>
+                        <td>${item.bcRemainingMeals}</td>
+                        <td>${item.eyCateredMeals}</td>
+                        <td>${item.eyRemainingMeals}</td>
+                    </tr>
+                `);
+                const meals = dataTableCard(
+                    "Meal Consumption",
+                    "/images/icons/section-header.svg",
+                    ["Meal Type", "Measurement Unit", "BC Catered Meals", "BC Remaining Meals", "EY Catered Meals", "EY Remaining Meals"],
+                    mealsRows,
+                    "No meal consumption records available.",
+                    {
+                        count: report.meals.length,
+                        titleSuffix: "",
+                        iconMarkup: sectionHeaderIcon("meal"),
+                        searchPlaceholder: "Search meals...",
+                        showFooter: true,
+                        footerLabel: `Showing 1 to ${report.meals.length} of ${report.meals.length} entries`,
+                        cardClass: "vr-services-card",
+                        headerClass: "vr-services-header",
+                        bodyClass: "vr-services-body",
+                        tableClass: "vr-services-table",
+                        tableKey: "meals"
+                    }
+                );
+
+                let content = "";
+
+                if (state.selectedTab === "general") {
+                    content = [generalInfo, delayReport, generalComments].join("");
+                } else if (state.selectedTab === "crew") {
+                    content = [crewInfo, snyCrew].join("");
+                } else if (state.selectedTab === "regulatory") {
+                    content = regulatory;
+                } else if (state.selectedTab === "safety") {
+                    content = safety;
+                } else if (state.selectedTab === "incidents") {
+                    content = report.incidents.length ? incidentCard(report) : emptyIncidentCard();
+                } else if (state.selectedTab === "passengers") {
+                    content = [passengers, flySmiles, specialNeeds, neighborFreeSeat].join("");
+                } else if (state.selectedTab === "services") {
+                    const waterPanel = sectionCard(
+                        `<span class="vr-services-title"><span class="vr-services-icon" aria-hidden="true">${sectionHeaderIcon("water")}</span>Water Consumption</span>`,
+                        `<div class="vr-water-panel"><div class="vr-water-label">WATER REMAINING ON ARRIVAL</div><div class="vr-water-value">${report.water}</div></div>`,
+                        "vr-services-water-card"
+                    );
+                    content = [waterPanel, meals].join("");
+                }
+
+                el.detailSections.innerHTML = content;
+                wireDetailTableInteractions(report);
+            }
+
+            function renderSummary() {
+                const rows = summaryRows();
+                const pageSize = state.summaryEntries;
+                const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+                if (state.summaryPage > totalPages) state.summaryPage = totalPages;
+                const start = (state.summaryPage - 1) * pageSize;
+                const visible = rows.slice(start, start + pageSize);
+
+                if (el.recordBadge) el.recordBadge.textContent = `${rows.length} records`;
+                if (el.pageBtn) el.pageBtn.textContent = String(state.summaryPage);
+                if (el.prevBtn) el.prevBtn.disabled = state.summaryPage <= 1;
+                if (el.nextBtn) el.nextBtn.disabled = state.summaryPage >= totalPages;
+                if (el.pagingInfo) {
+                    const from = rows.length ? start + 1 : 0;
+                    const to = start + visible.length;
+                    el.pagingInfo.textContent = `Showing ${from} to ${to} of ${rows.length} entries`;
+                }
+
+                if (!el.summaryBody) return;
+                el.summaryBody.innerHTML = visible.length
+                    ? visible.map((row) => `
+                        <tr class="vr-click-row" data-key="${row.flightNo}::${row.flightDate}">
+                            <td>${dateLabel(row.flightDate)}</td>
+                            <td>${row.flightNo}</td>
+                            <td>${row.boardPoint}</td>
+                            <td>${row.offPoint}</td>
+                        </tr>
+                    `).join("")
+                    : `<tr><td colspan="4" class="vr-empty-row">No matching voyage reports found</td></tr>`;
+
+                document.querySelectorAll(".vr-click-row").forEach((row) => {
+                    row.addEventListener("click", function () {
+                        state.selectedId = this.getAttribute("data-key") || "";
+                        state.selectedTab = "general";
+                        renderView();
+                    });
+                });
+            }
+
+            function renderDetail() {
+                const report = getSelectedReport();
+                if (!report) return;
+                if (el.bannerFlight) el.bannerFlight.textContent = `Flight ${report.flightNo}`;
+                if (el.bannerRoute) el.bannerRoute.textContent = `${report.boardPoint} → ${report.offPoint}`;
+                if (el.bannerDate) el.bannerDate.textContent = dateLabel(report.flightDate);
+                if (el.bannerPax) el.bannerPax.textContent = String(report.generalInformation.total);
+                if (el.bannerCrew) el.bannerCrew.textContent = String(report.crewInformation.length);
+                if (el.bannerIncidents) el.bannerIncidents.textContent = String(report.incidents.length);
+                renderTabStrip(report);
+                renderDetailSections(report);
+            }
+
+            function openGallery(incident) {
+                if (!incident || !el.galleryModal || !el.galleryBody || !el.galleryTitle) return;
+                el.galleryTitle.textContent = `${incident.incidentId} Images`;
+                el.galleryBody.innerHTML = `
+                    <div class="vr-gallery-grid">
+                        ${incident.images.map((image) => `
+                            <figure class="vr-gallery-item">
+                                <img src="${image.src}" alt="${image.caption}" />
+                                <figcaption>${image.caption}</figcaption>
+                            </figure>
+                        `).join("")}
+                    </div>
+                `;
+                setHidden(el.galleryModal, false);
+            }
+
+            function showState(which) {
+                setHidden(el.emptyState, true);
+                setHidden(el.summaryState, true);
+                setHidden(el.detailState, true);
+                setHidden(el.searchCard, false);
+
+                if (which === "empty") setHidden(el.emptyState, false);
+                if (which === "summary") setHidden(el.summaryState, false);
+                if (which === "detail") {
+                    setHidden(el.searchCard, true);
+                    setHidden(el.detailState, false);
+                }
+            }
+
+            function renderView() {
+                if (state.selectedId) {
+                    const selectedReport = getSelectedReport();
+                    if (!selectedReport) {
+                        state.selectedId = "";
+                        state.selectedTab = "general";
+                    } else {
+                        showState("detail");
+                        renderDetail();
+                        return;
+                    }
+                }
+
+                const rows = summaryRows();
+                if (!state.searched) {
+                    setEmptyStateText(
+                        "Ready to Search",
+                        "Use the filters above to search voyage reports by flight.<br />Enter flight details to get started."
+                    );
+                    showState("empty");
+                    return;
+                }
+
+                if (!rows.length) {
+                    showState("empty");
+                    setEmptyStateText(
+                        "No Results Found",
+                        isGroundUser
+                            ? "No assigned voyage reports matched your filters.<br />Try another Flight No, date, or board point."
+                            : "No voyage reports matched your filters.<br />Try another Flight No, date, or board point."
+                    );
+                    return;
+                }
+
+                showState("summary");
+                renderSummary();
+            }
+
+            if (el.searchForm) {
+                el.searchForm.addEventListener("submit", function (event) {
+                    event.preventDefault();
+                    state.filterFlightNo = el.flightNo ? el.flightNo.value.trim() : "";
+                    state.filterDate = normalizeDateInput(el.flightDate ? el.flightDate.value : "");
+                    state.filterBoardPoint = el.boardPoint ? el.boardPoint.value.trim() : "";
+                    state.summarySearch = "";
+                    state.summaryPage = 1;
+                    state.selectedId = "";
+                    state.selectedTab = "general";
+                    state.searched = true;
+                    if (el.summarySearch) el.summarySearch.value = "";
+                    renderView();
+                });
+            }
+
+            if (el.summarySearch) {
+                el.summarySearch.addEventListener("input", function () {
+                    state.summarySearch = this.value.trim();
+                    state.summaryPage = 1;
+                    renderView();
+                });
+            }
+
+            if (el.entriesSelect) {
+                el.entriesSelect.addEventListener("change", function () {
+                    state.summaryEntries = parseInt(this.value, 10);
+                    state.summaryPage = 1;
+                    renderSummary();
+                });
+            }
+
+            if (el.prevBtn) {
+                el.prevBtn.addEventListener("click", function () {
+                    if (state.summaryPage <= 1) return;
+                    state.summaryPage -= 1;
+                    renderSummary();
+                });
+            }
+
+            if (el.nextBtn) {
+                el.nextBtn.addEventListener("click", function () {
+                    const total = summaryRows().length;
+                    const pages = Math.max(1, Math.ceil(total / state.summaryEntries));
+                    if (state.summaryPage >= pages) return;
+                    state.summaryPage += 1;
+                    renderSummary();
+                });
+            }
+
+            if (el.backBtn) {
+                el.backBtn.addEventListener("click", function () {
+                    state.selectedId = "";
+                    state.selectedTab = "general";
+                    renderView();
+                });
+            }
+
+            document.querySelectorAll(".vr-sort").forEach((th) => {
+                th.addEventListener("click", function () {
+                    toggleSort(th.getAttribute("data-sort-key") || "flightDate");
+                    state.summaryPage = 1;
+                    renderSummary();
+                });
             });
 
-        </script>
-    }
-
-    @section Styles {
-        <style>
-            .tracker-container {
-                max-width: 1400px;
-                margin: 0 auto;
-                padding: 0;
+            if (el.galleryClose) {
+                el.galleryClose.addEventListener("click", function () {
+                    setHidden(el.galleryModal, true);
+                });
             }
 
-            .search-card {
-                background: white;
-                border-radius: 16px;
-                min-height: 128px;
-                padding: 16px 33px;
-                margin-bottom: 2rem;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-                display: flex;
-                align-items: center;
-                justify-content: center;
+            if (el.galleryModal) {
+                el.galleryModal.addEventListener("click", function (event) {
+                    if (event.target && event.target.hasAttribute("data-gallery-close")) {
+                        setHidden(el.galleryModal, true);
+                    }
+                });
             }
 
-            .search-form {
+            renderView();
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .vr-page {
+            max-width: 1584px;
+            margin: 0 auto;
+            color: #1a1a1a;
+            font-family: Arial, sans-serif;
+        }
+
+        .vr-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+            margin-bottom: 18px;
+        }
+
+        .vr-search-card {
+            min-height: 118px;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vr-search-form {
+            width: 100%;
+            max-width: 1320px;
+        }
+
+        .vr-form-row-inline {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .vr-form-field {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .vr-form-field label {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 14px;
+            white-space: nowrap;
+        }
+
+        .vr-form-field input {
+            flex: 1 1 auto;
+            width: 100%;
+            height: 56px;
+            padding: 0 12px;
+            border: 0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #f3f3f5;
+            color: #717182;
+            box-sizing: border-box;
+        }
+
+        .vr-form-field input:focus {
+            outline: none;
+            background: #eceef2;
+        }
+
+        .vr-date-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .vr-date-input-wrapper input {
+            width: 100%;
+        }
+
+        .vr-btn-search-inline {
+            width: 112px;
+            height: 36px;
+            border: 0;
+            border-radius: 8px;
+            background: #0f1e7d;
+            color: #fff;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .vr-search-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+
+        .vr-empty-card {
+            min-height: 604px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 48px;
+        }
+
+        .vr-empty-state {
+            max-width: 520px;
+        }
+
+        .vr-empty-icon img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 24px;
+        }
+
+        .vr-empty-title {
+            margin: 0 0 12px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .vr-empty-text {
+            margin: 0;
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        .vr-summary-card,
+        .vr-detail-sections {
+            padding: 16px;
+        }
+
+        .vr-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0 0 16px;
+            margin-bottom: 16px;
+            gap: 20px;
+        }
+
+        .vr-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4a5565;
+        }
+
+        .vr-toolbar-left select {
+            width: 80px;
+            height: 36px;
+            border: 0;
+            border-radius: 8px;
+            background: #f3f3f5;
+            padding: 0 12px;
+        }
+
+        .vr-badge {
+            text-transform: uppercase;
+            padding: 4.8px 12.8px;
+            border-radius: 999px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            color: #364153;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+            line-height: 20px;
+        }
+
+        .vr-toolbar-search {
+            position: relative;
+        }
+
+        .vr-toolbar-search input {
+            width: 384px;
+            height: 44px;
+            border: 0;
+            border-radius: 8px;
+            background: #f3f3f5;
+            color: #717182;
+            font-size: 16px;
+            padding: 0 12px 0 44px;
+            outline: none;
+        }
+
+        .vr-toolbar-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: #717182;
+            pointer-events: none;
+        }
+
+        .vr-toolbar-search-icon img {
+            width: 20px;
+            height: 20px;
+            display: block;
+            opacity: 0.7;
+        }
+
+        .vr-inline-toolbar {
+            padding-top: 2px;
+            margin-bottom: 20px;
+        }
+
+        .vr-toolbar-select {
+            width: 74px;
+            height: 36px;
+            border: 0;
+            border-radius: 8px;
+            background: #f3f3f5;
+            padding: 0 12px;
+            color: #1a1a1a;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6.5 8 10.5 12 6.5' stroke='%236A7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 14px 14px;
+            padding-right: 28px;
+        }
+
+        .vr-table-wrap {
+            overflow-x: auto;
+        }
+
+        .vr-table {
+            width: 100%;
+            min-width: 860px;
+            border-collapse: collapse;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .vr-detail-table {
+            min-width: 1250px;
+        }
+
+        .vr-crew-table {
+            min-width: 1400px;
+        }
+
+        .vr-table thead {
+            background: rgba(131, 157, 187, 0.7);
+        }
+
+        .vr-table th,
+        .vr-table td {
+            height: 56px;
+            text-align: left;
+            padding: 0 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            white-space: nowrap;
+        }
+
+        .vr-table th {
+            height: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #364153;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .vr-crew-table th {
+            height: 64px;
+            font-size: 16px;
+            position: relative;
+            padding-right: 26px;
+        }
+
+        .vr-crew-table th::after {
+            content: "⇅";
+            position: absolute;
+            right: 9px;
+            top: 50%;
+            transform: translateY(-48%);
+            color: #6a7890;
+            font-size: 12px;
+        }
+
+        .vr-crew-table td {
+            height: 74px;
+            font-size: 16px;
+        }
+
+        .vr-sort::after {
+            content: "⇅";
+            color: #6a7890;
+            margin-left: 8px;
+            font-size: 12px;
+        }
+
+        .vr-table tbody tr:nth-child(even) {
+            background: rgba(21, 93, 252, 0.1);
+        }
+
+        .vr-click-row {
+            cursor: pointer;
+        }
+
+        .vr-click-row:hover {
+            background: rgba(21, 93, 252, 0.16);
+        }
+
+        .vr-empty-row {
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .vr-table-footer {
+            margin-top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #4a5565;
+            font-size: 14px;
+            min-height: 64px;
+        }
+
+        .vr-pager-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .vr-pager-btns button {
+            height: 44px;
+            min-width: 44px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background: #fff;
+            color: #1a1a1a;
+            font-size: 14px;
+            padding: 0 12px;
+            cursor: pointer;
+        }
+
+        .vr-pager-btns .active {
+            background: rgba(131, 157, 187, 0.7);
+            color: #fff;
+            border-color: rgba(131, 157, 187, 0.7);
+        }
+
+        .vr-pager-btns button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .vr-back-btn {
+            height: 36px;
+            border: 0;
+            background: transparent;
+            color: #4a5565;
+            padding: 0 4px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        .vr-banner {
+            border-radius: 8px;
+            background: linear-gradient(95deg, #1256b5 0%, #0166bf 35%, #0a7ca5 100%);
+            color: #fff;
+            min-height: 84px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px 14px 18px;
+            margin-bottom: 12px;
+            gap: 16px;
+        }
+
+        .vr-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .vr-banner-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .vr-banner-icon svg {
+            width: 15px;
+            height: 15px;
+            display: block;
+        }
+
+        .vr-banner-main {
+            font-size: 28px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .vr-banner-sub {
+            margin-top: 4px;
+            font-size: 13px;
+            line-height: 18px;
+            opacity: 0.9;
+        }
+
+        .vr-banner-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            margin-top: 2px;
+            flex-wrap: wrap;
+        }
+
+        .vr-banner-meta-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vr-banner-meta-item svg {
+            width: 15px;
+            height: 15px;
+            color: rgba(255, 255, 255, 0.88);
+            flex-shrink: 0;
+        }
+
+        .vr-banner-right {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .vr-tab-shell {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+            padding: 10px 0 0;
+        }
+
+        .vr-tab-strip {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px;
+            overflow-x: auto;
+            border-radius: 999px;
+            background: #fafafa;
+            box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.04);
+            margin: 0 16px 16px;
+        }
+
+        .vr-tab-btn {
+            appearance: none;
+            border: 0;
+            background: transparent;
+            height: 28px;
+            min-width: 124px;
+            padding: 0 18px;
+            border-radius: 999px;
+            color: #1a1a1a;
+            font-size: 13px;
+            cursor: pointer;
+            flex: 1 0 auto;
+        }
+
+        .vr-tab-btn.active {
+            background: #15227f;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(21, 34, 127, 0.24);
+        }
+
+        .vr-banner-chip {
+            min-width: 84px;
+            height: 54px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .vr-banner-chip span {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .vr-banner-chip strong {
+            font-size: 17px;
+            line-height: 1.1;
+            margin-top: 3px;
+        }
+
+        .vr-detail-sections {
+            display: grid;
+            gap: 16px;
+            padding: 0 0 12px;
+        }
+
+        .vr-section-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            border: 1px solid currentColor;
+            border-radius: 999px;
+            font-size: 12px;
+            line-height: 1;
+        }
+
+        .vr-incident-empty-card .vr-section-body {
+            padding: 20px 20px 24px;
+        }
+
+        .vr-incident-empty-panel {
+            min-height: 132px;
+            border-radius: 10px;
+            border: 1px solid #b8f0c8;
+            background: #eefbf2;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .vr-incident-empty-mark {
+            width: 44px;
+            height: 44px;
+            border: 3px solid #16a34a;
+            border-radius: 999px;
+            color: #16a34a;
+            display: grid;
+            place-items: center;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .vr-incident-empty-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2f5d40;
+        }
+
+        .vr-incident-empty-text {
+            margin-top: 4px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .vr-water-panel {
+            min-height: 92px;
+            border: 1px solid #b7d4ff;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #eaf3ff 0%, #dfeeff 100%);
+            padding: 16px 14px;
+        }
+
+        .vr-water-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #6883af;
+            margin-bottom: 6px;
+        }
+
+        .vr-water-value {
+            font-size: 24px;
+            line-height: 1;
+            color: #0f7dc4;
+        }
+
+        .vr-services-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .vr-services-icon {
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .vr-services-icon svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .vr-services-water-card .vr-section-body {
+            padding: 14px 18px 18px;
+        }
+
+        .vr-services-card .vr-data-card-header {
+            min-height: 46px;
+            font-size: 24px;
+            gap: 10px;
+        }
+
+        .vr-services-card .vr-data-card-body {
+            padding-top: 12px;
+        }
+
+        .vr-services-card .vr-toolbar {
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .vr-services-card .vr-toolbar-left {
+            font-size: 13px;
+        }
+
+        .vr-services-card .vr-toolbar-left .vr-toolbar-select {
+            min-width: 42px;
+            height: 26px;
+            border-radius: 6px;
+            font-size: 12px;
+            padding: 0 8px;
+        }
+
+        .vr-services-card .vr-badge {
+            padding: 3px 10px;
+            font-size: 11px;
+        }
+
+        .vr-services-card .vr-toolbar-search input {
+            width: 225px;
+            height: 26px;
+            font-size: 12px;
+            background-color: #ebeaf0;
+        }
+
+        .vr-services-table {
+            min-width: 980px;
+            box-shadow: none;
+            border-color: #d3dae5;
+        }
+
+        .vr-services-table thead {
+            background: #9fb1c7;
+        }
+
+        .vr-services-table th {
+            height: 38px;
+            font-size: 12px;
+            padding-right: 24px;
+            position: relative;
+        }
+
+        .vr-services-table th::after {
+            content: "⇅";
+            position: absolute;
+            right: 9px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6d7e96;
+            font-size: 11px;
+        }
+
+        .vr-services-table td {
+            height: 42px;
+            font-size: 12px;
+        }
+
+        .vr-services-table tbody tr:nth-child(even) {
+            background: #d6dff0;
+        }
+
+        .vr-services-card .vr-table-footer {
+            min-height: 48px;
+            font-size: 12px;
+        }
+
+        .vr-services-card .vr-pager-btns button {
+            height: 28px;
+            min-width: 30px;
+            font-size: 12px;
+            padding: 0 8px;
+            background: #f2f4f7;
+            color: #a3acb8;
+            cursor: default;
+        }
+
+        .vr-services-card .vr-pager-btns .active {
+            background: #9bb0c8;
+            border-color: #9bb0c8;
+            color: #ffffff;
+        }
+
+        .vr-section-card {
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+
+        .vr-section-header {
+            min-height: 58px;
+            background: #272727;
+            color: #fff;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        .vr-data-card-header {
+            min-height: 66px;
+            font-size: 20px;
+            gap: 12px;
+        }
+
+        .vr-data-header-icon {
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .vr-data-header-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .vr-data-header-icon svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .vr-data-card-body {
+            padding-top: 12px;
+        }
+
+        .vr-regulatory-card .vr-section-header {
+            min-height: 44px;
+            font-size: 27px;
+            padding: 0 16px;
+        }
+
+        .vr-reg-header-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 26px;
+            line-height: 1;
+        }
+
+        .vr-reg-header-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            line-height: 1;
+        }
+
+        .vr-regulatory-wrap {
+            padding: 2px 2px 4px;
+        }
+
+        .vr-reg-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .vr-reg-item {
+            min-height: 38px;
+            border-radius: 8px;
+            border: 1px solid #86e6a9;
+            background: #d8e6df;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 0 10px 0 12px;
+        }
+
+        .vr-reg-item.pending {
+            border-color: #a7abb4;
+            background: #d8d8dc;
+        }
+
+        .vr-reg-label {
+            font-size: 13px;
+            color: #1f2937;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .vr-reg-status {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .vr-reg-status svg {
+            width: 20px;
+            height: 20px;
+            display: block;
+        }
+
+        .vr-reg-divider {
+            height: 1px;
+            background: #d6d9df;
+            margin: 12px 2px;
+        }
+
+        .vr-reg-subtitle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1f2937;
+            font-size: 14px;
+            margin: 2px 4px 10px;
+        }
+
+        .vr-reg-subtitle-mark {
+            width: 3px;
+            height: 16px;
+            border-radius: 2px;
+            background: #0f9d58;
+            flex-shrink: 0;
+        }
+
+        .vr-safety-card .vr-section-body {
+            background: #ffffff;
+            padding: 14px 16px 16px;
+        }
+
+        .vr-safety-wrap {
+            display: grid;
+            gap: 14px;
+        }
+
+        .vr-safety-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e2e7ee;
+            padding: 4px 0 10px;
+            gap: 14px;
+        }
+
+        .vr-safety-toolbar-left {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #5d6575;
+            font-size: 13px;
+        }
+
+        .vr-safety-toolbar-search {
+            position: relative;
+        }
+
+        .vr-safety-toolbar-search input {
+            width: 425px;
+            height: 32px;
+            border: 0;
+            border-radius: 7px;
+            background: #f3f3f5;
+            color: #7a8392;
+            font-size: 13px;
+            padding: 0 10px 0 34px;
+            outline: none;
+        }
+
+        .vr-safety-toolbar-search .vr-toolbar-search-icon {
+            left: 10px;
+            width: 16px;
+            height: 16px;
+        }
+
+        .vr-safety-toolbar-search .vr-toolbar-search-icon img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .vr-safety-table {
+            min-width: 980px;
+            border-color: #d3dae5;
+            box-shadow: none;
+        }
+
+        .vr-safety-table thead {
+            background: #a8b8ca;
+        }
+
+        .vr-safety-table th {
+            height: 34px;
+            font-size: 13px;
+            position: relative;
+            padding-right: 24px;
+        }
+
+        .vr-safety-table th::after {
+            content: "⇅";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            color: #6d7e96;
+        }
+
+        .vr-safety-table td {
+            height: 38px;
+            font-size: 13px;
+            border-bottom-color: #e2e7ee;
+        }
+
+        .vr-safety-table tbody tr:nth-child(even) {
+            background: #edf3fb;
+        }
+
+        .vr-safety-sign {
+            min-width: 34px;
+            height: 20px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-size: 10px;
+            font-weight: 700;
+            border: 1px solid;
+        }
+
+        .vr-safety-sign.yes {
+            color: #2563eb;
+            border-color: #b8d2ff;
+            background: #e8f1ff;
+        }
+
+        .vr-safety-sign.no {
+            color: #5b6470;
+            border-color: #b9c0ca;
+            background: #e6ebf1;
+        }
+
+        .vr-safety-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #4f5968;
+            font-size: 13px;
+            padding-top: 2px;
+        }
+
+        .vr-safety-pager {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .vr-safety-pager button {
+            height: 28px;
+            min-width: 30px;
+            border: 1px solid #d5dae3;
+            border-radius: 7px;
+            background: #f2f4f7;
+            color: #a3acb8;
+            font-size: 12px;
+            padding: 0 10px;
+            cursor: default;
+        }
+
+        .vr-safety-pager button.active {
+            background: #9bb0c8;
+            color: #ffffff;
+            border-color: #9bb0c8;
+        }
+
+        .vr-passenger-card .vr-data-card-header {
+            min-height: 48px;
+            font-size: 14px;
+            gap: 10px;
+        }
+
+        .vr-passenger-card .vr-data-card-body {
+            padding-top: 12px;
+        }
+
+        .vr-passenger-card .vr-toolbar {
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .vr-passenger-card .vr-toolbar-left {
+            font-size: 13px;
+        }
+
+        .vr-passenger-card .vr-toolbar-left select {
+            width: 48px;
+            height: 28px;
+            border-radius: 6px;
+            font-size: 12px;
+            padding: 0 8px;
+        }
+
+        .vr-passenger-card .vr-badge {
+            padding: 3px 10px;
+            font-size: 11px;
+        }
+
+        .vr-passenger-card .vr-toolbar-search input {
+            width: 345px;
+            height: 32px;
+            font-size: 13px;
+            background-color: #ebeaf0;
+        }
+
+        .vr-passenger-card .vr-table th {
+            height: 40px;
+            font-size: 12px;
+            padding: 0 10px;
+        }
+
+        .vr-passenger-card .vr-table td {
+            height: 48px;
+            font-size: 12px;
+            padding: 0 10px;
+        }
+
+        .vr-passenger-card .vr-table-footer {
+            min-height: 56px;
+            font-size: 12px;
+        }
+
+        .vr-passenger-card .vr-pager-btns button {
+            height: 32px;
+            min-width: 32px;
+            font-size: 12px;
+            padding: 0 10px;
+        }
+
+        .vr-passenger-table {
+            min-width: 760px;
+        }
+
+        .vr-flysmiles-table {
+            min-width: 860px;
+        }
+
+        .vr-special-needs-table {
+            min-width: 980px;
+        }
+
+        .vr-neighbor-seat-table {
+            min-width: 1060px;
+        }
+
+        .vr-incident-card .vr-section-body {
+            background: #ffffff;
+            padding: 14px 16px 16px;
+        }
+
+        .vr-incident-header {
+            gap: 12px;
+        }
+
+        .vr-incident-header-icon {
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .vr-incident-header-icon svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        .vr-incident-wrap {
+            display: grid;
+            gap: 14px;
+        }
+
+        .vr-incident-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e2e7ee;
+            padding: 4px 0 10px;
+            gap: 14px;
+        }
+
+        .vr-incident-toolbar-left {
+            color: #5d6575;
+            font-size: 13px;
+        }
+
+        .vr-incident-toolbar-search {
+            position: relative;
+        }
+
+        .vr-incident-toolbar-search input {
+            width: 360px;
+            height: 32px;
+            border: 0;
+            border-radius: 7px;
+            background: #ebeaf0;
+            color: #7a8392;
+            font-size: 13px;
+            padding: 0 10px 0 34px;
+            outline: none;
+        }
+
+        .vr-incident-toolbar-search .vr-toolbar-search-icon {
+            left: 10px;
+            width: 16px;
+            height: 16px;
+        }
+
+        .vr-incident-toolbar-search .vr-toolbar-search-icon img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .vr-incident-table {
+            min-width: 1500px;
+            border-color: #d3dae5;
+            box-shadow: none;
+        }
+
+        .vr-incident-table thead {
+            background: #a8b8ca;
+        }
+
+        .vr-incident-table th {
+            height: 34px;
+            font-size: 13px;
+            padding-right: 10px;
+        }
+
+        .vr-incident-table td {
+            height: 52px;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .vr-incident-table td:nth-child(3),
+        .vr-incident-table td:nth-child(4) {
+            white-space: normal;
+            line-height: 1.4;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .vr-incident-table tbody tr:nth-child(even) {
+            background: #edf3fb;
+        }
+
+        .vr-incident-cat {
+            min-width: 86px;
+            height: 24px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .vr-incident-details {
+            color: #334155;
+        }
+
+        .vr-incident-gallery-btn {
+            height: 28px;
+            border-radius: 8px;
+            border-color: #d3dae5;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .vr-incident-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #4f5968;
+            font-size: 13px;
+            padding-top: 2px;
+        }
+
+        .vr-incident-pager {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .vr-incident-pager button {
+            height: 28px;
+            min-width: 30px;
+            border: 1px solid #d5dae3;
+            border-radius: 7px;
+            background: #f2f4f7;
+            color: #a3acb8;
+            font-size: 12px;
+            padding: 0 10px;
+            cursor: default;
+        }
+
+        .vr-incident-pager button.active {
+            background: #9bb0c8;
+            color: #ffffff;
+            border-color: #9bb0c8;
+        }
+
+        .vr-section-body {
+            padding: 16px;
+        }
+
+        .vr-kv-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .vr-kv-item {
+            min-height: 64px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f8fafc;
+            padding: 12px 14px;
+            display: grid;
+            align-content: start;
+            gap: 6px;
+        }
+
+        .vr-kv-item span {
+            color: #6b7280;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .vr-kv-item strong {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .vr-alert-box,
+        .vr-info-box {
+            border: 1px solid #f3d6ac;
+            border-radius: 8px;
+            background: #fff8f0;
+            padding: 12px 14px;
+            color: #2f2f2f;
+            font-size: 13px;
+            line-height: 20px;
+        }
+
+        .vr-info-box {
+            border-color: #bfd7ff;
+            background: #f8fbff;
+        }
+
+        .vr-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 64px;
+            height: 26px;
+            border-radius: 999px;
+            padding: 0 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            background: #eff6ff;
+            border: 1px solid #bedbff;
+            color: #1447e6;
+        }
+
+        .vr-pill.no,
+        .vr-sign.no,
+        .vr-status.closed {
+            background: #f3f4f6;
+            border-color: #99a1af;
+            color: #535964;
+        }
+
+        .vr-sign {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 54px;
+            height: 26px;
+            border-radius: 999px;
+            padding: 0 13px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 1px solid #bedbff;
+            background: #eff6ff;
+            color: #1447e6;
+            letter-spacing: 0.6px;
+        }
+
+        .vr-cat-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+            height: 25px;
+            border-radius: 999px;
+            border: 1px solid #d1d5dc;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            color: #1a1a1a;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            padding: 0 10px;
+        }
+
+        .vr-yn-icon {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vr-yn-icon svg {
+            width: 20px;
+            height: 20px;
+            display: block;
+        }
+
+        .vr-status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 64px;
+            height: 26px;
+            border-radius: 999px;
+            padding: 0 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            background: #eff6ff;
+            border: 1px solid #bedbff;
+            color: #1447e6;
+        }
+
+        .vr-note,
+        .vr-paragraph {
+            margin: 0 0 16px;
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 22px;
+        }
+
+        .vr-gallery-btn {
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: #fff;
+            cursor: pointer;
+            padding: 0 12px;
+        }
+
+        .vr-gallery-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 2400;
+            display: grid;
+            place-items: center;
+        }
+
+        .vr-gallery-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.58);
+        }
+
+        .vr-gallery-panel {
+            position: relative;
+            z-index: 1;
+            width: min(1080px, calc(100vw - 48px));
+            max-height: min(88vh, 920px);
+            overflow: auto;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 24px 72px rgba(0, 0, 0, 0.28);
+        }
+
+        .vr-gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .vr-gallery-header h4 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .vr-gallery-close {
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 999px;
+            background: #f3f4f6;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .vr-gallery-body {
+            padding: 20px;
+        }
+
+        .vr-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .vr-gallery-item {
+            margin: 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+
+        .vr-gallery-item img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+        }
+
+        .vr-gallery-item figcaption {
+            padding: 12px 14px;
+            font-size: 14px;
+            color: #4b5563;
+        }
+
+        /* Consistency pass across Voyage detail tabs */
+        .vr-tab-shell .vr-section-header,
+        .vr-tab-shell .vr-data-card-header {
+            min-height: 52px;
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: 0;
+        }
+
+        .vr-tab-shell .vr-detail-sections {
+            gap: 14px;
+            padding: 0 16px 16px;
+        }
+
+        .vr-tab-shell .vr-section-card {
+            border-radius: 12px;
+        }
+
+        .vr-tab-shell .vr-section-body,
+        .vr-tab-shell .vr-data-card-body,
+        .vr-tab-shell .vr-safety-card .vr-section-body,
+        .vr-tab-shell .vr-incident-card .vr-section-body,
+        .vr-tab-shell .vr-services-water-card .vr-section-body {
+            padding: 14px 16px 16px;
+        }
+
+        .vr-tab-shell .vr-regulatory-card .vr-section-header,
+        .vr-tab-shell .vr-services-card .vr-data-card-header,
+        .vr-tab-shell .vr-passenger-card .vr-data-card-header {
+            min-height: 52px;
+            font-size: 20px;
+        }
+
+        .vr-tab-shell .vr-reg-header-title,
+        .vr-tab-shell .vr-services-title {
+            font-size: 20px;
+            line-height: 1.2;
+        }
+
+        .vr-tab-shell .vr-data-header-icon,
+        .vr-tab-shell .vr-services-icon,
+        .vr-tab-shell .vr-reg-header-icon,
+        .vr-tab-shell .vr-incident-header-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .vr-tab-shell .vr-toolbar-left,
+        .vr-tab-shell .vr-safety-toolbar-left,
+        .vr-tab-shell .vr-incident-toolbar-left {
+            font-size: 13px;
+        }
+
+        .vr-tab-shell .vr-toolbar,
+        .vr-tab-shell .vr-safety-toolbar,
+        .vr-tab-shell .vr-incident-toolbar {
+            padding: 0 0 12px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #dee3ea;
+        }
+
+        .vr-tab-shell .vr-toolbar-search input,
+        .vr-tab-shell .vr-safety-toolbar-search input,
+        .vr-tab-shell .vr-incident-toolbar-search input,
+        .vr-tab-shell .vr-services-card .vr-toolbar-search input,
+        .vr-tab-shell .vr-passenger-card .vr-toolbar-search input {
+            height: 32px;
+            font-size: 13px;
+        }
+
+        .vr-tab-shell .vr-badge,
+        .vr-tab-shell .vr-services-card .vr-badge,
+        .vr-tab-shell .vr-passenger-card .vr-badge {
+            font-size: 11px;
+            line-height: 18px;
+            padding: 3px 10px;
+        }
+
+        .vr-tab-shell .vr-table th {
+            height: 40px;
+            font-size: 13px;
+        }
+
+        .vr-tab-shell .vr-table td {
+            height: 46px;
+            font-size: 13px;
+        }
+
+        .vr-tab-shell .vr-table-footer,
+        .vr-tab-shell .vr-safety-footer,
+        .vr-tab-shell .vr-incident-footer,
+        .vr-tab-shell .vr-services-card .vr-table-footer,
+        .vr-tab-shell .vr-passenger-card .vr-table-footer {
+            min-height: 52px;
+            font-size: 13px;
+            padding-top: 0;
+        }
+
+        .vr-tab-shell .vr-pager-btns button,
+        .vr-tab-shell .vr-safety-pager button,
+        .vr-tab-shell .vr-incident-pager button,
+        .vr-tab-shell .vr-services-card .vr-pager-btns button,
+        .vr-tab-shell .vr-passenger-card .vr-pager-btns button {
+            height: 30px;
+            min-width: 30px;
+            font-size: 12px;
+        }
+
+        /* Final normalization for Voyage Reports */
+        .vr-page {
+            font-size: 14px;
+        }
+
+        .vr-tab-shell .vr-tab-btn {
+            font-size: 14px;
+            height: 32px;
+        }
+
+        .vr-tab-shell .vr-section-header,
+        .vr-tab-shell .vr-data-card-header,
+        .vr-tab-shell .vr-regulatory-card .vr-section-header,
+        .vr-tab-shell .vr-services-card .vr-data-card-header,
+        .vr-tab-shell .vr-passenger-card .vr-data-card-header,
+        .vr-tab-shell .vr-incident-header,
+        .vr-tab-shell .vr-incident-empty-header {
+            min-height: 52px;
+            font-size: 20px;
+            line-height: 1.2;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .vr-tab-shell .vr-toolbar-left,
+        .vr-tab-shell .vr-safety-toolbar-left,
+        .vr-tab-shell .vr-incident-toolbar-left,
+        .vr-tab-shell .vr-table-footer,
+        .vr-tab-shell .vr-safety-footer,
+        .vr-tab-shell .vr-incident-footer,
+        .vr-tab-shell .vr-services-card .vr-table-footer,
+        .vr-tab-shell .vr-passenger-card .vr-table-footer {
+            font-size: 14px;
+        }
+
+        .vr-tab-shell .vr-toolbar-search input,
+        .vr-tab-shell .vr-safety-toolbar-search input,
+        .vr-tab-shell .vr-incident-toolbar-search input,
+        .vr-tab-shell .vr-services-card .vr-toolbar-search input,
+        .vr-tab-shell .vr-passenger-card .vr-toolbar-search input {
+            height: 36px;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+
+        .vr-tab-shell .vr-table th,
+        .vr-tab-shell .vr-safety-table th,
+        .vr-tab-shell .vr-incident-table th,
+        .vr-tab-shell .vr-services-table th,
+        .vr-tab-shell .vr-passenger-card .vr-table th {
+            height: 46px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .vr-tab-shell .vr-table td,
+        .vr-tab-shell .vr-safety-table td,
+        .vr-tab-shell .vr-incident-table td,
+        .vr-tab-shell .vr-services-table td,
+        .vr-tab-shell .vr-passenger-card .vr-table td {
+            height: 52px;
+            font-size: 14px;
+        }
+
+        .vr-tab-shell .vr-badge,
+        .vr-tab-shell .vr-services-card .vr-badge,
+        .vr-tab-shell .vr-passenger-card .vr-badge {
+            font-size: 12px;
+            line-height: 20px;
+            padding: 4px 12px;
+        }
+
+        .vr-tab-shell .vr-pager-btns button,
+        .vr-tab-shell .vr-safety-pager button,
+        .vr-tab-shell .vr-incident-pager button,
+        .vr-tab-shell .vr-services-card .vr-pager-btns button,
+        .vr-tab-shell .vr-passenger-card .vr-pager-btns button {
+            height: 34px;
+            min-width: 34px;
+            font-size: 13px;
+            border-radius: 8px;
+        }
+
+        /* Final spacing alignment for Voyage detail tabs */
+        .vr-tab-shell {
+            padding: 12px 0 0;
+        }
+
+        .vr-tab-shell .vr-detail-sections {
+            gap: 16px;
+            padding: 0 16px 18px;
+        }
+
+        .vr-tab-shell .vr-section-card {
+            margin: 0;
+        }
+
+        .vr-tab-shell .vr-section-header,
+        .vr-tab-shell .vr-data-card-header {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .vr-tab-shell .vr-section-body,
+        .vr-tab-shell .vr-data-card-body,
+        .vr-tab-shell .vr-safety-card .vr-section-body,
+        .vr-tab-shell .vr-incident-card .vr-section-body,
+        .vr-tab-shell .vr-services-water-card .vr-section-body,
+        .vr-tab-shell .vr-passenger-card .vr-data-card-body,
+        .vr-tab-shell .vr-services-card .vr-data-card-body {
+            padding: 16px;
+        }
+
+        .vr-tab-shell .vr-toolbar,
+        .vr-tab-shell .vr-safety-toolbar,
+        .vr-tab-shell .vr-incident-toolbar,
+        .vr-tab-shell .vr-services-card .vr-toolbar,
+        .vr-tab-shell .vr-passenger-card .vr-toolbar {
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+        }
+
+        .vr-tab-shell .vr-table-wrap {
+            margin-bottom: 0;
+        }
+
+        .vr-tab-shell .vr-table-footer,
+        .vr-tab-shell .vr-safety-footer,
+        .vr-tab-shell .vr-incident-footer,
+        .vr-tab-shell .vr-services-card .vr-table-footer,
+        .vr-tab-shell .vr-passenger-card .vr-table-footer {
+            margin-top: 12px;
+        }
+
+        .vr-tab-shell .vr-water-panel {
+            margin-top: 0;
+        }
+
+        .d-none {
+            display: none !important;
+        }
+
+        @@media (max-width: 1200px) {
+            .vr-form-row-inline {
+                flex-wrap: wrap;
+            }
+
+            .vr-form-field {
+                flex: 1 1 45%;
+            }
+
+            .vr-btn-search-inline {
+                flex: 1 1 100%;
+            }
+
+            .vr-toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .vr-toolbar-search input {
                 width: 100%;
-                max-width: 1320px;
             }
 
-            .form-row-inline {
-                display: flex;
-                align-items: center;
-                gap: 30px;
-                margin: 0 auto;
+            .vr-safety-toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .vr-safety-toolbar-search {
                 width: 100%;
             }
 
-            .form-field {
-                display: flex;
-                align-items: center;
-                gap: 14px;
-                flex: 1;
-                min-width: 0;
-            }
-
-            .form-field label {
-                font-size: 16px;
-                font-weight: 400;
-                color: #1a1a1a;
-                white-space: nowrap;
-                line-height: 14px;
-            }
-
-            .form-field input {
-                flex: 1 1 auto;
-                width: 100%;
-                height: 56px;
-                padding: 0 12px;
-                border: none;
-                border-radius: 8px;
-                font-size: 16px;
-                background: #f3f3f5;
-                color: #717182;
-                box-sizing: border-box;
-            }
-
-            .form-field input:focus {
-                outline: none;
-                background: #eceef2;
-            }
-
-            .form-field input::placeholder {
-                color: #717182;
-            }
-
-            .date-input-wrapper {
-                position: relative;
-                flex: 1;
-            }
-
-            .date-input-wrapper input {
+            .vr-safety-toolbar-search input {
                 width: 100%;
             }
 
-            .btn-search-inline {
-                width: 112px;
-                height: 36px;
-                border: 0;
-                border-radius: 8px;
-                background: #0f1e7d;
-                color: #ffffff;
-                font-size: 16px;
-                cursor: pointer;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
+            .vr-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .vr-banner-right {
+                justify-content: flex-start;
+            }
+
+            .vr-kv-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .vr-reg-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .vr-form-row-inline {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .vr-form-field {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
                 gap: 0.5rem;
-                white-space: nowrap;
             }
 
-            .btn-search-inline:hover {
-                background: #0f1e7d;
+            .vr-search-card,
+            .vr-summary-card,
+            .vr-detail-sections {
+                padding: 14px;
             }
 
-            .btn-search-inline:active {
-                background: #0f1e7d;
+            .vr-tab-shell .vr-detail-sections {
+                padding: 0 10px 12px;
+                gap: 12px;
             }
 
-            .search-icon {
-                width: 16px;
-                height: 16px;
-                flex-shrink: 0;
-                object-fit: contain;
+            .vr-tab-strip {
+                margin: 0 8px 12px;
+                padding: 4px;
             }
 
-            .results-card {
-                background: white;
-                border-radius: 16px;
-                padding: 4rem 2rem;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-                min-height: 450px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+            .vr-tab-btn {
+                min-width: 112px;
+                font-size: 13px;
             }
 
-            .empty-state {
-                text-align: center;
-                max-width: 520px;
+            .vr-kv-grid {
+                grid-template-columns: 1fr;
             }
 
-            .empty-icon {
-                margin-bottom: 1.5rem;
-                opacity: 1;
+            .vr-safety-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
             }
 
-            .empty-icon img {
-                width: 80px;
-                height: 80px;
-                object-fit: contain;
-                display: block;
-                margin: 0 auto;
+            .vr-incident-footer,
+            .vr-table-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
             }
 
-            .empty-title {
-                font-size: 1.5rem;
-                font-weight: 600;
-                color: #2d3748;
-                margin-bottom: 0.75rem;
+            .vr-banner-main {
+                font-size: 26px;
             }
 
-            .empty-text {
-                font-size: 0.9375rem;
-                color: #718096;
-                line-height: 1.6;
+            .vr-table th,
+            .vr-table td,
+            .vr-toolbar-left,
+            .vr-table-footer,
+            .vr-pager-btns button,
+            .vr-badge,
+            .vr-toolbar-search input {
+                font-size: 14px;
             }
+        }
+    </style>
+}
 
-            @@media (max-width: 1200px) {
-                .form-row-inline {
-                    flex-wrap: wrap;
-                }
 
-                .form-field {
-                    flex: 1 1 45%;
-                }
 
-                .btn-search-inline {
-                    flex: 1 1 100%;
-                }
-            }
-
-            @@media (max-width: 768px) {
-                .form-row-inline {
-                    flex-direction: column;
-                    gap: 1rem;
-                }
-
-                .form-field {
-                    width: 100%;
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 0.5rem;
-                }
-
-                .form-field label {
-                    font-size: 0.875rem;
-                }
-
-                .search-card {
-                    padding: 1.5rem;
-                }
-            }
-        </style>
-    }

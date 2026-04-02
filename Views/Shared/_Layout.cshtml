@@ -10,6 +10,62 @@
     <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/figma-tokens.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
+    <style>
+        .topbar-user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar-user-trigger {
+            border: 0;
+            background: transparent;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0;
+            gap: 12px;
+        }
+
+        .topbar-user-meta {
+            text-align: right;
+        }
+
+        .topbar-user-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            min-width: 170px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+            padding: 8px;
+            z-index: 2000;
+            display: none;
+        }
+
+        .topbar-user-dropdown.open {
+            display: block;
+        }
+
+        .topbar-user-dropdown button {
+            width: 100%;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: #111827;
+            cursor: pointer;
+        }
+
+        .topbar-user-dropdown button:hover {
+            background: #f3f4f6;
+        }
+    </style>
 </head>
 
 <body>
@@ -22,12 +78,17 @@
         <div class="topbar-left">
             <span class="page-title">@ViewData["Title"]</span>
         </div>
-        <div class="topbar-right ms-auto d-flex align-items-center">
-            <div class="text-end me-3">
-                <div class="user-name">John Doe</div>
-                <div class="user-role">Crew Admin</div>
-            </div>
-            <div class="avatar bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center">JD
+        <div class="topbar-right ms-auto d-flex align-items-center topbar-user-menu" id="topbarUserMenu">
+            <button type="button" class="topbar-user-trigger" id="topbarUserTrigger" aria-haspopup="true" aria-expanded="false">
+                <div class="topbar-user-meta me-3">
+                    <div class="user-name" id="topbarUserName">John Doe</div>
+                    <div class="user-role" id="topbarUserRole">Crew Admin</div>
+                </div>
+                <div class="avatar bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center" id="topbarUserInitials">JD</div>
+            </button>
+
+            <div class="topbar-user-dropdown" id="topbarUserDropdown" role="menu">
+                <button type="button" id="topbarLogoutBtn" role="menuitem">Log Out</button>
             </div>
         </div>
     </header>
@@ -42,7 +103,7 @@
         </div>
 
         <nav class="nav flex-column" aria-label="Main navigation">
-            <a class="nav-link @(currentController == "Home" && currentAction == "Index" ? "active" : "")" asp-area=""
+            <a id="sidebarDashboardLink" class="nav-link @(currentController == "Home" && (currentAction == "Index" || currentAction == "GroundDashboard") ? "active" : "")" data-ground-allowed="true" asp-area=""
                    asp-controller="Home" asp-action="Index">
                 <img src="~/images/icons/Icon-19.svg" class="nav-icon-svg" alt="" />
                 <span>Dashboard</span>
@@ -50,7 +111,7 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">INCIDENT MANAGEMENT</div>
-                <a class="nav-link @(currentController == "Incidents" && currentAction == "Index" ? "active" : "")"
+                <a class="nav-link @(currentController == "Incidents" && currentAction == "Index" ? "active" : "")" data-ground-allowed="true"
                        asp-area="" asp-controller="Incidents" asp-action="Index">
                     <img src="~/images/icons/Icon-2.svg" class="nav-icon-svg" alt="" />
                     <span>Incident Reports</span>
@@ -59,7 +120,7 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">VOYAGE MANAGEMENT</div>
-                <a class="nav-link @(currentController == "Voyage" && currentAction == "Reports" ? "active" : "")"
+                <a class="nav-link @(currentController == "Voyage" && currentAction == "Reports" ? "active" : "")" data-ground-allowed="true"
                        asp-area="" asp-controller="Voyage" asp-action="Reports">
                     <img src="~/images/icons/Icon-3.svg" class="nav-icon-svg" alt="" />
                     <span>Voyage Reports</span>
@@ -132,6 +193,89 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        (function () {
+            var trigger = document.getElementById("topbarUserTrigger");
+            var dropdown = document.getElementById("topbarUserDropdown");
+            var logoutBtn = document.getElementById("topbarLogoutBtn");
+            var userNameEl = document.getElementById("topbarUserName");
+            var userRoleEl = document.getElementById("topbarUserRole");
+            var userInitialsEl = document.getElementById("topbarUserInitials");
+            var loginUrl = "@Url.Action("Login", "Home")";
+            var homeUrl = "@Url.Action("Index", "Home")";
+            var groundDashboardUrl = "@Url.Action("GroundDashboard", "Home")";
+            var currentController = "@currentController";
+            var currentAction = "@currentAction";
+
+            if (!trigger || !dropdown || !logoutBtn || !userNameEl || !userRoleEl || !userInitialsEl) {
+                return;
+            }
+
+            function getInitials(name) {
+                var parts = (name || "").trim().split(/\s+/).filter(Boolean);
+                if (!parts.length) return "JD";
+                if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+                return (parts[0][0] + parts[1][0]).toUpperCase();
+            }
+
+            var storedName = localStorage.getItem("cc_user_name") || "John Doe";
+            var rawRole = localStorage.getItem("cc_user_role") || "Ground User";
+            var storedRole = (rawRole === "Ground User" || rawRole === "Admin") ? rawRole : "Ground User";
+
+            userNameEl.textContent = storedName;
+            userRoleEl.textContent = storedRole;
+            userInitialsEl.textContent = getInitials(storedName);
+
+            if (storedRole === "Ground User") {
+                var navLinks = document.querySelectorAll(".sidebar .nav-link");
+                navLinks.forEach(function (link) {
+                    if (link.getAttribute("data-ground-allowed") !== "true") {
+                        link.classList.add("d-none");
+                    }
+                });
+
+                var homeNav = document.getElementById("sidebarDashboardLink");
+                if (homeNav) {
+                    homeNav.setAttribute("href", groundDashboardUrl);
+                }
+
+                var sections = document.querySelectorAll(".sidebar .nav-section");
+                sections.forEach(function (section) {
+                    var visibleLinks = section.querySelectorAll(".nav-link:not(.d-none)").length;
+                    if (!visibleLinks) {
+                        section.classList.add("d-none");
+                    }
+                });
+
+                var routeKey = currentController + "/" + currentAction;
+                var allowedRoutes = ["Home/GroundDashboard", "Incidents/Index", "Voyage/Reports"];
+                if (allowedRoutes.indexOf(routeKey) === -1) {
+                    window.location.href = groundDashboardUrl;
+                    return;
+                }
+            }
+
+            trigger.addEventListener("click", function (event) {
+                event.stopPropagation();
+                var isOpen = dropdown.classList.toggle("open");
+                trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            });
+
+            document.addEventListener("click", function (event) {
+                if (!dropdown.classList.contains("open")) return;
+                if (event.target && (event.target === trigger || trigger.contains(event.target))) return;
+                dropdown.classList.remove("open");
+                trigger.setAttribute("aria-expanded", "false");
+            });
+
+            logoutBtn.addEventListener("click", function () {
+                localStorage.removeItem("cc_user_name");
+                localStorage.removeItem("cc_user_role");
+                localStorage.removeItem("cc_assigned_flights");
+                window.location.href = loginUrl;
+            });
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
