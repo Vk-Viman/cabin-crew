@@ -20,7 +20,10 @@
                 <input id="cbfFilterBoardPoint" type="text" placeholder="cmb" />
             </div>
             <button id="cbfFilterSearchBtn" type="button" class="cbf-search-btn">
-                <img class="cbf-search-icon" src="http://localhost:3845/assets/8d5576640b13d512765bbe4597d5b9542d886612.svg" alt="" aria-hidden="true" />
+                <svg class="cbf-search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                    <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2" />
+                    <path d="M15.5 15.5L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
                 <span>Search</span>
             </button>
         </div>
@@ -28,7 +31,7 @@
 
     <section id="cbfEmptyState" class="cbf-card cbf-empty-card">
         <div class="cbf-empty-icon">
-            <img src="http://localhost:3845/assets/891a4a9cb6d25fc1b60faf0f44955f6eb74c2677.svg" alt="" aria-hidden="true" />
+            <img src="@Url.Content("~/images/icons/Icon-13.svg")" alt="" aria-hidden="true" />
         </div>
         <h3>Ready to Search</h3>
         <p>Use the filters above to search for cabin crew assignments<br />by flight. Enter flight details to get
@@ -94,7 +97,7 @@
 
             <section class="cbf-card cbf-detail-card">
                 <header class="cbf-detail-header">
-                    <img src="http://localhost:3845/assets/253273c5f2398ddeff1de3be576bb887fa28265b.svg" alt="" />
+                    <img src="@Url.Content("~/images/icons/Icon-1.svg")" alt="" />
                     <h3 id="cbfCrewTitle">Cabin Crew Members (0 members)</h3>
                 </header>
 
@@ -146,7 +149,7 @@
 
             <section class="cbf-card cbf-detail-card">
                 <header class="cbf-detail-header">
-                    <img src="http://localhost:3845/assets/253273c5f2398ddeff1de3be576bb887fa28265b.svg" alt="" />
+                    <img src="@Url.Content("~/images/icons/Icon-1.svg")" alt="" />
                     <h3 id="cbfSnyTitle">SNY Crew (0 members)</h3>
                 </header>
 
@@ -764,6 +767,7 @@
                 height: 16px;
                 flex-shrink: 0;
                 object-fit: contain;
+                color: #ffffff;
             }
 
             .cbf-toolbar-search {
@@ -781,10 +785,10 @@
             }
 
             .cbf-empty-icon img {
-                width: 80px;
-                height: 80px;
-                opacity: 0.65;
-                margin-bottom: 16px;
+                width: 56px;
+                height: 56px;
+                opacity: 1;
+                margin-bottom: 20px;
             }
 
             .cbf-empty-card h3 {
@@ -859,7 +863,7 @@
                 font-size: 16px;
                 padding: 0 12px 0 44px;
                 outline: none;
-                background-image: url("http://localhost:3845/assets/8d5576640b13d512765bbe4597d5b9542d886612.svg");
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none'%3E%3Ccircle cx='11' cy='11' r='6' stroke='%23717182' stroke-width='2'/%3E%3Cpath d='M15.5 15.5L20 20' stroke='%23717182' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
                 background-repeat: no-repeat;
                 background-size: 20px 20px;
                 background-position: 12px center;

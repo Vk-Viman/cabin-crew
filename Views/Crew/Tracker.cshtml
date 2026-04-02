@@ -23,7 +23,7 @@
                     <input class="it-input" type="text" id="itBoardPoint" name="boardPoint" placeholder="cmb" />
                 </div>
                 <button type="submit" class="it-search-btn">
-                    <img class="it-search-btn-icon" src="http://localhost:3845/assets/8d5576640b13d512765bbe4597d5b9542d886612.svg" alt="" aria-hidden="true" />
+                    <img class="it-search-btn-icon" src="/images/icons/search-white.svg" alt="" aria-hidden="true" />
                     Search
                 </button>
             </div>
@@ -37,7 +37,7 @@
         <div id="itEmpty" class="it-empty-state">
             <div class="it-empty-inner">
                 <div class="it-empty-icon">
-                    <img src="http://localhost:3845/assets/891a4a9cb6d25fc1b60faf0f44955f6eb74c2677.svg" alt="" aria-hidden="true" />
+                    <img src="/images/icons/empty-state.svg" alt="" aria-hidden="true" />
                 </div>
                 <h3 class="it-empty-title">Ready to Search</h3>
                 <p class="it-empty-text">Use the filters above to search for CabinOps iPad Trackers by flight. Enter flight details to get started.</p>
@@ -52,15 +52,14 @@
                 <div class="it-toolbar-left">
                     <div class="it-show-wrap">
                         <span class="it-show-label">Show</span>
-                        <div class="it-show-select">
-                            <span>10</span>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6 9l6 6 6-6" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
+                        <select id="itEntriesSelect" class="it-show-select" aria-label="Entries per page">
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
                         <span class="it-show-label">entries</span>
                     </div>
-                    <span class="it-records-badge">3 RECORDS</span>
+                    <span id="itRecordsBadge" class="it-records-badge">3 RECORDS</span>
                 </div>
                 <div class="it-toolbar-right">
                     <div class="it-table-search-wrap">
@@ -70,7 +69,7 @@
                                 <path d="M20 20l-3.5-3.5" stroke="#717182" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
                         </span>
-                        <input class="it-table-search" type="text" placeholder="Search iPad tracker..." />
+                        <input id="itTableSearch" class="it-table-search" type="text" placeholder="Search iPad tracker..." />
                     </div>
                 </div>
             </div>
@@ -126,12 +125,12 @@
             <!-- Pagination -->
             <div class="it-pagination">
                 <p class="it-pager-info">
-                    Showing <span class="it-pager-num">1</span> to <span class="it-pager-num">3</span> of <span class="it-pager-num">3</span> entries
+                    Showing <span id="itFrom" class="it-pager-num">1</span> to <span id="itTo" class="it-pager-num">3</span> of <span id="itTotal" class="it-pager-num">3</span> entries
                 </p>
                 <div class="it-pager-btns">
-                    <button class="it-pager-btn it-pager-btn--disabled" disabled>Previous</button>
-                    <button class="it-pager-btn it-pager-btn--active">1</button>
-                    <button class="it-pager-btn it-pager-btn--disabled" disabled>Next</button>
+                    <button id="itPrevBtn" class="it-pager-btn it-pager-btn--disabled" disabled>Previous</button>
+                    <button id="itPageBtn" class="it-pager-btn it-pager-btn--active">1</button>
+                    <button id="itNextBtn" class="it-pager-btn it-pager-btn--disabled" disabled>Next</button>
                 </div>
             </div>
 
@@ -143,16 +142,130 @@
 @section Scripts {
     <script>
         (function () {
-            var form   = document.getElementById('itSearchForm');
-            var empty  = document.getElementById('itEmpty');
-            var filled = document.getElementById('itFilled');
-            var dateIn = document.getElementById('itFlightDate');
+            function initTrackerTable() {
+                var form = document.getElementById('itSearchForm');
+                var empty = document.getElementById('itEmpty');
+                var filled = document.getElementById('itFilled');
+                var flightNo = document.getElementById('itFlightNo');
+                var flightDate = document.getElementById('itFlightDate');
+                var boardPoint = document.getElementById('itBoardPoint');
+                var entriesSelect = document.getElementById('itEntriesSelect');
+                var tableSearch = document.getElementById('itTableSearch');
+                var tableBody = document.getElementById('itTbody');
+                var recordsBadge = document.getElementById('itRecordsBadge');
+                var fromEl = document.getElementById('itFrom');
+                var toEl = document.getElementById('itTo');
+                var totalEl = document.getElementById('itTotal');
+                var prevBtn = document.getElementById('itPrevBtn');
+                var pageBtn = document.getElementById('itPageBtn');
+                var nextBtn = document.getElementById('itNextBtn');
 
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                empty.classList.add('d-none');
-                filled.classList.remove('d-none');
-            });
+                if (!form || !empty || !filled || !entriesSelect || !tableSearch || !tableBody || !recordsBadge || !fromEl || !toEl || !totalEl || !prevBtn || !pageBtn || !nextBtn) {
+                    return;
+                }
+
+                var rows = Array.from(tableBody.querySelectorAll('tr')).map(function (row) {
+                    return {
+                        html: row.outerHTML,
+                        text: (row.textContent || '').toLowerCase(),
+                        flightDate: (row.children[0] && row.children[0].textContent || '').trim(),
+                        flightNo: (row.children[1] && row.children[1].textContent || '').trim().toLowerCase(),
+                        boardPoint: (row.children[2] && row.children[2].textContent || '').trim().toLowerCase()
+                    };
+                });
+
+                var state = {
+                    searched: false,
+                    page: 1
+                };
+
+                function applyFilters() {
+                    var toolbarQuery = (tableSearch.value || '').trim().toLowerCase();
+                    var formFlightNo = ((flightNo && flightNo.value) || '').trim().toLowerCase();
+                    var formDate = ((flightDate && flightDate.value) || '').trim();
+                    var formBoardPoint = ((boardPoint && boardPoint.value) || '').trim().toLowerCase();
+
+                    return rows.filter(function (row) {
+                        var passForm = (!formFlightNo || row.flightNo.indexOf(formFlightNo) !== -1)
+                            && (!formDate || row.flightDate === formDate)
+                            && (!formBoardPoint || row.boardPoint.indexOf(formBoardPoint) !== -1);
+                        if (!passForm) return false;
+                        if (!toolbarQuery) return true;
+                        return row.text.indexOf(toolbarQuery) !== -1;
+                    });
+                }
+
+                function updatePagerButtons(currentPage, totalPages) {
+                    prevBtn.disabled = currentPage <= 1;
+                    nextBtn.disabled = currentPage >= totalPages;
+                    prevBtn.classList.toggle('it-pager-btn--disabled', prevBtn.disabled);
+                    nextBtn.classList.toggle('it-pager-btn--disabled', nextBtn.disabled);
+                    pageBtn.textContent = String(currentPage);
+                }
+
+                function renderTable() {
+                    var filtered = applyFilters();
+                    var pageSize = parseInt(entriesSelect.value, 10) || 10;
+                    var totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                    if (state.page > totalPages) state.page = totalPages;
+                    var start = (state.page - 1) * pageSize;
+                    var visibleRows = filtered.slice(start, start + pageSize);
+
+                    tableBody.innerHTML = visibleRows.length
+                        ? visibleRows.map(function (row) { return row.html; }).join('')
+                        : '<tr><td class="it-td" colspan="7" style="text-align:center;color:#6b7280;font-style:italic;">No matching tracker records found</td></tr>';
+
+                    var total = filtered.length;
+                    var from = total > 0 ? start + 1 : 0;
+                    var to = start + visibleRows.length;
+
+                    recordsBadge.textContent = total + ' RECORDS';
+                    fromEl.textContent = String(from);
+                    toEl.textContent = String(to);
+                    totalEl.textContent = String(total);
+                    updatePagerButtons(state.page, totalPages);
+                }
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    state.searched = true;
+                    state.page = 1;
+                    empty.classList.add('d-none');
+                    filled.classList.remove('d-none');
+                    renderTable();
+                });
+
+                tableSearch.addEventListener('input', function () {
+                    state.page = 1;
+                    if (state.searched) renderTable();
+                });
+
+                entriesSelect.addEventListener('change', function () {
+                    state.page = 1;
+                    if (state.searched) renderTable();
+                });
+
+                prevBtn.addEventListener('click', function () {
+                    if (state.page <= 1) return;
+                    state.page -= 1;
+                    renderTable();
+                });
+
+                nextBtn.addEventListener('click', function () {
+                    var filtered = applyFilters();
+                    var pageSize = parseInt(entriesSelect.value, 10) || 10;
+                    var totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                    if (state.page >= totalPages) return;
+                    state.page += 1;
+                    renderTable();
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTrackerTable);
+            } else {
+                initTrackerTable();
+            }
         })();
     </script>
 }
@@ -318,13 +431,18 @@
             border-radius: 8px;
             height: 36px;
             padding: 0 12.8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
             font-size: 16px;
             color: #1a1a1a;
             cursor: pointer;
             min-width: 64px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6.5 8 10.5 12 6.5' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 14px 14px;
+            padding-right: 30px;
         }
         .it-records-badge {
             background: #f9fafb;
@@ -541,3 +659,4 @@
         }
     </style>
 }
+

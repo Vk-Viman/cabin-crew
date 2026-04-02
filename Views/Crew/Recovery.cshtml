@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Signature Recovery";
     var showDemoData = Context.Request.Query.ContainsKey("showDemo");
     var flightNoValue = Context.Request.Query["flightNo"].ToString();
@@ -36,9 +36,7 @@ Action = "Recovered" }
                 </div>
 
                 <button type="submit" class="sr-search-btn">
-                    <img class="sr-btn-icon"
-                         src="http://localhost:3845/assets/8d5576640b13d512765bbe4597d5b9542d886612.svg" alt=""
-                         aria-hidden="true" />
+                    <img class="sr-btn-icon" src="/images/icons/search-white.svg" alt="" aria-hidden="true" />
                     Search
                 </button>
             </div>
@@ -47,8 +45,7 @@ Action = "Recovered" }
 
     <section class="sr-results-card">
         <div id="srEmpty" class="sr-empty-state @(showDemoData ? "d-none" : "")">
-            <img class="sr-empty-icon" src="http://localhost:3845/assets/891a4a9cb6d25fc1b60faf0f44955f6eb74c2677.svg"
-                 alt="" aria-hidden="true" />
+            <img class="sr-empty-icon" src="/images/icons/empty-state.svg" alt="" aria-hidden="true" />
             <p class="sr-empty-title">Ready to Search</p>
             <p class="sr-empty-body">Use the filters above to search for cabin crew signature to recover by flight.
                 Enter flight details to get started.</p>
@@ -87,11 +84,11 @@ Action = "Recovered" }
                         </colgroup>
                         <thead>
                             <tr>
-                                <th>Flight Date (Local) <span class="sr-sort">⇅</span></th>
-                                <th>Flight No <span class="sr-sort">⇅</span></th>
-                                <th>Board Point <span class="sr-sort">⇅</span></th>
-                                <th>Affected Crew <span class="sr-sort">⇅</span></th>
-                                <th>Status <span class="sr-sort">⇅</span></th>
+                                <th>Flight Date (Local) <span class="sr-sort">â‡…</span></th>
+                                <th>Flight No <span class="sr-sort">â‡…</span></th>
+                                <th>Board Point <span class="sr-sort">â‡…</span></th>
+                                <th>Affected Crew <span class="sr-sort">â‡…</span></th>
+                                <th>Status <span class="sr-sort">â‡…</span></th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -112,7 +109,7 @@ Action = "Recovered" }
                                         <td><span class="@badgeClass">@row.Status</span></td>
                                         <td>
                                             <button type="button" class="@btnClass" @(row.Action == "Recovered" ? "disabled" :
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                null)>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    null)>
                                 <svg class="sr-action-icon" viewBox="0 0 24 24" aria-hidden="true">
                                     <path
                                     d="M15.5 14h-.8l-.3-.3a6 6 0 1 0-.9.9l.3.3v.8L20 20l1-1-5.5-5Zm-5.5 1a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9Z" />
@@ -131,9 +128,9 @@ Action = "Recovered" }
     <p class="sr-showing-text">Showing <span id="srFrom" class="sr-num">1</span> to <span id="srTo"
                                                                                               class="sr-num">2</span> of <span id="srTotal" class="sr-num">2</span> entries</p>
         <div class="sr-pagination">
-            <button type="button" class="sr-page-btn" disabled>Previous</button>
-            <button type="button" class="sr-page-btn sr-page-btn--active">1</button>
-            <button type="button" class="sr-page-btn" disabled>Next</button>
+            <button id="srPrevBtn" type="button" class="sr-page-btn" disabled>Previous</button>
+            <button id="srPageBtn" type="button" class="sr-page-btn sr-page-btn--active">1</button>
+            <button id="srNextBtn" type="button" class="sr-page-btn" disabled>Next</button>
         </div>
     </div>
 </div>
@@ -153,12 +150,15 @@ Action = "Recovered" }
                 var fromEl = document.getElementById('srFrom');
                 var toEl = document.getElementById('srTo');
                 var totalEl = document.getElementById('srTotal');
+                var prevBtn = document.getElementById('srPrevBtn');
+                var pageBtn = document.getElementById('srPageBtn');
+                var nextBtn = document.getElementById('srNextBtn');
 
                 if (!dateInput) {
                     return;
                 }
 
-                if (!filled || filled.classList.contains('d-none') || !entriesSelect || !tableSearch || !tableBody || !recordsBadge || !fromEl || !toEl || !totalEl) {
+                if (!filled || filled.classList.contains('d-none') || !entriesSelect || !tableSearch || !tableBody || !recordsBadge || !fromEl || !toEl || !totalEl || !prevBtn || !pageBtn || !nextBtn) {
                     return;
                 }
 
@@ -167,14 +167,23 @@ Action = "Recovered" }
                     { flightDate: '2025-11-16', flightNo: 'UL205', boardPoint: 'CMB', affectedCrew: 'CCM-123', status: 'RECOVERED', action: 'Recovered' }
                 ];
 
-                function renderTable() {
+                var currentPage = 1;
+
+                function filteredRows() {
                     var query = (tableSearch.value || '').toLowerCase().trim();
-                    var pageSize = parseInt(entriesSelect.value, 10) || 10;
-                    var filtered = demoData.filter(function (row) {
+                    return demoData.filter(function (row) {
                         var haystack = [row.flightDate, row.flightNo, row.boardPoint, row.affectedCrew, row.status, row.action].join(' ').toLowerCase();
                         return !query || haystack.indexOf(query) !== -1;
                     });
-                    var visibleRows = filtered.slice(0, pageSize);
+                }
+
+                function renderTable() {
+                    var pageSize = parseInt(entriesSelect.value, 10) || 10;
+                    var filtered = filteredRows();
+                    var totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                    if (currentPage > totalPages) currentPage = totalPages;
+                    var start = (currentPage - 1) * pageSize;
+                    var visibleRows = filtered.slice(start, start + pageSize);
 
                     tableBody.innerHTML = visibleRows.map(function (row, index) {
                         var rowClass = index === 1 ? ' class="sr-row-tint"' : '';
@@ -193,17 +202,45 @@ Action = "Recovered" }
                     }).join('');
 
                     var total = filtered.length;
-                    var to = visibleRows.length;
-                    var from = total > 0 ? 1 : 0;
+                    var from = total > 0 ? start + 1 : 0;
+                    var to = start + visibleRows.length;
 
                     recordsBadge.textContent = total + ' RECORDS';
                     fromEl.textContent = String(from);
                     toEl.textContent = String(to);
                     totalEl.textContent = String(total);
+
+                    pageBtn.textContent = String(currentPage);
+                    prevBtn.disabled = currentPage <= 1;
+                    nextBtn.disabled = currentPage >= totalPages;
                 }
 
-                entriesSelect.addEventListener('change', renderTable);
-                tableSearch.addEventListener('input', renderTable);
+                entriesSelect.addEventListener('change', function () {
+                    currentPage = 1;
+                    renderTable();
+                });
+
+                tableSearch.addEventListener('input', function () {
+                    currentPage = 1;
+                    renderTable();
+                });
+
+                prevBtn.addEventListener('click', function () {
+                    if (currentPage <= 1) return;
+                    currentPage -= 1;
+                    renderTable();
+                });
+
+                nextBtn.addEventListener('click', function () {
+                    var filtered = filteredRows();
+                    var pageSize = parseInt(entriesSelect.value, 10) || 10;
+                    var totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                    if (currentPage >= totalPages) return;
+                    currentPage += 1;
+                    renderTable();
+                });
+
+                renderTable();
             }
 
             if (document.readyState === 'loading') {
@@ -649,3 +686,4 @@ Action = "Recovered" }
         }
     </style>
 }
+

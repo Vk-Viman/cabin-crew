@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Unsubmitted Voyage Reports";
     var showDemoData = Context.Request.Query.ContainsKey("showDemo");
     var flightDateValue = Context.Request.Query["flightDate"].ToString();
@@ -25,9 +25,7 @@
                            value="@flightDateValue" />
                 </div>
                 <button type="submit" class="uvr-search-btn">
-                    <img class="uvr-btn-icon"
-                         src="http://localhost:3845/assets/8d5576640b13d512765bbe4597d5b9542d886612.svg" alt=""
-                         aria-hidden="true" />
+                    <img class="uvr-btn-icon" src="/images/icons/search-white.svg" alt="" aria-hidden="true" />
                     Search
                 </button>
             </div>
@@ -36,8 +34,7 @@
 
     <section class="uvr-results-card">
         <div id="uvrEmpty" class="uvr-empty-state @(showDemoData ? "d-none" : "")">
-            <img class="uvr-empty-icon" src="http://localhost:3845/assets/891a4a9cb6d25fc1b60faf0f44955f6eb74c2677.svg"
-                 alt="" aria-hidden="true" />
+            <img class="uvr-empty-icon" src="/images/icons/empty-state.svg" alt="" aria-hidden="true" />
             <p class="uvr-empty-title">Ready to Search</p>
             <p class="uvr-empty-body">Use the filters above to search for un-submitted voyage reports. Enter flight date
                 to get started.</p>
@@ -69,14 +66,14 @@
                     <table class="uvr-tbl">
                         <thead>
                             <tr>
-                                <th>FLT Date Operate <span class="uvr-sort">⇅</span></th>
-                                <th>Flight No <span class="uvr-sort">⇅</span></th>
-                                <th>AC Reg No <span class="uvr-sort">⇅</span></th>
-                                <th>SEC ARV <span class="uvr-sort">⇅</span></th>
-                                <th>SEC DEPT <span class="uvr-sort">⇅</span></th>
-                                <th>Status <span class="uvr-sort">⇅</span></th>
-                                <th>Purser <span class="uvr-sort">⇅</span></th>
-                                <th>Cabin Supervisors <span class="uvr-sort">⇅</span></th>
+                                <th>FLT Date Operate <span class="uvr-sort">â‡…</span></th>
+                                <th>Flight No <span class="uvr-sort">â‡…</span></th>
+                                <th>AC Reg No <span class="uvr-sort">â‡…</span></th>
+                                <th>SEC ARV <span class="uvr-sort">â‡…</span></th>
+                                <th>SEC DEPT <span class="uvr-sort">â‡…</span></th>
+                                <th>Status <span class="uvr-sort">â‡…</span></th>
+                                <th>Purser <span class="uvr-sort">â‡…</span></th>
+                                <th>Cabin Supervisors <span class="uvr-sort">â‡…</span></th>
                             </tr>
                         </thead>
                         <tbody id="uvrTableBody">
@@ -109,9 +106,9 @@
                                                                                         class="uvr-num">@(showDemoData ? demoCount : 0)</span> entries
                     </p>
                     <div class="uvr-pagination">
-                        <button type="button" class="uvr-page-btn" disabled>Previous</button>
-                        <button type="button" class="uvr-page-btn uvr-page-btn--active">1</button>
-                        <button type="button" class="uvr-page-btn" disabled>Next</button>
+                        <button id="uvrPrevBtn" type="button" class="uvr-page-btn" disabled>Previous</button>
+                        <button id="uvrPageBtn" type="button" class="uvr-page-btn uvr-page-btn--active">1</button>
+                        <button id="uvrNextBtn" type="button" class="uvr-page-btn" disabled>Next</button>
                     </div>
                 </div>
             </div>
@@ -130,9 +127,12 @@
                     var fromEl = document.getElementById('uvrFrom');
                     var toEl = document.getElementById('uvrTo');
                     var totalEl = document.getElementById('uvrTotal');
+                    var prevBtn = document.getElementById('uvrPrevBtn');
+                    var pageBtn = document.getElementById('uvrPageBtn');
+                    var nextBtn = document.getElementById('uvrNextBtn');
                     var filled = document.getElementById('uvrFilled');
 
-                    if (!dateInput || !entriesSelect || !tableSearch || !tableBody || !recordsBadge || !fromEl || !toEl || !totalEl || !filled) {
+                    if (!dateInput || !entriesSelect || !tableSearch || !tableBody || !recordsBadge || !fromEl || !toEl || !totalEl || !prevBtn || !pageBtn || !nextBtn || !filled) {
                         return;
                     }
 
@@ -146,14 +146,23 @@
                         { flightDate: '2025-11-19', flightNo: 'UL205', acRegNo: '6T-XYZ', secArv: 'KHI', secDept: 'CMB', status: 'PENDING', purser: 'CCM-493', supervisors: 'CCM-749' }
                     ];
 
-                    function renderTable() {
+                    var currentPage = 1;
+
+                    function filteredRows() {
                         var query = (tableSearch.value || '').toLowerCase().trim();
-                        var pageSize = parseInt(entriesSelect.value, 10) || 10;
-                        var filtered = demoData.filter(function (row) {
+                        return demoData.filter(function (row) {
                             var haystack = [row.flightDate, row.flightNo, row.acRegNo, row.secArv, row.secDept, row.status, row.purser, row.supervisors].join(' ').toLowerCase();
                             return !query || haystack.indexOf(query) !== -1;
                         });
-                        var visibleRows = filtered.slice(0, pageSize);
+                    }
+
+                    function renderTable() {
+                        var pageSize = parseInt(entriesSelect.value, 10) || 10;
+                        var filtered = filteredRows();
+                        var totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                        if (currentPage > totalPages) currentPage = totalPages;
+                        var start = (currentPage - 1) * pageSize;
+                        var visibleRows = filtered.slice(start, start + pageSize);
 
                         tableBody.innerHTML = visibleRows.map(function (row, index) {
                             var rowClass = index === 1 ? ' class="uvr-row-tint"' : '';
@@ -170,17 +179,45 @@
                         }).join('');
 
                         var total = filtered.length;
-                        var to = visibleRows.length;
-                        var from = total > 0 ? 1 : 0;
+                        var from = total > 0 ? start + 1 : 0;
+                        var to = start + visibleRows.length;
 
                         recordsBadge.textContent = total + ' RECORDS';
                         fromEl.textContent = String(from);
                         toEl.textContent = String(to);
                         totalEl.textContent = String(total);
+
+                        pageBtn.textContent = String(currentPage);
+                        prevBtn.disabled = currentPage <= 1;
+                        nextBtn.disabled = currentPage >= totalPages;
                     }
 
-                    entriesSelect.addEventListener('change', renderTable);
-                    tableSearch.addEventListener('input', renderTable);
+                    entriesSelect.addEventListener('change', function () {
+                        currentPage = 1;
+                        renderTable();
+                    });
+
+                    tableSearch.addEventListener('input', function () {
+                        currentPage = 1;
+                        renderTable();
+                    });
+
+                    prevBtn.addEventListener('click', function () {
+                        if (currentPage <= 1) return;
+                        currentPage -= 1;
+                        renderTable();
+                    });
+
+                    nextBtn.addEventListener('click', function () {
+                        var filtered = filteredRows();
+                        var pageSize = parseInt(entriesSelect.value, 10) || 10;
+                        var totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+                        if (currentPage >= totalPages) return;
+                        currentPage += 1;
+                        renderTable();
+                    });
+
+                    renderTable();
                 }
 
                 if (document.readyState === 'loading') {
